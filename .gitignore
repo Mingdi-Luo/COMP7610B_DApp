@@ -1,0 +1,23 @@
+# Dependencies and generated builds can always be rebuilt.
+node_modules/
+dist/
+
+# Local configuration. The example files are intentionally safe to commit.
+.env
+.env.*
+!.env.example
+*.local
+
+# Hardhat build output and local deployment records.
+contracts/artifacts/
+contracts/cache/
+contracts/types/
+contracts/coverage/
+contracts/ignition/deployments/chain-31337/
+
+# Local editor and assistant settings.
+.claude/
+
+# OS metadata.
+.DS_Store
+Thumbs.db

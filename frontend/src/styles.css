@@ -1,0 +1,378 @@
+/* Base theme adapted from the course NFT-ticket starter. */
+:root {
+  --bg: #09090b;
+  --surface: rgba(24, 24, 27, 0.86);
+  --border: rgba(255, 255, 255, 0.12);
+  --text: #f8fafc;
+  --muted: #a1a1aa;
+  --accent: #a78bfa;
+  --accent-strong: #7c3aed;
+  --ok: #22c55e;
+  --warn: #f59e0b;
+  --error: #f87171;
+
+  /* Element and rarity colours used by the card face. */
+  --fire: #f97316;
+  --water: #38bdf8;
+  --wood: #4ade80;
+  --common: #a1a1aa;
+  --rare: #c084fc;
+  --legendary: #facc15;
+
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  font-synthesis: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(124, 58, 237, 0.25), transparent 34%),
+    radial-gradient(circle at 80% 80%, rgba(14, 165, 233, 0.18), transparent 32%),
+    var(--bg);
+  background-attachment: fixed;
+}
+
+button,
+a {
+  font: inherit;
+}
+
+a {
+  color: var(--accent);
+}
+
+code {
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 0.9em;
+  word-break: break-all;
+}
+
+/* Buttons */
+button {
+  padding: 10px 18px;
+  border: 0;
+  border-radius: 12px;
+  color: white;
+  background: var(--accent-strong);
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 120ms ease, opacity 120ms ease;
+}
+
+button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.button-secondary {
+  background: transparent;
+  border: 1px solid var(--border);
+}
+
+.button-warning {
+  background: var(--warn);
+  color: #1c1917;
+}
+
+.button-link {
+  padding: 0;
+  margin-top: 24px;
+  background: none;
+  color: var(--muted);
+  font-weight: 500;
+  text-decoration: underline;
+}
+
+/* Header and navigation */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  padding: 12px 24px 0;
+  background: rgba(9, 9, 11, 0.85);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+}
+
+.header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.brand {
+  padding: 0;
+  background: none;
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+.wallet-area {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.wallet-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 0.9rem;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.dot-ok {
+  background: var(--ok);
+}
+
+.dot-warn {
+  background: var(--warn);
+}
+
+.nav {
+  display: flex;
+  gap: 4px;
+  margin-top: 10px;
+  overflow-x: auto;
+}
+
+.nav-link {
+  padding: 10px 14px;
+  border-radius: 10px 10px 0 0;
+  background: none;
+  color: var(--muted);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.nav-link.active {
+  color: var(--text);
+  box-shadow: inset 0 -2px 0 var(--accent);
+}
+
+/* Page layout */
+.page {
+  width: min(100%, 960px);
+  margin: 0 auto;
+  padding: 32px 16px 64px;
+}
+
+.panel {
+  padding: 32px;
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  background: var(--surface);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+}
+
+.eyebrow {
+  color: var(--accent);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+h1 {
+  margin: 8px 0 12px;
+  font-size: clamp(1.8rem, 5vw, 2.5rem);
+}
+
+.lead {
+  margin: 0 0 24px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.steps {
+  padding-left: 20px;
+  line-height: 1.7;
+}
+
+.triangle {
+  margin: 24px 0;
+  font-weight: 600;
+}
+
+.toolbar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+/* Notices and transaction status */
+.notice {
+  margin: 16px 0;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  line-height: 1.5;
+}
+
+.notice p {
+  margin: 0 0 10px;
+}
+
+.notice p:last-child {
+  margin-bottom: 0;
+}
+
+.notice-warning {
+  border-color: rgba(245, 158, 11, 0.5);
+  background: rgba(245, 158, 11, 0.08);
+}
+
+.notice-error {
+  border-color: rgba(248, 113, 113, 0.5);
+  background: rgba(248, 113, 113, 0.08);
+  color: var(--error);
+}
+
+.tx-status {
+  margin-top: 16px;
+  padding: 12px 16px;
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.tx-status p {
+  margin: 0 0 6px;
+}
+
+.tx-success {
+  border-left-color: var(--ok);
+}
+
+.tx-error {
+  border-left-color: var(--error);
+  color: var(--error);
+}
+
+.reveal {
+  margin-top: 24px;
+}
+
+/* Card face. TODO(frontend B): artwork, glow for Legendary, flip animation. */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.game-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  max-width: 180px;
+  aspect-ratio: 5 / 7;
+  padding: 14px 10px;
+  border: 3px solid var(--rarity-color);
+  border-radius: 16px;
+  background: linear-gradient(160deg, color-mix(in srgb, var(--element-color) 35%, #18181b), #18181b 70%);
+  color: var(--text);
+  font-weight: 500;
+  text-align: center;
+}
+
+button.game-card:hover:not(:disabled) {
+  transform: translateY(-3px);
+}
+
+.game-card.selected {
+  outline: 3px solid var(--text);
+  outline-offset: 3px;
+}
+
+.element-fire { --element-color: var(--fire); }
+.element-water { --element-color: var(--water); }
+.element-wood { --element-color: var(--wood); }
+.rarity-common { --rarity-color: var(--common); }
+.rarity-rare { --rarity-color: var(--rare); }
+.rarity-legendary { --rarity-color: var(--legendary); }
+
+.game-card-rarity {
+  color: var(--rarity-color);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.game-card-icon {
+  margin-top: auto;
+  font-size: 2.6rem;
+}
+
+.game-card-element {
+  color: var(--element-color);
+  font-weight: 700;
+}
+
+.game-card-power {
+  margin-bottom: auto;
+  font-size: 1.8rem;
+}
+
+.game-card-id {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+/* Drop-rate table */
+.odds-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.odds-table th,
+.odds-table td {
+  padding: 12px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+}
+
+.odds-table th {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+@media (max-width: 560px) {
+  .header {
+    padding: 10px 16px 0;
+  }
+
+  .panel {
+    padding: 22px;
+  }
+}
