@@ -4,6 +4,7 @@ import { WalletProvider } from "./hooks/useWallet.jsx";
 import Arena from "./pages/Arena.jsx";
 import Collection from "./pages/Collection.jsx";
 import Forge from "./pages/Forge.jsx";
+import History from "./pages/History.jsx";
 import Home from "./pages/Home.jsx";
 import Odds from "./pages/Odds.jsx";
 import Shop from "./pages/Shop.jsx";
@@ -14,6 +15,7 @@ const PAGES = [
   { id: "collection", label: "My Cards", component: Collection },
   { id: "forge", label: "Forge", component: Forge },
   { id: "arena", label: "Arena", component: Arena },
+  { id: "history", label: "History", component: History },
   { id: "odds", label: "Drop Rates", component: Odds },
 ];
 

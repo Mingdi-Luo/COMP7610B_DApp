@@ -1,26 +1,26 @@
 import { useState } from "react";
 import { formatEther, parseEther } from "ethers";
-import Card from "../components/Card.jsx";
+import { CardReveal } from "../components/Card.jsx";
 import TxStatus from "../components/TxStatus.jsx";
 import WalletGate from "../components/WalletGate.jsx";
-import { getCardsContract } from "../config/contracts.js";
+import { ELEMENTS, RARITIES, getCardsContract } from "../config/contracts.js";
 import { useTx } from "../hooks/useTx.js";
 import { useWallet } from "../hooks/useWallet.jsx";
+import { findEvent, toCard } from "../lib/cards.js";
 
 // Mirrors ElementCards.PACK_PRICE.
 const PACK_PRICE = parseEther("0.001");
 
-/**
- * Reference page for the read -> send -> wait -> parse-event pattern.
- * TODO(frontend A): pack-opening animation (card back flips to reveal the card).
- */
-export default function Shop() {
+/** Reference page for the send -> wait -> parse-event pattern. */
+export default function Shop({ onNavigate }) {
   const { getSigner } = useWallet();
   const tx = useTx();
+  const [opening, setOpening] = useState(false);
   const [newCard, setNewCard] = useState(null);
 
   async function openPack() {
     setNewCard(null);
+    setOpening(true);
     let contract;
     // Getting the signer inside run() lets useTx report a rejected network switch too.
     const receipt = await tx.run(
@@ -30,34 +30,42 @@ export default function Shop() {
       },
       { pending: "Opening your pack...", success: "Pack opened!" },
     );
-    if (!receipt) return;
 
     // The PackOpened event in the receipt says which card was minted.
-    const event = receipt.logs
-      .map((log) => contract.interface.parseLog(log))
-      .find((parsed) => parsed?.name === "PackOpened");
-    if (event) {
-      const { tokenId, element, rarity, power } = event.args;
-      setNewCard({ tokenId: Number(tokenId), element: Number(element), rarity: Number(rarity), power: Number(power) });
-    }
+    const event = receipt && findEvent(receipt, contract, "PackOpened");
+    setOpening(false);
+    if (event) setNewCard(toCard(event.args.tokenId, event.args));
   }
 
   return (
     <section className="panel">
       <h1>Shop</h1>
-      <p className="lead">One pack mints one random card for {formatEther(PACK_PRICE)} ETH.</p>
+      <p className="lead">
+        One pack mints one random card for {formatEther(PACK_PRICE)} ETH. The card is an NFT owned by
+        your wallet.
+      </p>
 
       <WalletGate>
-        <button type="button" onClick={openPack} disabled={tx.busy}>
-          {tx.busy ? "Opening..." : "Open a pack"}
-        </button>
+        <div className="pack-stage">
+          <CardReveal card={newCard} shaking={opening} />
+          {newCard && (
+            <p className={`reveal-caption rarity-${RARITIES[newCard.rarity].toLowerCase()}`}>
+              {RARITIES[newCard.rarity]} {ELEMENTS[newCard.element]} card #{newCard.tokenId}, power {newCard.power}
+            </p>
+          )}
+        </div>
+
+        <div className="toolbar">
+          <button type="button" onClick={openPack} disabled={tx.busy}>
+            {tx.busy ? "Opening..." : newCard ? "Open another pack" : "Open a pack"}
+          </button>
+          {newCard && (
+            <button type="button" className="button-secondary" onClick={() => onNavigate("collection")}>
+              See my cards
+            </button>
+          )}
+        </div>
         <TxStatus tx={tx} />
-        {newCard && (
-          <div className="reveal">
-            <p>You got:</p>
-            <Card {...newCard} />
-          </div>
-        )}
       </WalletGate>
     </section>
   );

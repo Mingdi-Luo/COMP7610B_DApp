@@ -8,7 +8,7 @@ const INTERFACES = [new Interface(elementCardsAbi), new Interface(arenaAbi)];
 
 // Friendly text for the custom errors declared in ElementCards.sol and Arena.sol.
 const CONTRACT_ERRORS = {
-  NotImplemented: "This feature is not implemented in the contract yet.",
+  ERC721NonexistentToken: "That card no longer exists. It may have been merged.",
   WrongPayment: "Send exactly the pack price.",
   NotCardOwner: "You do not own that card.",
   DuplicateCard: "Pick three different cards.",

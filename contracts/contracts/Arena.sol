@@ -15,7 +15,7 @@ import {ElementCards} from "./ElementCards.sol";
  *
  * The contract reads card data from ElementCards, an example of contracts
  * composing with each other. The public interface is frozen; see
- * docs/INTERFACE.md. Bodies marked TODO belong to the contract team.
+ * docs/INTERFACE.md.
  */
 contract Arena is ReentrancyGuard {
     enum Status {
@@ -51,13 +51,20 @@ contract Arena is ReentrancyGuard {
 
     mapping(uint256 battleId => Battle) private _battles;
 
+    // Card attributes copied at reveal time, so a player who burns or transfers
+    // a revealed card cannot stop the battle from resolving.
+    mapping(uint256 battleId => ElementCards.Card) private _creatorCards;
+    mapping(uint256 battleId => ElementCards.Card) private _opponentCards;
+
+    // Every battle a player created or joined, oldest first, for history pages.
+    mapping(address player => uint256[]) private _playerBattles;
+
     event BattleCreated(uint256 indexed battleId, address indexed creator, uint256 stake);
     event BattleJoined(uint256 indexed battleId, address indexed opponent, uint64 revealDeadline);
     event CardRevealed(uint256 indexed battleId, address indexed player, uint256 tokenId);
     event BattleResolved(uint256 indexed battleId, address indexed winner, uint256 payout);
     event BattleCancelled(uint256 indexed battleId);
 
-    error NotImplemented();
     error BattleNotFound(uint256 battleId);
     error InvalidStatus(Status current);
     error StakeMismatch(uint256 sent, uint256 required);
@@ -80,22 +87,30 @@ contract Arena is ReentrancyGuard {
      * @param commitment computeCommitment(tokenId, salt, msg.sender), built in the browser.
      */
     function createBattle(bytes32 commitment) external payable returns (uint256 battleId) {
-        // TODO(contract team): battleId = ++battleCount; store creator, stake,
-        // commitment and Status.Open; emit BattleCreated.
-        commitment;
-        battleId;
-        revert NotImplemented();
+        battleId = ++battleCount;
+        Battle storage battle = _battles[battleId];
+        battle.creator = msg.sender;
+        battle.stake = msg.value;
+        battle.creatorCommitment = commitment;
+        battle.status = Status.Open;
+        _playerBattles[msg.sender].push(battleId);
+        emit BattleCreated(battleId, msg.sender, msg.value);
     }
 
     /// @notice Join an open battle by sending exactly the same stake.
     function joinBattle(uint256 battleId, bytes32 commitment) external payable nonReentrant {
-        // TODO(contract team): require Status.Open (InvalidStatus), caller is not
-        // the creator (CannotJoinOwnBattle), msg.value == stake (StakeMismatch).
-        // Store opponent + commitment, set Status.Joined and
-        // revealDeadline = block.timestamp + REVEAL_WINDOW; emit BattleJoined.
-        battleId;
-        commitment;
-        revert NotImplemented();
+        Battle storage battle = _existingBattle(battleId);
+        if (battle.status != Status.Open) revert InvalidStatus(battle.status);
+        if (msg.sender == battle.creator) revert CannotJoinOwnBattle();
+        if (msg.value != battle.stake) revert StakeMismatch(msg.value, battle.stake);
+
+        uint64 deadline = uint64(block.timestamp + REVEAL_WINDOW);
+        battle.opponent = msg.sender;
+        battle.opponentCommitment = commitment;
+        battle.revealDeadline = deadline;
+        battle.status = Status.Joined;
+        _playerBattles[msg.sender].push(battleId);
+        emit BattleJoined(battleId, msg.sender, deadline);
     }
 
     /**
@@ -103,16 +118,32 @@ contract Arena is ReentrancyGuard {
      * @param salt The random 32 bytes used when committing.
      */
     function reveal(uint256 battleId, uint256 tokenId, bytes32 salt) external nonReentrant {
-        // TODO(contract team): require Status.Joined and the reveal window still
-        // open; caller is creator or opponent (NotPlayer) and has not revealed
-        // (AlreadyRevealed); computeCommitment(tokenId, salt, msg.sender) must
-        // equal the stored commitment (CommitmentMismatch); the caller must
-        // still own tokenId (NotCardOwner). Record it, emit CardRevealed, and
-        // call _resolve once both players have revealed.
-        battleId;
-        tokenId;
-        salt;
-        revert NotImplemented();
+        Battle storage battle = _existingBattle(battleId);
+        if (battle.status != Status.Joined) revert InvalidStatus(battle.status);
+        if (block.timestamp > battle.revealDeadline) revert RevealWindowClosed();
+
+        bool isCreator = msg.sender == battle.creator;
+        if (!isCreator && msg.sender != battle.opponent) revert NotPlayer();
+        if (isCreator ? battle.creatorRevealed : battle.opponentRevealed) revert AlreadyRevealed();
+
+        bytes32 commitment = isCreator ? battle.creatorCommitment : battle.opponentCommitment;
+        if (computeCommitment(tokenId, salt, msg.sender) != commitment) revert CommitmentMismatch();
+        // ownerOf reverts with ERC721NonexistentToken if the card was burned.
+        if (cards.ownerOf(tokenId) != msg.sender) revert NotCardOwner(tokenId);
+
+        ElementCards.Card memory card = cards.getCard(tokenId);
+        if (isCreator) {
+            battle.creatorTokenId = tokenId;
+            battle.creatorRevealed = true;
+            _creatorCards[battleId] = card;
+        } else {
+            battle.opponentTokenId = tokenId;
+            battle.opponentRevealed = true;
+            _opponentCards[battleId] = card;
+        }
+        emit CardRevealed(battleId, msg.sender, tokenId);
+
+        if (battle.creatorRevealed && battle.opponentRevealed) _resolve(battleId);
     }
 
     /**
@@ -120,25 +151,48 @@ contract Arena is ReentrancyGuard {
      *         Exactly one reveal: that player takes the pot. No reveals: both refunded.
      */
     function claimTimeout(uint256 battleId) external nonReentrant {
-        // TODO(contract team): require Status.Joined and the window closed
-        // (RevealWindowOpen); pay out as described; emit BattleResolved.
-        battleId;
-        revert NotImplemented();
+        Battle storage battle = _existingBattle(battleId);
+        if (battle.status != Status.Joined) revert InvalidStatus(battle.status);
+        if (block.timestamp <= battle.revealDeadline) revert RevealWindowOpen();
+
+        // Both players cannot have revealed here: the second reveal resolves the battle.
+        address winner;
+        if (battle.creatorRevealed) winner = battle.creator;
+        else if (battle.opponentRevealed) winner = battle.opponent;
+        _settle(battleId, winner);
     }
 
     /// @notice The creator takes back the stake if nobody has joined yet.
     function cancelBattle(uint256 battleId) external nonReentrant {
-        // TODO(contract team): require Status.Open and msg.sender == creator
-        // (NotCreator); set Status.Cancelled before refunding; emit BattleCancelled.
-        battleId;
-        revert NotImplemented();
+        Battle storage battle = _existingBattle(battleId);
+        if (battle.status != Status.Open) revert InvalidStatus(battle.status);
+        if (msg.sender != battle.creator) revert NotCreator();
+
+        battle.status = Status.Cancelled;
+        emit BattleCancelled(battleId);
+        _send(battle.creator, battle.stake);
     }
 
     /// @notice Full state of a battle. Reverts if it does not exist.
     function getBattle(uint256 battleId) external view returns (Battle memory) {
-        Battle memory battle = _battles[battleId];
-        if (battle.status == Status.None) revert BattleNotFound(battleId);
-        return battle;
+        return _existingBattle(battleId);
+    }
+
+    /// @notice IDs of every battle `player` created or joined, oldest first.
+    function battlesOf(address player) external view returns (uint256[] memory) {
+        return _playerBattles[player];
+    }
+
+    /**
+     * @notice Both cards as they were when revealed, so history pages can show
+     *         them even after a card is merged away. A side that has not revealed
+     *         comes back zeroed; check creatorRevealed and opponentRevealed.
+     */
+    function getRevealedCards(
+        uint256 battleId
+    ) external view returns (ElementCards.Card memory creatorCard, ElementCards.Card memory opponentCard) {
+        _existingBattle(battleId);
+        return (_creatorCards[battleId], _opponentCards[battleId]);
     }
 
     /**
@@ -164,11 +218,51 @@ contract Arena is ReentrancyGuard {
      *      refunds both players.
      */
     function _resolve(uint256 battleId) internal {
-        // TODO(contract team): read both cards with cards.getCard(...), apply
-        // beats() (power * 3 / 2), set winner and Status.Resolved BEFORE sending
-        // ETH (checks-effects-interactions), then pay with _send.
-        battleId;
-        revert NotImplemented();
+        ElementCards.Card memory creatorCard = _creatorCards[battleId];
+        ElementCards.Card memory opponentCard = _opponentCards[battleId];
+        uint256 creatorPower = _battlePower(creatorCard, opponentCard);
+        uint256 opponentPower = _battlePower(opponentCard, creatorCard);
+
+        Battle storage battle = _battles[battleId];
+        address winner;
+        if (creatorPower > opponentPower) winner = battle.creator;
+        else if (opponentPower > creatorPower) winner = battle.opponent;
+        _settle(battleId, winner);
+    }
+
+    /// @dev Power of `card` against `enemy`, including the element advantage.
+    function _battlePower(
+        ElementCards.Card memory card,
+        ElementCards.Card memory enemy
+    ) internal pure returns (uint256) {
+        if (beats(card.element, enemy.element)) return (uint256(card.power) * 3) / 2;
+        return card.power;
+    }
+
+    /**
+     * @dev Mark the battle resolved, then pay: the whole pot to `winner`, or each
+     *      stake back when `winner` is address(0). State changes come before the
+     *      transfers (checks-effects-interactions).
+     */
+    function _settle(uint256 battleId, address winner) internal {
+        Battle storage battle = _battles[battleId];
+        battle.status = Status.Resolved;
+        battle.winner = winner;
+
+        if (winner == address(0)) {
+            emit BattleResolved(battleId, address(0), battle.stake);
+            _send(battle.creator, battle.stake);
+            _send(battle.opponent, battle.stake);
+        } else {
+            uint256 pot = battle.stake * 2;
+            emit BattleResolved(battleId, winner, pot);
+            _send(winner, pot);
+        }
+    }
+
+    function _existingBattle(uint256 battleId) internal view returns (Battle storage battle) {
+        battle = _battles[battleId];
+        if (battle.status == Status.None) revert BattleNotFound(battleId);
     }
 
     function _send(address to, uint256 amount) internal {

@@ -33,8 +33,8 @@ A merged card gets a fresh random element and a random power inside its new rari
 
 | Function | Kind | Description |
 | --- | --- | --- |
-| `openPack() returns (uint256 tokenId)` | payable, **TODO** | Requires `msg.value == PACK_PRICE`. Mints one random card to the caller. |
-| `merge(uint256[3] tokenIds) returns (uint256 newTokenId)` | **TODO** | Burns three distinct, same-rarity, non-Legendary cards owned by the caller; mints one card of the next rarity. |
+| `openPack() returns (uint256 tokenId)` | payable | Requires `msg.value == PACK_PRICE`. Mints one random card to the caller. |
+| `merge(uint256[3] tokenIds) returns (uint256 newTokenId)` | | Burns three distinct, same-rarity, non-Legendary cards owned by the caller; mints one card of the next rarity. |
 | `getCard(uint256 tokenId) returns (Card)` | view | Reverts with `ERC721NonexistentToken` for unknown or burned IDs. |
 | `cardsOf(address owner) returns (uint256[])` | view | All token IDs owned by `owner`. |
 | `dropRate(Rarity) returns (uint16)` | pure | Drop rate in basis points. |
@@ -54,8 +54,8 @@ event CardsMerged(address indexed player, uint256[3] burnedTokenIds, uint256 ind
 ### Errors
 
 `WrongPayment(sent, required)`, `NotCardOwner(tokenId)`, `DuplicateCard(tokenId)`,
-`RarityMismatch()`, `CannotMergeLegendary()`, `WithdrawFailed()`, and `NotImplemented()`
-until the TODO bodies are written.
+`RarityMismatch()`, `CannotMergeLegendary()`, `WithdrawFailed()`, plus the standard
+OpenZeppelin ERC-721 errors such as `ERC721NonexistentToken(tokenId)`.
 
 ## Arena (ReentrancyGuard)
 
@@ -101,20 +101,25 @@ createBattle ──► Open ──joinBattle──► Joined ──both reveal�
               Cancelled              Resolved
 ```
 
-Resolution: a card with the element advantage counts at `power * 3 / 2`. The higher value
-wins `2 * stake`; a tie refunds both stakes. After the deadline, if exactly one player has
-revealed, that player wins `2 * stake`; if nobody revealed, both are refunded.
+Resolution: a card with the element advantage counts at `power * 3 / 2` (rounded down). The
+higher value wins `2 * stake`; a tie refunds both stakes. After the deadline, if exactly one
+player has revealed, that player wins `2 * stake`; if nobody revealed, both are refunded.
+
+A card's element and power are copied when it is revealed, so burning or transferring a
+revealed card does not change or block the result.
 
 ### Functions
 
 | Function | Kind | Description |
 | --- | --- | --- |
-| `createBattle(bytes32 commitment) returns (uint256 battleId)` | payable, **TODO** | `msg.value` is the stake; 0 makes a friendly match. |
-| `joinBattle(uint256 battleId, bytes32 commitment)` | payable, **TODO** | Needs `Open`, a caller other than the creator, and `msg.value == stake`. Starts the `REVEAL_WINDOW`. |
-| `reveal(uint256 battleId, uint256 tokenId, bytes32 salt)` | **TODO** | Needs `Joined`, the window still open, a matching commitment, and the caller still owning the card. The second reveal resolves the battle. |
-| `claimTimeout(uint256 battleId)` | **TODO** | After `revealDeadline`, settles a `Joined` battle as described above. |
-| `cancelBattle(uint256 battleId)` | **TODO** | The creator refunds an `Open` battle. |
+| `createBattle(bytes32 commitment) returns (uint256 battleId)` | payable | `msg.value` is the stake; 0 makes a friendly match. |
+| `joinBattle(uint256 battleId, bytes32 commitment)` | payable | Needs `Open`, a caller other than the creator, and `msg.value == stake`. Starts the `REVEAL_WINDOW`. |
+| `reveal(uint256 battleId, uint256 tokenId, bytes32 salt)` | | Needs `Joined`, the window still open, a matching commitment, and the caller still owning the card. The second reveal resolves the battle. |
+| `claimTimeout(uint256 battleId)` | | After `revealDeadline`, settles a `Joined` battle as described above. Anyone may call it; the money only goes to the players. |
+| `cancelBattle(uint256 battleId)` | | The creator refunds an `Open` battle. |
 | `getBattle(uint256 battleId) returns (Battle)` | view | Reverts with `BattleNotFound` for unknown IDs. |
+| `battlesOf(address player) returns (uint256[])` | view | IDs of every battle the player created or joined, oldest first. |
+| `getRevealedCards(uint256 battleId) returns (Card creatorCard, Card opponentCard)` | view | Both cards as they were when revealed; a side that has not revealed comes back zeroed. Reverts with `BattleNotFound` for unknown IDs. |
 | `battleCount() returns (uint256)` | view | The latest battle ID; iterate `1..battleCount` to list battles. |
 | `computeCommitment(uint256, bytes32, address) returns (bytes32)` | pure | Reference implementation of the commitment. |
 | `beats(Element attacker, Element defender) returns (bool)` | pure | The element triangle. |
@@ -131,13 +136,16 @@ event BattleResolved(uint256 indexed battleId, address indexed winner, uint256 p
 event BattleCancelled(uint256 indexed battleId);
 ```
 
+In `BattleResolved`, `payout` is the amount sent to the winner (`2 * stake`). For a draw,
+`winner` is `address(0)` and `payout` is the stake refunded to each player.
+
 ### Errors
 
 `BattleNotFound(battleId)`, `InvalidStatus(current)`, `StakeMismatch(sent, required)`,
 `CannotJoinOwnBattle()`, `NotPlayer()`, `NotCreator()`, `AlreadyRevealed()`,
 `CommitmentMismatch()`, `NotCardOwner(tokenId)`, `RevealWindowClosed()`,
-`RevealWindowOpen()`, `TransferFailed()`, and `NotImplemented()` until the TODO bodies are
-written. `frontend/src/lib/errors.js` turns each into a readable message.
+`RevealWindowOpen()` and `TransferFailed()`. `frontend/src/lib/errors.js` turns each into a
+readable message.
 
 ## Security notes for the report
 
@@ -149,3 +157,9 @@ written. `frontend/src/lib/errors.js` turns each into a readable message.
   and payout functions use `nonReentrant`.
 - **Griefing:** a player who sees they will lose may refuse to reveal; the reveal window plus
   `claimTimeout` makes that a guaranteed loss.
+- **Revealed cards:** element and power are copied at reveal time, so a player cannot block the
+  other player's reveal by burning or transferring their own revealed card.
+- **Push payments:** winnings are sent directly to the players. A player that is a contract
+  rejecting ETH could stop a draw from paying out; a pull-payment (`withdraw`) pattern would
+  remove that edge case. All players in this DApp are MetaMask accounts, so we kept the simpler
+  design.

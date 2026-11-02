@@ -1,50 +1,107 @@
 import { useState } from "react";
 import Card from "../components/Card.jsx";
 import WalletGate from "../components/WalletGate.jsx";
+import { ELEMENTS, RARITIES } from "../config/contracts.js";
 import { useMyCards } from "../hooks/useMyCards.js";
-import { SAMPLE_CARDS } from "../mock/cards.js";
 
-// TODO(frontend A): filter by rarity and element, sort by power, show counts per rarity.
+const SORTS = {
+  newest: { label: "Newest", compare: (a, b) => b.tokenId - a.tokenId },
+  strongest: { label: "Strongest", compare: (a, b) => b.power - a.power },
+  weakest: { label: "Weakest", compare: (a, b) => a.power - b.power },
+};
+
 export default function Collection({ onNavigate }) {
-  const { cards, loading, error, refresh } = useMyCards();
-  const [showSamples, setShowSamples] = useState(false);
-
   return (
     <section className="panel">
       <h1>My cards</h1>
       <p className="lead">Every card you own on-chain. You can also see them in any NFT wallet.</p>
-
       <WalletGate>
-        <div className="toolbar">
-          <button type="button" className="button-secondary" onClick={refresh} disabled={loading}>
-            {loading ? "Loading..." : "Refresh"}
-          </button>
-        </div>
-        {error && <p className="notice notice-error">{error}</p>}
-
-        {cards.length > 0 ? (
-          <div className="card-grid">
-            {cards.map((card) => <Card key={card.tokenId} {...card} />)}
-          </div>
-        ) : (
-          !loading && (
-            <div className="notice">
-              <p>No cards yet.</p>
-              <button type="button" onClick={() => onNavigate("shop")}>Go to the shop</button>
-            </div>
-          )
-        )}
+        <CardList onNavigate={onNavigate} />
       </WalletGate>
+    </section>
+  );
+}
 
-      {/* Sample data lets the UI be styled before the contracts can mint. Remove before the demo. */}
-      <button type="button" className="button-link" onClick={() => setShowSamples((shown) => !shown)}>
-        {showSamples ? "Hide" : "Preview"} sample cards
-      </button>
-      {showSamples && (
-        <div className="card-grid">
-          {SAMPLE_CARDS.map((card) => <Card key={card.tokenId} {...card} />)}
+function CardList({ onNavigate }) {
+  const { cards, loading, error, refresh } = useMyCards();
+  // "all" or an enum number as a string, as <select> values are strings.
+  const [rarity, setRarity] = useState("all");
+  const [element, setElement] = useState("all");
+  const [sort, setSort] = useState("newest");
+
+  const shown = cards
+    .filter((card) => rarity === "all" || card.rarity === Number(rarity))
+    .filter((card) => element === "all" || card.element === Number(element))
+    .sort(SORTS[sort].compare);
+  const counts = RARITIES.map((_, index) => cards.filter((card) => card.rarity === index).length);
+  // Legendary cards (the last rarity) cannot be merged.
+  const canMerge = counts.slice(0, -1).some((count) => count >= 3);
+
+  if (cards.length === 0) {
+    return (
+      <>
+        {error && <p className="notice notice-error">{error}</p>}
+        {loading ? (
+          <p className="muted">Loading your cards...</p>
+        ) : (
+          <div className="notice">
+            <p>No cards yet.</p>
+            <button type="button" onClick={() => onNavigate("shop")}>Go to the shop</button>
+          </div>
+        )}
+      </>
+    );
+  }
+
+  return (
+    <>
+      <p className="collection-summary">
+        <strong>{cards.length} cards</strong>
+        {RARITIES.map((name, index) => (
+          <span key={name} className={`rarity-${name.toLowerCase()} rarity-count`}>{counts[index]} {name}</span>
+        ))}
+      </p>
+      {canMerge && (
+        <div className="notice">
+          <p>You have three cards of the same rarity. Merge them into a rarer card.</p>
+          <button type="button" onClick={() => onNavigate("forge")}>Go to the Forge</button>
         </div>
       )}
-    </section>
+
+      <div className="toolbar">
+        <label className="field">
+          <span>Rarity</span>
+          <select value={rarity} onChange={(event) => setRarity(event.target.value)}>
+            <option value="all">All</option>
+            {RARITIES.map((name, index) => <option key={name} value={index}>{name}</option>)}
+          </select>
+        </label>
+        <label className="field">
+          <span>Element</span>
+          <select value={element} onChange={(event) => setElement(event.target.value)}>
+            <option value="all">All</option>
+            {ELEMENTS.map((name, index) => <option key={name} value={index}>{name}</option>)}
+          </select>
+        </label>
+        <label className="field">
+          <span>Sort</span>
+          <select value={sort} onChange={(event) => setSort(event.target.value)}>
+            {Object.entries(SORTS).map(([id, { label }]) => <option key={id} value={id}>{label}</option>)}
+          </select>
+        </label>
+        <button type="button" className="button-secondary" onClick={refresh} disabled={loading}>
+          {loading ? "Loading..." : "Refresh"}
+        </button>
+      </div>
+      {error && <p className="notice notice-error">{error}</p>}
+
+      {shown.length > 0 ? (
+        <div className="card-grid">
+          {shown.map((card) => <Card key={card.tokenId} {...card} />)}
+        </div>
+      ) : (
+        <p className="muted">No cards match these filters.</p>
+      )}
+    </>
   );
 }

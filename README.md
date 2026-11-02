@@ -4,9 +4,8 @@ An on-chain card game built for **COMP7610 Introduction to Web3 and Blockchain**
 Players open packs to mint elemental card NFTs, merge duplicates into rarer cards, and
 stake ETH in duels that use commit-reveal so nobody can peek at the other player's card.
 
-> **Status:** project skeleton. Contract interfaces are frozen and the wallet/transaction
-> plumbing works; game logic marked `TODO` is being implemented. See
-> [docs/PLAN.md](docs/PLAN.md) for the task split and timeline.
+> **Status:** both contracts and every page are implemented and tested on a local chain.
+> Next: deploy to Sepolia. See [docs/PLAN.md](docs/PLAN.md) for the task split and timeline.
 
 ## Gameplay
 
@@ -20,6 +19,18 @@ stake ETH in duels that use commit-reveal so nobody can peek at the other player
   A card with the element advantage fights at 1.5x power.
 - **Rarities:** Common 70% (power 10–39), Rare 25% (40–69), Legendary 5% (70–100).
   The rates are public constants in the contract.
+
+## Pages
+
+| Page | What you can do |
+| --- | --- |
+| **Home** | New players see an introduction. Returning players see a live dashboard, refreshed every 10 seconds: cards owned, battle record, net battle earnings, strongest card, what needs attention (reveal countdowns, timeouts, open battles to join, cards ready to merge) and recent results. |
+| **Shop** | Open a pack and watch the new card flip over. |
+| **My Cards** | See every card you own, filter by rarity and element, and sort by power. |
+| **Forge** | Pick three cards of one rarity, or let the page pick the three weakest, and merge them. |
+| **Arena** | Create or join a battle with a chosen card and stake, reveal before the countdown ends, settle a timeout, or cancel a battle nobody has joined. Active battles show both cards: only you can see yours before you reveal, and your opponent's stays face down until they reveal. Cancelled and finished battles leave this list. |
+| **History** | Your last 20 finished battles, with both cards, any element bonus, the result and the ETH won or lost. Cards appear as they were when revealed, even if they were merged or transferred later. |
+| **Drop Rates** | The drop rates and power ranges, read directly from the contract. |
 
 ## Why a blockchain?
 
@@ -51,15 +62,16 @@ flowchart LR
 contracts/                 Hardhat 3 project
   contracts/ElementCards.sol   card NFT, packs, merging
   contracts/Arena.sol          staked commit-reveal battles
-  test/                        mocha tests (pending specs list the TODO behaviour)
+  contracts/mocks/             test-only card contract with chosen attributes (never deploy)
+  test/                        mocha tests for both contracts
   scripts/deploy.ts            deploy both contracts and update the frontend config
   scripts/export-abi.ts        copy ABIs into the frontend
 frontend/                  Vite + React + ethers v6
   src/config/                  chains, contract addresses (deployments.json) and ABIs
-  src/hooks/                   useWallet, useTx, useMyCards
-  src/components/              Header, WalletGate, Card, TxStatus
-  src/pages/                   Home, Shop, Collection, Forge, Arena, Odds
-  src/lib/                     error messages, commit-reveal helpers
+  src/hooks/                   useWallet, useTx, useMyCards, useBattles, useNow
+  src/components/              Header, WalletGate, Card, BattleCards, TxStatus
+  src/pages/                   Home, Shop, Collection, Forge, Arena, History, Odds
+  src/lib/                     game rules, commit-reveal helpers, error messages, formatting
 docs/
   INTERFACE.md                 frozen contract interface
   PLAN.md                      team roles, timeline and conventions (Chinese)
@@ -118,15 +130,23 @@ paste one of the private keys printed in step 2.
 > ⚠️ Those keys are public and identical on every machine. Use them only on the local chain;
 > never send real funds to them.
 
-**After restarting the local node**, reset MetaMask's cached nonce: *Settings → Advanced →
-Clear activity tab data*. Otherwise transactions fail with a nonce error.
+**6. Try a duel.** Import a second test account the same way, then connect it to the site from
+MetaMask's connected accounts settings. Until you do, the page keeps showing the first account.
+With the first account, pick a card in the Arena and create a battle. Switch MetaMask to the
+second account, open a pack, then join the battle. Each account reveals its card, and the second
+reveal settles the battle. The result then appears on the Home dashboard and in History.
+
+**After restarting the local node**, reset MetaMask's cached nonce for each test account, with
+Hardhat Local selected: *Settings → Developer tools → Delete activity and nonce data*. Older
+MetaMask versions have this under *Settings → Advanced → Clear activity tab data*. Otherwise
+transactions fail with a nonce error.
 
 ## Deploy to Sepolia
 
 Deploying with Remix and MetaMask keeps private keys out of every file.
 
 1. In [Remix](https://remix.ethereum.org/), create `ElementCards.sol` and `Arena.sol` with the
-   contents of `contracts/contracts/`. Remix downloads the OpenZeppelin imports automatically.
+   contents of `contracts/contracts/` (skip `mocks/`, which is for tests only). Remix downloads the OpenZeppelin imports automatically.
 2. Compile with Solidity 0.8.28 or newer.
 3. In *Deploy & Run*, choose **Injected Provider - MetaMask** with MetaMask on Sepolia.
 4. Deploy `ElementCards`, copy its address, then deploy `Arena` with that address as the

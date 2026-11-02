@@ -12,8 +12,7 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
  *         card of the next rarity.
  *
  * The public interface (functions, events, errors) is frozen so the frontend
- * can be built in parallel; see docs/INTERFACE.md. Bodies marked TODO belong to
- * the contract team (docs/PLAN.md).
+ * can be built in parallel; see docs/INTERFACE.md.
  */
 contract ElementCards is ERC721Enumerable, Ownable {
     // Fire beats Wood, Wood beats Water, Water beats Fire.
@@ -54,7 +53,6 @@ contract ElementCards is ERC721Enumerable, Ownable {
     event PackOpened(address indexed player, uint256 indexed tokenId, Element element, Rarity rarity, uint8 power);
     event CardsMerged(address indexed player, uint256[3] burnedTokenIds, uint256 indexed newTokenId);
 
-    error NotImplemented();
     error WrongPayment(uint256 sent, uint256 required);
     error NotCardOwner(uint256 tokenId);
     error DuplicateCard(uint256 tokenId);
@@ -69,13 +67,11 @@ contract ElementCards is ERC721Enumerable, Ownable {
      * @return tokenId The ID of the new card.
      */
     function openPack() external payable returns (uint256 tokenId) {
-        // TODO(contract team):
-        // 1. Revert with WrongPayment unless msg.value == PACK_PRICE.
-        // 2. Roll a rarity with the drop rates above (_random() % 10_000).
-        // 3. tokenId = _mintCard(msg.sender, rarity);
-        // 4. Emit PackOpened with the new card's attributes.
-        tokenId;
-        revert NotImplemented();
+        if (msg.value != PACK_PRICE) revert WrongPayment(msg.value, PACK_PRICE);
+
+        tokenId = _mintCard(msg.sender, _rollRarity());
+        Card memory card = _cards[tokenId];
+        emit PackOpened(msg.sender, tokenId, card.element, card.rarity, card.power);
     }
 
     /**
@@ -84,17 +80,25 @@ contract ElementCards is ERC721Enumerable, Ownable {
      * @return newTokenId The ID of the upgraded card.
      */
     function merge(uint256[3] calldata tokenIds) external returns (uint256 newTokenId) {
-        // TODO(contract team):
-        // 1. Each card must be owned by msg.sender (NotCardOwner) and the three
-        //    IDs must differ (DuplicateCard).
-        // 2. All three must share a rarity (RarityMismatch), and Legendary cards
-        //    cannot be merged (CannotMergeLegendary).
-        // 3. Burn the three cards and delete their _cards entries.
-        // 4. newTokenId = _mintCard(msg.sender, nextRarity);
-        // 5. Emit CardsMerged(msg.sender, tokenIds, newTokenId).
-        tokenIds;
-        newTokenId;
-        revert NotImplemented();
+        // Check every card before burning any of them.
+        Rarity rarity = _cards[tokenIds[0]].rarity;
+        for (uint256 i = 0; i < 3; i++) {
+            uint256 tokenId = tokenIds[i];
+            if (_ownerOf(tokenId) != msg.sender) revert NotCardOwner(tokenId);
+            for (uint256 j = 0; j < i; j++) {
+                if (tokenIds[j] == tokenId) revert DuplicateCard(tokenId);
+            }
+            if (_cards[tokenId].rarity != rarity) revert RarityMismatch();
+        }
+        if (rarity == Rarity.Legendary) revert CannotMergeLegendary();
+
+        for (uint256 i = 0; i < 3; i++) {
+            _burn(tokenIds[i]);
+            delete _cards[tokenIds[i]];
+        }
+
+        newTokenId = _mintCard(msg.sender, Rarity(uint8(rarity) + 1));
+        emit CardsMerged(msg.sender, tokenIds, newTokenId);
     }
 
     /// @notice Attributes of an existing card. Reverts if the card does not exist.
@@ -132,17 +136,32 @@ contract ElementCards is ERC721Enumerable, Ownable {
         if (!ok) revert WithdrawFailed();
     }
 
+    /// @dev Roll a rarity using the published drop rates.
+    function _rollRarity() internal returns (Rarity) {
+        uint256 roll = _random() % 10_000;
+        if (roll < LEGENDARY_RATE_BP) return Rarity.Legendary;
+        if (roll < LEGENDARY_RATE_BP + RARE_RATE_BP) return Rarity.Rare;
+        return Rarity.Common;
+    }
+
     /**
      * @dev Mint a card of `rarity` with a random element and a random power
-     *      inside powerRange(rarity), and store its attributes.
+     *      inside powerRange(rarity).
      */
     function _mintCard(address to, Rarity rarity) internal returns (uint256 tokenId) {
-        // TODO(contract team): pick element and power with _random(), store the
-        // Card in _cards, then _safeMint(to, tokenId). Use _nextTokenId++.
-        to;
-        rarity;
-        tokenId;
-        revert NotImplemented();
+        uint256 seed = _random();
+        (uint8 min, uint8 max) = powerRange(rarity);
+        // Different bits of the seed for the element and the power.
+        uint256 power = min + ((seed >> 8) % (uint256(max) - min + 1));
+        return _issueCard(to, Card(Element(seed % 3), rarity, uint8(power)));
+    }
+
+    /// @dev Store `card` under the next token ID and mint it to `to`.
+    function _issueCard(address to, Card memory card) internal returns (uint256 tokenId) {
+        tokenId = _nextTokenId++;
+        // Store the attributes first: _safeMint may call into `to`.
+        _cards[tokenId] = card;
+        _safeMint(to, tokenId);
     }
 
     /**
@@ -150,9 +169,6 @@ contract ElementCards is ERC721Enumerable, Ownable {
      *      but validators can influence it; production games use Chainlink VRF.
      */
     function _random() internal returns (uint256) {
-        // TODO(contract team): hash block.prevrandao, block.timestamp,
-        // msg.sender and ++_nonce with keccak256(abi.encodePacked(...)).
-        _nonce;
-        revert NotImplemented();
+        return uint256(keccak256(abi.encodePacked(block.prevrandao, block.timestamp, msg.sender, ++_nonce)));
     }
 }

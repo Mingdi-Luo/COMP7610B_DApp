@@ -5,7 +5,7 @@ import WalletGate from "../components/WalletGate.jsx";
 import { useWallet } from "../hooks/useWallet.jsx";
 import { readableError } from "../lib/errors.js";
 
-// TODO(frontend A): turn the table into a visual (bars or a pie) and explain why on-chain odds matter.
+// TODO: turn the table into a visual (bars or a pie) and explain why on-chain odds matter.
 export default function Odds() {
   return (
     <section className="panel">
