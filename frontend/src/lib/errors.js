@@ -1,22 +1,27 @@
 import { Interface } from "ethers";
+import gameCoinAbi from "../config/abi/GameCoin.json";
 import elementCardsAbi from "../config/abi/ElementCards.json";
 import arenaAbi from "../config/abi/Arena.json";
 
 // ethers decodes custom errors only for read calls. A transaction that fails
 // gas estimation arrives as "unknown custom error", so decode it here.
-const INTERFACES = [new Interface(elementCardsAbi), new Interface(arenaAbi)];
+const INTERFACES = [new Interface(gameCoinAbi), new Interface(elementCardsAbi), new Interface(arenaAbi)];
 
-// Friendly text for the custom errors declared in ElementCards.sol and Arena.sol.
+// Friendly text for the custom errors declared in the contracts.
 const CONTRACT_ERRORS = {
-  ERC721NonexistentToken: "That card no longer exists. It may have been merged.",
-  WrongPayment: "Send exactly the pack price.",
+  ERC20InsufficientBalance: "You do not have enough coins. Top up first.",
+  InvalidTopUp: "Top up a whole number of coins.",
+  NotGameContract: "The game contracts are not authorized to move coins. Check the deployment.",
+  ERC721NonexistentToken: "That card no longer exists. It may have been merged or decomposed.",
   NotCardOwner: "You do not own that card.",
-  DuplicateCard: "Pick three different cards.",
+  DuplicateCard: "Pick different cards.",
   RarityMismatch: "All three cards must have the same rarity.",
   CannotMergeLegendary: "Legendary cards cannot be merged.",
+  UnknownSpecies: "That species does not exist.",
+  BreedOnCooldown: "That card is still resting from its last breeding.",
+  SameGender: "Breeding needs one male and one female.",
   BattleNotFound: "That battle does not exist.",
   InvalidStatus: "This battle is not in the right state for that action.",
-  StakeMismatch: "Send exactly the same stake as the battle creator.",
   CannotJoinOwnBattle: "You cannot join your own battle.",
   NotPlayer: "You are not a player in this battle.",
   NotCreator: "Only the battle creator can do this.",
@@ -48,7 +53,7 @@ export function readableError(error) {
   );
 }
 
-/** The matching custom error ({ name, args }) from either contract, or null. */
+/** The matching custom error ({ name, args }) from any game contract, or null. */
 function decodeRevert(error) {
   if (error?.revert?.name) return error.revert;
 

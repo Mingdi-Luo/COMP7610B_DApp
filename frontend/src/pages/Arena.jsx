@@ -1,26 +1,27 @@
 import { useState } from "react";
-import { ZeroAddress, parseEther } from "ethers";
+import { ZeroAddress } from "ethers";
 import { Matchup, ResultRow } from "../components/BattleCards.jsx";
 import Card from "../components/Card.jsx";
 import TxStatus from "../components/TxStatus.jsx";
 import WalletGate from "../components/WalletGate.jsx";
 import { BATTLE_STATUS, getArenaContract } from "../config/contracts.js";
 import { useBattles } from "../hooks/useBattles.js";
+import { useCoins } from "../hooks/useCoins.jsx";
 import { useMyCards } from "../hooks/useMyCards.js";
 import { useNow } from "../hooks/useNow.js";
 import { useTx } from "../hooks/useTx.js";
 import { useWallet } from "../hooks/useWallet.jsx";
 import { STATUS, sideOf, stakeLabel } from "../lib/battles.js";
 import { computeCommitment, loadSecret, newSalt, saveSecret } from "../lib/commitment.js";
-import { formatCountdown, sameAddress, shortAddress } from "../lib/format.js";
+import { formatCoins, formatCountdown, sameAddress, shortAddress } from "../lib/format.js";
 
 export default function Arena({ onNavigate }) {
   return (
     <section className="panel">
       <h1>Arena</h1>
       <p className="lead">
-        Stake ETH on a duel. Both players commit a hidden card, then reveal it within 10 minutes. The
-        stronger card takes the pot, and an element advantage multiplies power by 1.5.
+        Stake coins on a duel. Both players commit a hidden card, then reveal it within 10 minutes.
+        Elements can double or halve a card's power, and the stronger card takes the pot.
       </p>
       <WalletGate>
         <Lobby onNavigate={onNavigate} />
@@ -33,13 +34,15 @@ function Lobby({ onNavigate }) {
   const { account, getSigner } = useWallet();
   const { cards } = useMyCards();
   const { openBattles, activeBattles, finishedBattles, loaded, error, refresh } = useBattles();
+  const { balance } = useCoins();
   const tx = useTx();
   const now = useNow();
   const [fighterId, setFighterId] = useState(null);
-  const [stakeInput, setStakeInput] = useState("0.001");
+  const [stakeInput, setStakeInput] = useState("1000");
 
   const fighter = cards.find((card) => card.tokenId === fighterId);
   const stake = parseStake(stakeInput);
+  const canAfford = (amount) => balance === null || balance >= amount;
 
   // Sends one Arena transaction from the connected account, then reloads the battles.
   async function send(action, messages) {
@@ -61,13 +64,13 @@ function Lobby({ onNavigate }) {
   }
 
   const createBattle = () =>
-    send((arena, player) => arena.createBattle(commitFighter(player), { value: stake }), {
+    send((arena, player) => arena.createBattle(commitFighter(player), stake), {
       pending: "Creating the battle...",
       success: "Battle created. Waiting for an opponent to join.",
     });
 
   const joinBattle = (battle) =>
-    send((arena, player) => arena.joinBattle(battle.id, commitFighter(player), { value: battle.stake }), {
+    send((arena, player) => arena.joinBattle(battle.id, commitFighter(player)), {
       pending: `Joining battle #${battle.id}...`,
       success: "Joined! Both players now have 10 minutes to reveal.",
     });
@@ -163,20 +166,30 @@ function Lobby({ onNavigate }) {
       <h2>2. Create or join a battle</h2>
       <div className="create-battle">
         <label className="field">
-          <span>Stake (ETH)</span>
+          <span>Stake (DUEL)</span>
           <input
             type="text"
-            inputMode="decimal"
+            inputMode="numeric"
             value={stakeInput}
             onChange={(event) => setStakeInput(event.target.value)}
             aria-invalid={stake === null}
           />
         </label>
-        <button type="button" onClick={createBattle} disabled={!fighter || stake === null || tx.busy}>
+        <button
+          type="button"
+          onClick={createBattle}
+          disabled={!fighter || stake === null || !canAfford(stake) || tx.busy}
+        >
           Create battle
         </button>
       </div>
-      {stake === null && <p className="field-error">Enter an amount in ETH, or 0 for a friendly match.</p>}
+      {stake === null && <p className="field-error">Enter a whole number of coins, or 0 for a friendly match.</p>}
+      {stake !== null && !canAfford(stake) && (
+        <div className="notice">
+          <p>You have {formatCoins(balance)}, which is not enough for this stake.</p>
+          <button type="button" onClick={() => onNavigate("topup")}>Top up</button>
+        </div>
+      )}
       {!fighter && <p className="muted">Pick a fighter above first.</p>}
 
       <h3>Open battles</h3>
@@ -189,7 +202,11 @@ function Lobby({ onNavigate }) {
                 <span className="muted"> by {shortAddress(battle.creator)} · card hidden</span>
               </div>
               <span className="battle-stake">{stakeLabel(battle.stake)}</span>
-              <button type="button" onClick={() => joinBattle(battle)} disabled={!fighter || tx.busy}>
+              <button
+                type="button"
+                onClick={() => joinBattle(battle)}
+                disabled={!fighter || !canAfford(battle.stake) || tx.busy}
+              >
                 Join
               </button>
             </div>
@@ -277,12 +294,8 @@ function ActiveBattle({ battle, account, myCards, now, busy, onReveal, onClaim, 
   );
 }
 
-/** The stake in wei, or null when the input is not a valid non-negative ETH amount. */
+/** The stake as a bigint, or null unless the input is a whole number of coins. */
 function parseStake(text) {
-  try {
-    const wei = parseEther(text.trim() || "0");
-    return wei >= 0n ? wei : null;
-  } catch {
-    return null;
-  }
+  const trimmed = text.trim() || "0";
+  return /^\d+$/.test(trimmed) ? BigInt(trimmed) : null;
 }

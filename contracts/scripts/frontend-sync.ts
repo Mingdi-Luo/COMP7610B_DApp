@@ -11,7 +11,7 @@ const FRONTEND_CONFIG_DIR = path.resolve(
 );
 const DEPLOYMENTS_FILE = path.join(FRONTEND_CONFIG_DIR, "deployments.json");
 
-export const CONTRACT_NAMES = ["ElementCards", "Arena"] as const;
+export const CONTRACT_NAMES = ["GameCoin", "ElementCards", "Arena"] as const;
 type ContractName = (typeof CONTRACT_NAMES)[number];
 
 /** Copy each contract's ABI into frontend/src/config/abi/. */

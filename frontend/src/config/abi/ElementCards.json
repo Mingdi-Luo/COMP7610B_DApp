@@ -1,8 +1,30 @@
 [
   {
-    "inputs": [],
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "coinAddress",
+        "type": "address"
+      }
+    ],
     "stateMutability": "nonpayable",
     "type": "constructor"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint64",
+        "name": "readyAt",
+        "type": "uint64"
+      }
+    ],
+    "name": "BreedOnCooldown",
+    "type": "error"
   },
   {
     "inputs": [],
@@ -156,51 +178,24 @@
     "type": "error"
   },
   {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
-      }
-    ],
-    "name": "OwnableInvalidOwner",
-    "type": "error"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      }
-    ],
-    "name": "OwnableUnauthorizedAccount",
-    "type": "error"
-  },
-  {
     "inputs": [],
     "name": "RarityMismatch",
     "type": "error"
   },
   {
     "inputs": [],
-    "name": "WithdrawFailed",
+    "name": "SameGender",
     "type": "error"
   },
   {
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "sent",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "required",
+        "name": "speciesId",
         "type": "uint256"
       }
     ],
-    "name": "WrongPayment",
+    "name": "UnknownSpecies",
     "type": "error"
   },
   {
@@ -264,6 +259,93 @@
       },
       {
         "indexed": false,
+        "internalType": "uint256",
+        "name": "parentA",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "parentB",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "childId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint8",
+        "name": "speciesId",
+        "type": "uint8"
+      }
+    ],
+    "name": "CardBred",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "player",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "coins",
+        "type": "uint256"
+      }
+    ],
+    "name": "CardDecomposed",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "player",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "enum ElementCards.Passive",
+        "name": "passive",
+        "type": "uint8"
+      }
+    ],
+    "name": "CardEnchanted",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "player",
+        "type": "address"
+      },
+      {
+        "indexed": false,
         "internalType": "uint256[3]",
         "name": "burnedTokenIds",
         "type": "uint256[3]"
@@ -284,25 +366,6 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "previousOwner",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "newOwner",
-        "type": "address"
-      }
-    ],
-    "name": "OwnershipTransferred",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
         "name": "player",
         "type": "address"
       },
@@ -314,8 +377,8 @@
       },
       {
         "indexed": false,
-        "internalType": "enum ElementCards.Element",
-        "name": "element",
+        "internalType": "uint8",
+        "name": "speciesId",
         "type": "uint8"
       },
       {
@@ -361,6 +424,19 @@
   },
   {
     "inputs": [],
+    "name": "BREED_COOLDOWN",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "COMMON_RATE_BP",
     "outputs": [
       {
@@ -393,6 +469,19 @@
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "POWER_SPREAD",
+    "outputs": [
+      {
+        "internalType": "uint8",
+        "name": "",
+        "type": "uint8"
       }
     ],
     "stateMutability": "view",
@@ -451,6 +540,73 @@
   {
     "inputs": [
       {
+        "internalType": "uint256",
+        "name": "parentA",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "parentB",
+        "type": "uint256"
+      }
+    ],
+    "name": "breed",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "childId",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "enum ElementCards.Rarity",
+        "name": "rarity",
+        "type": "uint8"
+      }
+    ],
+    "name": "breedFee",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "speciesA",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "speciesB",
+        "type": "uint256"
+      }
+    ],
+    "name": "breedResult",
+    "outputs": [
+      {
+        "internalType": "uint8",
+        "name": "childSpecies",
+        "type": "uint8"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address",
         "name": "owner",
         "type": "address"
@@ -468,6 +624,57 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "coin",
+    "outputs": [
+      {
+        "internalType": "contract GameCoin",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "decompose",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "coins",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "enum ElementCards.Rarity",
+        "name": "rarity",
+        "type": "uint8"
+      }
+    ],
+    "name": "decomposeValue",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "enum ElementCards.Rarity",
@@ -481,6 +688,44 @@
         "internalType": "uint16",
         "name": "",
         "type": "uint16"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "enchant",
+    "outputs": [
+      {
+        "internalType": "enum ElementCards.Passive",
+        "name": "passive",
+        "type": "uint8"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "enum ElementCards.Rarity",
+        "name": "rarity",
+        "type": "uint8"
+      }
+    ],
+    "name": "enchantCost",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       }
     ],
     "stateMutability": "pure",
@@ -518,8 +763,18 @@
       {
         "components": [
           {
+            "internalType": "uint8",
+            "name": "speciesId",
+            "type": "uint8"
+          },
+          {
             "internalType": "enum ElementCards.Element",
             "name": "element",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Element",
+            "name": "secondElement",
             "type": "uint8"
           },
           {
@@ -531,9 +786,75 @@
             "internalType": "uint8",
             "name": "power",
             "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Passive",
+            "name": "passive",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Gender",
+            "name": "gender",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "generation",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint64",
+            "name": "breedReadyAt",
+            "type": "uint64"
           }
         ],
         "internalType": "struct ElementCards.Card",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "speciesId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getSpecies",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "enum ElementCards.Element",
+            "name": "element",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Element",
+            "name": "secondElement",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Rarity",
+            "name": "rarity",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "basePower",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint16",
+            "name": "breedRank",
+            "type": "uint16"
+          }
+        ],
+        "internalType": "struct ElementCards.Species",
         "name": "",
         "type": "tuple"
       }
@@ -607,20 +928,7 @@
         "type": "uint256"
       }
     ],
-    "stateMutability": "payable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "owner",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -664,13 +972,6 @@
       }
     ],
     "stateMutability": "pure",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "renounceOwnership",
-    "outputs": [],
-    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -740,6 +1041,19 @@
     "name": "setApprovalForAll",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "speciesCount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -868,26 +1182,6 @@
       }
     ],
     "name": "transferFrom",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "newOwner",
-        "type": "address"
-      }
-    ],
-    "name": "transferOwnership",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "withdraw",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

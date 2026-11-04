@@ -84,27 +84,6 @@
     "type": "error"
   },
   {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "sent",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "required",
-        "type": "uint256"
-      }
-    ],
-    "name": "StakeMismatch",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "TransferFailed",
-    "type": "error"
-  },
-  {
     "anonymous": false,
     "inputs": [
       {
@@ -231,6 +210,124 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint8",
+            "name": "speciesId",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Element",
+            "name": "element",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Element",
+            "name": "secondElement",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Rarity",
+            "name": "rarity",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "power",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Passive",
+            "name": "passive",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Gender",
+            "name": "gender",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "generation",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint64",
+            "name": "breedReadyAt",
+            "type": "uint64"
+          }
+        ],
+        "internalType": "struct ElementCards.Card",
+        "name": "attacker",
+        "type": "tuple"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint8",
+            "name": "speciesId",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Element",
+            "name": "element",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Element",
+            "name": "secondElement",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Rarity",
+            "name": "rarity",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "power",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Passive",
+            "name": "passive",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Gender",
+            "name": "gender",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "generation",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint64",
+            "name": "breedReadyAt",
+            "type": "uint64"
+          }
+        ],
+        "internalType": "struct ElementCards.Card",
+        "name": "defender",
+        "type": "tuple"
+      }
+    ],
+    "name": "attackMultiplier",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "percent",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "battleCount",
     "outputs": [
@@ -241,6 +338,124 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint8",
+            "name": "speciesId",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Element",
+            "name": "element",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Element",
+            "name": "secondElement",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Rarity",
+            "name": "rarity",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "power",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Passive",
+            "name": "passive",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Gender",
+            "name": "gender",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "generation",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint64",
+            "name": "breedReadyAt",
+            "type": "uint64"
+          }
+        ],
+        "internalType": "struct ElementCards.Card",
+        "name": "card",
+        "type": "tuple"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint8",
+            "name": "speciesId",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Element",
+            "name": "element",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Element",
+            "name": "secondElement",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Rarity",
+            "name": "rarity",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "power",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Passive",
+            "name": "passive",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Gender",
+            "name": "gender",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "generation",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint64",
+            "name": "breedReadyAt",
+            "type": "uint64"
+          }
+        ],
+        "internalType": "struct ElementCards.Card",
+        "name": "enemy",
+        "type": "tuple"
+      }
+    ],
+    "name": "battlePower",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "pure",
     "type": "function"
   },
   {
@@ -326,6 +541,19 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "coin",
+    "outputs": [
+      {
+        "internalType": "contract GameCoin",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "uint256",
@@ -360,6 +588,11 @@
         "internalType": "bytes32",
         "name": "commitment",
         "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "stake",
+        "type": "uint256"
       }
     ],
     "name": "createBattle",
@@ -370,7 +603,31 @@
         "type": "uint256"
       }
     ],
-    "stateMutability": "payable",
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "enum ElementCards.Element",
+        "name": "attacker",
+        "type": "uint8"
+      },
+      {
+        "internalType": "enum ElementCards.Element",
+        "name": "defender",
+        "type": "uint8"
+      }
+    ],
+    "name": "elementMultiplier",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "pure",
     "type": "function"
   },
   {
@@ -467,8 +724,18 @@
       {
         "components": [
           {
+            "internalType": "uint8",
+            "name": "speciesId",
+            "type": "uint8"
+          },
+          {
             "internalType": "enum ElementCards.Element",
             "name": "element",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Element",
+            "name": "secondElement",
             "type": "uint8"
           },
           {
@@ -480,6 +747,26 @@
             "internalType": "uint8",
             "name": "power",
             "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Passive",
+            "name": "passive",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Gender",
+            "name": "gender",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "generation",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint64",
+            "name": "breedReadyAt",
+            "type": "uint64"
           }
         ],
         "internalType": "struct ElementCards.Card",
@@ -489,8 +776,18 @@
       {
         "components": [
           {
+            "internalType": "uint8",
+            "name": "speciesId",
+            "type": "uint8"
+          },
+          {
             "internalType": "enum ElementCards.Element",
             "name": "element",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Element",
+            "name": "secondElement",
             "type": "uint8"
           },
           {
@@ -502,6 +799,26 @@
             "internalType": "uint8",
             "name": "power",
             "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Passive",
+            "name": "passive",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Gender",
+            "name": "gender",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "generation",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint64",
+            "name": "breedReadyAt",
+            "type": "uint64"
           }
         ],
         "internalType": "struct ElementCards.Card",
@@ -527,7 +844,7 @@
     ],
     "name": "joinBattle",
     "outputs": [],
-    "stateMutability": "payable",
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {

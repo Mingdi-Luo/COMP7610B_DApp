@@ -1,11 +1,13 @@
 import { ResultRow } from "../components/BattleCards.jsx";
-import { ELEMENTS, RARITIES, contractsConfigured } from "../config/contracts.js";
+import { ELEMENTS, PACK_PRICE, RARITIES, contractsConfigured } from "../config/contracts.js";
+import { SPECIES } from "../config/species.js";
 import { useBattles } from "../hooks/useBattles.js";
+import { useCoins } from "../hooks/useCoins.jsx";
 import { useMyCards } from "../hooks/useMyCards.js";
 import { useNow } from "../hooks/useNow.js";
 import { useWallet } from "../hooks/useWallet.jsx";
 import { STATUS, recordOf, sideOf, stakeLabel } from "../lib/battles.js";
-import { formatCountdown, formatEth, formatSignedEth, shortAddress } from "../lib/format.js";
+import { formatCoins, formatCountdown, formatSignedCoins, shortAddress } from "../lib/format.js";
 
 const LEGENDARY = RARITIES.length - 1;
 
@@ -16,24 +18,28 @@ export default function Home({ onNavigate }) {
 }
 
 function Intro({ onNavigate }) {
+  const { balance } = useCoins();
+  const canOpenPack = balance !== null && balance >= PACK_PRICE;
+
   return (
     <section className="panel">
-      <span className="eyebrow">On-chain card game</span>
+      <span className="eyebrow">On-chain creature card game</span>
       <h1>Elemental Duel</h1>
       <p className="lead">
-        Open packs to mint elemental card NFTs, merge duplicates into rarer cards, and stake ETH in
-        duels where neither player can peek at the other&apos;s card.
+        Collect creature card NFTs, make them stronger, and stake coins in duels where neither player can
+        peek at the other&apos;s card.
       </p>
 
       <ol className="steps">
-        <li><strong>Collect.</strong> Each pack mints one card. The drop rates live in the contract, so anyone can audit them.</li>
-        <li><strong>Merge.</strong> Burn three cards of one rarity to mint a card of the next rarity.</li>
-        <li><strong>Duel.</strong> Commit a hidden card, reveal it, and the stronger card takes the pot.</li>
+        <li><strong>Top up.</strong> Buy Duel Coin with ETH. Everything in the game is priced in coins.</li>
+        <li><strong>Collect.</strong> Each pack mints one creature. The drop rates live in the contract, so anyone can audit them.</li>
+        <li><strong>Improve.</strong> Merge three cards into a rarer one, enchant a random passive, or breed new creatures. Decompose what you do not need for coins.</li>
+        <li><strong>Duel.</strong> Commit a hidden card, reveal it, and the stronger card takes the pot. Nine elements can double or halve its power.</li>
       </ol>
 
-      <p className="triangle">🔥 Fire beats 🌿 Wood · 🌿 Wood beats 💧 Water · 💧 Water beats 🔥 Fire</p>
-
-      <button type="button" onClick={() => onNavigate("shop")}>Open your first pack</button>
+      <button type="button" onClick={() => onNavigate(canOpenPack ? "shop" : "topup")}>
+        {canOpenPack ? "Open your first pack" : "Top up to get started"}
+      </button>
     </section>
   );
 }
@@ -41,6 +47,7 @@ function Intro({ onNavigate }) {
 /** Live overview for a returning player: stats, battles that need action, recent results. */
 function Dashboard({ onNavigate }) {
   const { account } = useWallet();
+  const { balance } = useCoins();
   const { cards, loaded: cardsLoaded } = useMyCards();
   const { openBattles, activeBattles, finishedBattles, loaded: battlesLoaded } = useBattles();
   const now = useNow();
@@ -53,7 +60,7 @@ function Dashboard({ onNavigate }) {
   const inPlay = activeBattles.reduce((total, battle) => total + battle.stake, 0n);
   const counts = RARITIES.map((_, rarity) => cards.filter((card) => card.rarity === rarity).length);
   const strongest = cards.reduce((best, card) => (!best || card.power > best.power ? card : best), null);
-  const tasks = buildTasks({ activeBattles, openBattles, counts, account, now });
+  const tasks = buildTasks({ activeBattles, openBattles, counts, balance, account, now });
   const pending = (value) => (cardsLoaded && battlesLoaded ? value : "…");
 
   return (
@@ -66,6 +73,11 @@ function Dashboard({ onNavigate }) {
 
       <div className="stat-grid">
         <Stat
+          label="Coins"
+          value={balance === null ? "…" : balance.toLocaleString("en-US")}
+          detail={inPlay > 0n ? `DUEL · ${formatCoins(inPlay)} in play` : "DUEL"}
+        />
+        <Stat
           label="Cards owned"
           value={pending(cards.length)}
           detail={RARITIES.map((name, rarity) => `${counts[rarity]} ${name}`).join(" · ")}
@@ -77,13 +89,17 @@ function Dashboard({ onNavigate }) {
         />
         <Stat
           label="Battle earnings"
-          value={pending(formatSignedEth(record.net))}
-          detail={inPlay > 0n ? `Excluding gas · ${formatEth(inPlay)} in play` : "Excluding gas"}
+          value={pending(formatSignedCoins(record.net))}
+          detail="Net over the last 20 battles"
         />
         <Stat
           label="Strongest card"
           value={pending(strongest ? strongest.power : "–")}
-          detail={strongest ? `${RARITIES[strongest.rarity]} ${ELEMENTS[strongest.element]} #${strongest.tokenId}` : "No cards yet"}
+          detail={
+            strongest
+              ? `${SPECIES[strongest.speciesId].name}, ${RARITIES[strongest.rarity]} ${ELEMENTS[strongest.element]} #${strongest.tokenId}`
+              : "No cards yet"
+          }
         />
       </div>
 
@@ -128,8 +144,8 @@ function Dashboard({ onNavigate }) {
         <button type="button" onClick={() => onNavigate("shop")}>Open a pack</button>
         <button type="button" className="button-secondary" onClick={() => onNavigate("forge")}>Forge</button>
         <button type="button" className="button-secondary" onClick={() => onNavigate("arena")}>Arena</button>
+        <button type="button" className="button-secondary" onClick={() => onNavigate("odds")}>Rules</button>
       </div>
-      <p className="triangle">🔥 Fire beats 🌿 Wood · 🌿 Wood beats 💧 Water · 💧 Water beats 🔥 Fire</p>
     </section>
   );
 }
@@ -145,7 +161,7 @@ function Stat({ label, value, detail }) {
 }
 
 /** Things the player can act on now, the urgent ones (reveal or settle) first. */
-function buildTasks({ activeBattles, openBattles, counts, account, now }) {
+function buildTasks({ activeBattles, openBattles, counts, balance, account, now }) {
   const tasks = [];
   for (const battle of activeBattles) {
     const { iRevealed, theyRevealed } = sideOf(battle, account);
@@ -186,6 +202,16 @@ function buildTasks({ activeBattles, openBattles, counts, account, now }) {
       button: "Go to the Forge",
       tag: "Tip",
       text: `You have ${counts[mergeable]} ${RARITIES[mergeable]} cards. Merge three into a ${RARITIES[mergeable + 1]} card.`,
+    });
+  }
+
+  if (balance !== null && balance < PACK_PRICE) {
+    tasks.push({
+      key: "top-up",
+      page: "topup",
+      button: "Top up",
+      tag: "Tip",
+      text: `You have ${formatCoins(balance)}. A pack costs ${formatCoins(PACK_PRICE)}.`,
     });
   }
 

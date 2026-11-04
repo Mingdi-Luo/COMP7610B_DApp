@@ -5,8 +5,15 @@ export default defineConfig({
   plugins: [hardhatToolboxMochaEthersPlugin],
   solidity: {
     profiles: {
+      // The optimizer keeps ElementCards under the 24 KB contract size limit.
       default: {
         version: "0.8.34",
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 200,
+          },
+        },
       },
       production: {
         version: "0.8.34",

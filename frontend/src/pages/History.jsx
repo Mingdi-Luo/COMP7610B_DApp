@@ -3,7 +3,7 @@ import WalletGate from "../components/WalletGate.jsx";
 import { HISTORY_SIZE, useBattles } from "../hooks/useBattles.js";
 import { useWallet } from "../hooks/useWallet.jsx";
 import { REVEAL_WINDOW, describeResult, recordOf, resultOf, sideOf, stakeLabel } from "../lib/battles.js";
-import { formatDateTime, formatSignedEth, shortAddress } from "../lib/format.js";
+import { formatDateTime, formatSignedCoins, shortAddress } from "../lib/format.js";
 
 export default function History({ onNavigate }) {
   return (
@@ -42,7 +42,7 @@ function HistoryList({ onNavigate }) {
             <span className="result-won">{record.won} won</span>
             <span className="result-lost">{record.lost} lost</span>
             <span>{record.draw} drawn</span>
-            <span>Net {formatSignedEth(record.net)} (excluding gas)</span>
+            <span>Net {formatSignedCoins(record.net)}</span>
           </p>
           <div className="battle-list">
             {finishedBattles.map((battle) => (

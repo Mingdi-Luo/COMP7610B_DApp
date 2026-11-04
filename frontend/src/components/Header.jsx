@@ -1,9 +1,11 @@
 import { TARGET_CHAIN } from "../config/chains.js";
+import { useCoins } from "../hooks/useCoins.jsx";
 import { useWallet } from "../hooks/useWallet.jsx";
-import { shortAddress } from "../lib/format.js";
+import { formatCoins, shortAddress } from "../lib/format.js";
 
 export default function Header({ pages, current, onNavigate }) {
   const { hasWallet, account, isCorrectChain, error, connect, switchToTargetChain } = useWallet();
+  const { balance } = useCoins();
 
   return (
     <header className="header">
@@ -13,6 +15,17 @@ export default function Header({ pages, current, onNavigate }) {
         </button>
 
         <div className="wallet-area">
+          {balance !== null && (
+            <button
+              type="button"
+              className="coin-chip"
+              title="Your game coins. Click to top up."
+              onClick={() => onNavigate("topup")}
+            >
+              <span aria-hidden="true">🪙</span> {formatCoins(balance)}
+              <span className="coin-chip-add" aria-hidden="true">+</span>
+            </button>
+          )}
           {account && !isCorrectChain && (
             <button type="button" className="button-warning" onClick={switchToTargetChain}>
               Switch to {TARGET_CHAIN.name}

@@ -14,10 +14,18 @@
   /* Element and rarity colours used by the card face. */
   --fire: #f97316;
   --water: #38bdf8;
-  --wood: #4ade80;
+  --grass: #4ade80;
+  --neutral: #cbd5e1;
+  --electric: #fde047;
+  --ground: #d6a25c;
+  --ice: #a5f3fc;
+  --dragon: #818cf8;
+  --dark: #a78baa;
   --common: #a1a1aa;
   --rare: #c084fc;
   --legendary: #facc15;
+  --male: #60a5fa;
+  --female: #f472b6;
 
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   color: var(--text);
@@ -122,6 +130,8 @@ button:disabled {
 
 .wallet-area {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
   align-items: center;
   gap: 10px;
 }
@@ -335,7 +345,13 @@ button.game-card:hover:not(:disabled) {
 
 .element-fire { --element-color: var(--fire); }
 .element-water { --element-color: var(--water); }
-.element-wood { --element-color: var(--wood); }
+.element-grass { --element-color: var(--grass); }
+.element-neutral { --element-color: var(--neutral); }
+.element-electric { --element-color: var(--electric); }
+.element-ground { --element-color: var(--ground); }
+.element-ice { --element-color: var(--ice); }
+.element-dragon { --element-color: var(--dragon); }
+.element-dark { --element-color: var(--dark); }
 .rarity-common { --rarity-color: var(--common); }
 .rarity-rare { --rarity-color: var(--rare); }
 .rarity-legendary { --rarity-color: var(--legendary); }
@@ -350,17 +366,43 @@ button.game-card:hover:not(:disabled) {
 
 .game-card-icon {
   margin-top: auto;
-  font-size: 2.6rem;
+  font-size: 2.2rem;
+  line-height: 1.1;
+}
+
+.game-card-name {
+  font-weight: 700;
 }
 
 .game-card-element {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0 6px;
   color: var(--element-color);
+  font-size: 0.75rem;
   font-weight: 700;
 }
 
 .game-card-power {
   margin-bottom: auto;
-  font-size: 1.8rem;
+  font-size: 1.5rem;
+  line-height: 1.2;
+}
+
+.game-card-passive {
+  color: var(--legendary);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.game-card-tag {
+  padding: 1px 8px;
+  border-radius: 999px;
+  color: var(--warn);
+  background: rgba(245, 158, 11, 0.12);
+  font-size: 0.7rem;
+  font-weight: 700;
 }
 
 .game-card-id {
@@ -434,7 +476,7 @@ button.game-card:hover:not(:disabled) {
 
 /* Fixed-width spots for one card (Forge slots, battle results). */
 .card-slot {
-  width: 128px;
+  width: 148px;
 }
 
 .card-slot .flip {
@@ -470,6 +512,32 @@ button.game-card:hover:not(:disabled) {
 }
 
 /* Forge */
+.gender-male { color: var(--male); }
+.gender-female { color: var(--female); }
+
+.gender-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+}
+
+button.empty-slot {
+  background: transparent;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+button.empty-slot.active {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.game-card:disabled {
+  opacity: 0.4;
+  filter: grayscale(1);
+}
+
 .forge-bench {
   display: flex;
   flex-wrap: wrap;
@@ -651,7 +719,7 @@ h3 {
 }
 
 .fighter-note {
-  max-width: 128px;
+  max-width: 148px;
   color: var(--muted);
   font-size: 0.8rem;
   text-align: center;
@@ -687,6 +755,84 @@ h3 {
 
 .quick-actions {
   margin-top: 32px;
+}
+
+/* Coin balance, always visible in the sticky header */
+.coin-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border: 1px solid rgba(250, 204, 21, 0.45);
+  border-radius: 999px;
+  background: rgba(250, 204, 21, 0.1);
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+.coin-chip-add {
+  display: inline-grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--legendary);
+  color: #1c1917;
+  font-weight: 800;
+  line-height: 1;
+}
+
+/* Top-up page and Forge tabs */
+.topup-balance {
+  max-width: 280px;
+}
+
+.preset {
+  background: transparent;
+  border: 1px solid var(--border);
+}
+
+.preset.active {
+  background: var(--accent-strong);
+  border-color: var(--accent-strong);
+}
+
+.mode-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.spaced {
+  margin-top: 12px;
+}
+
+.action-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 24px;
+  margin: 16px 0;
+}
+
+.action-row > div:last-child {
+  flex: 1;
+  min-width: 220px;
+}
+
+.passive-list {
+  padding-left: 20px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.passive-list strong {
+  color: var(--text);
+}
+
+.table-scroll {
+  overflow-x: auto;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -728,7 +874,28 @@ h3 {
 
   /* Smaller cards in fixed slots, so three fit in one row. */
   .card-slot {
-    width: 84px;
+    width: 92px;
+  }
+
+  .card-slot .element-name {
+    display: none;
+  }
+
+  .card-slot .game-card-name {
+    font-size: 0.7rem;
+  }
+
+  .card-slot .game-card-passive,
+  .card-slot .game-card-tag {
+    font-size: 0.6rem;
+  }
+
+  .fighter-note {
+    max-width: 92px;
+  }
+
+  .coin-chip {
+    font-size: 0.85rem;
   }
 
   .card-slot .game-card {

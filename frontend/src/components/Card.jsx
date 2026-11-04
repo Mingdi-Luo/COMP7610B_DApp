@@ -1,14 +1,31 @@
-import { ELEMENTS, RARITIES } from "../config/contracts.js";
-
-const ELEMENT_ICONS = { Fire: "🔥", Water: "💧", Wood: "🌿" };
+import { ELEMENTS, GENDERS, GENDER_SYMBOLS, PASSIVES, PASSIVE_EFFECTS, RARITIES } from "../config/contracts.js";
+import { ELEMENT_ICONS, SPECIES } from "../config/species.js";
 
 /**
- * One card face. `element` and `rarity` are the contract's enum numbers.
- * Pass onClick to make the card selectable (Forge and Arena pages).
+ * One card face. `element`, `rarity`, `passive` and `gender` are the contract's enum numbers.
+ * Pass onClick to make the card selectable, and `tag` for a short status such as "In battle".
  */
-export default function Card({ tokenId, element, rarity, power, selected = false, disabled = false, onClick }) {
+export default function Card({
+  tokenId,
+  speciesId,
+  element,
+  secondElement,
+  rarity,
+  power,
+  passive = 0,
+  gender = 0,
+  generation = 0,
+  selected = false,
+  disabled = false,
+  tag,
+  onClick,
+}) {
+  const species = SPECIES[speciesId];
   const elementName = ELEMENTS[element];
   const rarityName = RARITIES[rarity];
+  const passiveName = PASSIVES[passive];
+  const genderName = GENDERS[gender];
+  const elementNames = secondElement === element ? [elementName] : [elementName, ELEMENTS[secondElement]];
   const className = [
     "game-card",
     `element-${elementName.toLowerCase()}`,
@@ -19,19 +36,36 @@ export default function Card({ tokenId, element, rarity, power, selected = false
   const content = (
     <>
       <span className="game-card-rarity">{rarityName}</span>
-      <span className="game-card-icon" aria-hidden="true">{ELEMENT_ICONS[elementName]}</span>
-      <span className="game-card-element">{elementName}</span>
+      <span className="game-card-icon" aria-hidden="true">{species.icon}</span>
+      <span className="game-card-name">
+        {species.name}{" "}
+        <span className={`gender-${genderName.toLowerCase()}`} role="img" aria-label={genderName} title={genderName}>
+          {GENDER_SYMBOLS[gender]}
+        </span>
+      </span>
+      <span className="game-card-element" title={elementNames.join(" / ")}>
+        {elementNames.map((name) => (
+          <span key={name}>
+            <span aria-hidden="true">{ELEMENT_ICONS[name]}</span>
+            <span className="element-name"> {name}</span>
+          </span>
+        ))}
+      </span>
       <strong className="game-card-power">{power}</strong>
-      <span className="game-card-id">#{tokenId}</span>
+      {passive > 0 && (
+        <span className="game-card-passive" title={PASSIVE_EFFECTS[passiveName]}>✨ {passiveName}</span>
+      )}
+      <span className="game-card-id">#{tokenId}{generation > 0 && ` · Gen ${generation}`}</span>
+      {tag && <span className="game-card-tag">{tag}</span>}
     </>
   );
 
   return onClick ? (
-    <button type="button" className={className} aria-pressed={selected} disabled={disabled} onClick={onClick}>
+    <button type="button" className={className} title={species.lore} aria-pressed={selected} disabled={disabled} onClick={onClick}>
       {content}
     </button>
   ) : (
-    <div className={className}>{content}</div>
+    <div className={className} title={species.lore}>{content}</div>
   );
 }
 

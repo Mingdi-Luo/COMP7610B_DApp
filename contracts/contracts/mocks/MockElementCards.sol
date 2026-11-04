@@ -6,11 +6,25 @@ import {ElementCards} from "../ElementCards.sol";
 /**
  * @title MockElementCards
  * @notice Test-only ElementCards that lets anyone mint a card with chosen
- *         attributes, so battle tests can set up exact matchups.
+ *         attributes, so tests can set up exact matchups.
  *         Never deploy this to a public network.
  */
 contract MockElementCards is ElementCards {
-    function mintCard(address to, Element element, Rarity rarity, uint8 power) external returns (uint256) {
-        return _issueCard(to, Card(element, rarity, power));
+    constructor(address coinAddress) ElementCards(coinAddress) {}
+
+    /// @param speciesId Supplies the card's elements and rarity.
+    function mintCard(
+        address to,
+        uint8 speciesId,
+        uint8 power,
+        Passive passive,
+        Gender gender
+    ) external returns (uint256) {
+        Species memory species = this.getSpecies(speciesId);
+        return
+            _issueCard(
+                to,
+                Card(speciesId, species.element, species.secondElement, species.rarity, power, passive, gender, 0, 0)
+            );
     }
 }

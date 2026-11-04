@@ -3,14 +3,15 @@ pragma solidity ^0.8.28;
 
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import {ElementCards} from "./ElementCards.sol";
+import {GameCoin} from "./GameCoin.sol";
 
 /**
  * @title Arena
  * @notice Staked 1v1 card battles using commit-reveal, so neither player can
  *         see the other's card before choosing their own.
  *
- * Flow: creator commits + stakes -> opponent commits + matches the stake ->
- * both reveal within REVEAL_WINDOW -> the contract pays the winner.
+ * Flow: creator commits + stakes coins -> opponent commits + matches the stake ->
+ * both reveal within REVEAL_WINDOW -> the contract pays the winner in coins.
  * If only one player reveals in time, that player can claim the whole pot.
  *
  * The contract reads card data from ElementCards, an example of contracts
@@ -45,6 +46,7 @@ contract Arena is ReentrancyGuard {
     uint256 public constant REVEAL_WINDOW = 10 minutes;
 
     ElementCards public immutable cards;
+    GameCoin public immutable coin;
 
     // Battle IDs start at 1; battleCount is also the latest battle ID.
     uint256 public battleCount;
@@ -67,7 +69,6 @@ contract Arena is ReentrancyGuard {
 
     error BattleNotFound(uint256 battleId);
     error InvalidStatus(Status current);
-    error StakeMismatch(uint256 sent, uint256 required);
     error CannotJoinOwnBattle();
     error NotPlayer();
     error NotCreator();
@@ -76,33 +77,34 @@ contract Arena is ReentrancyGuard {
     error NotCardOwner(uint256 tokenId);
     error RevealWindowClosed();
     error RevealWindowOpen();
-    error TransferFailed();
 
     constructor(address cardsAddress) {
         cards = ElementCards(cardsAddress);
+        coin = cards.coin();
     }
 
     /**
-     * @notice Open a battle. The ETH sent becomes the stake (0 is a friendly match).
+     * @notice Open a battle, staking coins (0 is a friendly match).
      * @param commitment computeCommitment(tokenId, salt, msg.sender), built in the browser.
+     * @param stake Coins taken from the caller and held here until the battle ends.
      */
-    function createBattle(bytes32 commitment) external payable returns (uint256 battleId) {
+    function createBattle(bytes32 commitment, uint256 stake) external nonReentrant returns (uint256 battleId) {
         battleId = ++battleCount;
         Battle storage battle = _battles[battleId];
         battle.creator = msg.sender;
-        battle.stake = msg.value;
+        battle.stake = stake;
         battle.creatorCommitment = commitment;
         battle.status = Status.Open;
         _playerBattles[msg.sender].push(battleId);
-        emit BattleCreated(battleId, msg.sender, msg.value);
+        emit BattleCreated(battleId, msg.sender, stake);
+        coin.collect(msg.sender, address(this), stake);
     }
 
-    /// @notice Join an open battle by sending exactly the same stake.
-    function joinBattle(uint256 battleId, bytes32 commitment) external payable nonReentrant {
+    /// @notice Join an open battle. The same stake is taken from the caller.
+    function joinBattle(uint256 battleId, bytes32 commitment) external nonReentrant {
         Battle storage battle = _existingBattle(battleId);
         if (battle.status != Status.Open) revert InvalidStatus(battle.status);
         if (msg.sender == battle.creator) revert CannotJoinOwnBattle();
-        if (msg.value != battle.stake) revert StakeMismatch(msg.value, battle.stake);
 
         uint64 deadline = uint64(block.timestamp + REVEAL_WINDOW);
         battle.opponent = msg.sender;
@@ -111,6 +113,7 @@ contract Arena is ReentrancyGuard {
         battle.status = Status.Joined;
         _playerBattles[msg.sender].push(battleId);
         emit BattleJoined(battleId, msg.sender, deadline);
+        coin.collect(msg.sender, address(this), battle.stake);
     }
 
     /**
@@ -204,24 +207,85 @@ contract Arena is ReentrancyGuard {
         return keccak256(abi.encodePacked(tokenId, salt, player));
     }
 
-    /// @notice True if `attacker` has the element advantage over `defender`.
+    /// @notice True if `attacker` is strong against `defender`.
     function beats(ElementCards.Element attacker, ElementCards.Element defender) public pure returns (bool) {
-        return
-            (attacker == ElementCards.Element.Fire && defender == ElementCards.Element.Wood) ||
-            (attacker == ElementCards.Element.Wood && defender == ElementCards.Element.Water) ||
-            (attacker == ElementCards.Element.Water && defender == ElementCards.Element.Fire);
+        if (attacker == ElementCards.Element.Water) return defender == ElementCards.Element.Fire;
+        if (attacker == ElementCards.Element.Fire) {
+            return defender == ElementCards.Element.Grass || defender == ElementCards.Element.Ice;
+        }
+        if (attacker == ElementCards.Element.Grass) return defender == ElementCards.Element.Ground;
+        if (attacker == ElementCards.Element.Ground) return defender == ElementCards.Element.Electric;
+        if (attacker == ElementCards.Element.Electric) return defender == ElementCards.Element.Water;
+        if (attacker == ElementCards.Element.Ice) return defender == ElementCards.Element.Dragon;
+        if (attacker == ElementCards.Element.Dragon) return defender == ElementCards.Element.Dark;
+        if (attacker == ElementCards.Element.Dark) return defender == ElementCards.Element.Neutral;
+        return false;
     }
 
     /**
-     * @dev Compare the two revealed cards and pay out. A card with the element
-     *      advantage fights at 1.5x power. Higher power wins 2 * stake; a tie
-     *      refunds both players.
+     * @notice Damage percent of one element against another: 200 if it is strong,
+     *         50 if the defender is strong against it, otherwise 100. Neutral always
+     *         attacks at 100, and an element attacks itself at 100.
      */
+    function elementMultiplier(
+        ElementCards.Element attacker,
+        ElementCards.Element defender
+    ) public pure returns (uint256) {
+        if (attacker == ElementCards.Element.Neutral) return 100;
+        if (beats(attacker, defender)) return 200;
+        if (beats(defender, attacker)) return 50;
+        return 100;
+    }
+
+    /**
+     * @notice Damage percent of `attacker` against `defender`. A card attacks with
+     *         its first element; a dual-element defender multiplies both results,
+     *         so two strengths make 400 and a strength plus a resistance make 100.
+     */
+    function attackMultiplier(
+        ElementCards.Card memory attacker,
+        ElementCards.Card memory defender
+    ) public pure returns (uint256 percent) {
+        percent = elementMultiplier(attacker.element, defender.element);
+        if (defender.secondElement != defender.element) {
+            percent = (percent * elementMultiplier(attacker.element, defender.secondElement)) / 100;
+        }
+    }
+
+    /**
+     * @notice Power of `card` against `enemy`, after the element multiplier and passive.
+     *         Pierce: a resisted attack still deals 100%.
+     *         Underdog: +30% if the card's power is below the enemy's.
+     *         Resonance: +20% if the two cards share an element.
+     *         Guard: +25% if the enemy is strong against this card.
+     *         Focus: +10% always.
+     */
+    function battlePower(
+        ElementCards.Card memory card,
+        ElementCards.Card memory enemy
+    ) public pure returns (uint256) {
+        uint256 multiplier = attackMultiplier(card, enemy);
+        uint256 bonus;
+        if (card.passive == ElementCards.Passive.Pierce && multiplier < 100) {
+            multiplier = 100;
+        } else if (card.passive == ElementCards.Passive.Underdog && card.power < enemy.power) {
+            bonus = 30;
+        } else if (card.passive == ElementCards.Passive.Resonance && _shareElement(card, enemy)) {
+            bonus = 20;
+        } else if (card.passive == ElementCards.Passive.Guard && attackMultiplier(enemy, card) > 100) {
+            bonus = 25;
+        } else if (card.passive == ElementCards.Passive.Focus) {
+            bonus = 10;
+        }
+        return (uint256(card.power) * multiplier * (100 + bonus)) / 10_000;
+    }
+
+    /// @dev Compare the two revealed cards. Higher power wins 2 * stake; a tie refunds both players.
     function _resolve(uint256 battleId) internal {
         ElementCards.Card memory creatorCard = _creatorCards[battleId];
         ElementCards.Card memory opponentCard = _opponentCards[battleId];
-        uint256 creatorPower = _battlePower(creatorCard, opponentCard);
-        uint256 opponentPower = _battlePower(opponentCard, creatorCard);
+        uint256 creatorPower = battlePower(creatorCard, opponentCard);
+        uint256 opponentPower = battlePower(opponentCard, creatorCard);
 
         Battle storage battle = _battles[battleId];
         address winner;
@@ -230,13 +294,15 @@ contract Arena is ReentrancyGuard {
         _settle(battleId, winner);
     }
 
-    /// @dev Power of `card` against `enemy`, including the element advantage.
-    function _battlePower(
-        ElementCards.Card memory card,
-        ElementCards.Card memory enemy
-    ) internal pure returns (uint256) {
-        if (beats(card.element, enemy.element)) return (uint256(card.power) * 3) / 2;
-        return card.power;
+    function _shareElement(
+        ElementCards.Card memory a,
+        ElementCards.Card memory b
+    ) private pure returns (bool) {
+        return
+            a.element == b.element ||
+            a.element == b.secondElement ||
+            a.secondElement == b.element ||
+            a.secondElement == b.secondElement;
     }
 
     /**
@@ -267,7 +333,6 @@ contract Arena is ReentrancyGuard {
 
     function _send(address to, uint256 amount) internal {
         if (amount == 0) return;
-        (bool ok, ) = to.call{value: amount}("");
-        if (!ok) revert TransferFailed();
+        coin.transfer(to, amount);
     }
 }

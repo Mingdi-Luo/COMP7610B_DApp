@@ -31,7 +31,7 @@ function CardList({ onNavigate }) {
 
   const shown = cards
     .filter((card) => rarity === "all" || card.rarity === Number(rarity))
-    .filter((card) => element === "all" || card.element === Number(element))
+    .filter((card) => element === "all" || card.element === Number(element) || card.secondElement === Number(element))
     .sort(SORTS[sort].compare);
   const counts = RARITIES.map((_, index) => cards.filter((card) => card.rarity === index).length);
   // Legendary cards (the last rarity) cannot be merged.

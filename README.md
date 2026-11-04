@@ -1,47 +1,73 @@
 # Elemental Duel
 
-An on-chain card game built for **COMP7610 Introduction to Web3 and Blockchain** (HKU).
-Players open packs to mint elemental card NFTs, merge duplicates into rarer cards, and
-stake ETH in duels that use commit-reveal so nobody can peek at the other player's card.
+An on-chain creature card game built for **COMP7610 Introduction to Web3 and Blockchain** (HKU).
+Players top up with ETH to get Duel Coin, open packs to mint creature card NFTs, make their cards
+stronger, and stake coins in duels that use commit-reveal so nobody can peek at the other player's
+card.
 
-> **Status:** both contracts and every page are implemented and tested on a local chain.
+> **Status:** all three contracts and every page are implemented and tested on a local chain.
 > Next: deploy to Sepolia. See [docs/PLAN.md](docs/PLAN.md) for the task split and timeline.
 
 ## Gameplay
 
 | Action | What happens on-chain |
 | --- | --- |
-| **Open a pack** | Pay 0.001 ETH; `ElementCards` mints one ERC-721 card with a random element, rarity and power. |
-| **Merge** | Burn three cards of the same rarity; mint one card of the next rarity. |
-| **Duel** | Both players commit `hash(card, salt, address)` and stake the same ETH, then reveal. The stronger card wins the pot. |
+| **Top up** | Pay ETH; `GameCoin` mints Duel Coin (DUEL) at a fixed 1 ETH = 1,000,000 DUEL. Top-ups are one-way. |
+| **Open a pack** | Pay 1,000 DUEL; `ElementCards` mints one ERC-721 card of a random species and power. |
+| **Merge** | Burn three cards of the same rarity for free; mint one random card of the next rarity. |
+| **Decompose** | Burn a card and receive coins, worth less than the card cost to get. |
+| **Enchant** | Pay coins to give a card one random passive. Enchanting again replaces it. |
+| **Breed** | Pay coins to mint a child from one male and one female card. The parents stay yours but rest afterwards. |
+| **Duel** | Both players commit `hash(card, salt, address)` and stake the same coins, then reveal. The stronger card wins the pot. |
 
-- **Elements:** 🔥 Fire beats 🌿 Wood, 🌿 Wood beats 💧 Water, 💧 Water beats 🔥 Fire.
-  A card with the element advantage fights at 1.5x power.
+- **Species:** 27 original creatures, nine of each rarity. Stats are in the `ElementCards`
+  constructor; names and settings are in `frontend/src/config/species.js`.
 - **Rarities:** Common 70% (power 10–39), Rare 25% (40–69), Legendary 5% (70–100).
   The rates are public constants in the contract.
+- **Elements:** Water beats Fire. Fire beats Grass and Ice. Grass beats Ground. Ground beats
+  Electric. Electric beats Water. Ice beats Dragon. Dragon beats Dark. Dark beats Neutral.
+- **Battle power:** a strong attack deals 2x and a resisted one 0.5x. A card attacks with its first
+  element; against a dual-element card both results multiply, so two strengths make 4x and a
+  strength plus a resistance make 1x. An element attacks itself at 1x, and Neutral always attacks
+  at 1x. The passive is applied last.
+- **Passives:** Pierce (a resisted attack deals full damage), Underdog (+30% against a stronger
+  card), Resonance (+20% when the cards share an element), Guard (+25% when the enemy is strong
+  against this card), Focus (+10% always).
+- **Gender:** every card is male or female, rolled at random when it is minted.
+- **Breeding:** the parents must be one male and one female. A special recipe wins if one exists. Otherwise the child is the species whose
+  breeding rank is closest to the average of the parents' ranks.
+
+| Rarity | Decompose for | Enchant | Breed a child |
+| --- | --- | --- | --- |
+| Common | 300 DUEL | 200 DUEL | 500 DUEL |
+| Rare | 900 DUEL | 500 DUEL | 1,500 DUEL |
+| Legendary | 2,700 DUEL | 1,000 DUEL | 4,500 DUEL |
 
 ## Pages
 
+The coin balance stays visible in the header on every page.
+
 | Page | What you can do |
 | --- | --- |
-| **Home** | New players see an introduction. Returning players see a live dashboard, refreshed every 10 seconds: cards owned, battle record, net battle earnings, strongest card, what needs attention (reveal countdowns, timeouts, open battles to join, cards ready to merge) and recent results. |
+| **Home** | New players see an introduction. Returning players see a live dashboard, refreshed every 10 seconds: coins, cards owned, battle record, net battle earnings, strongest card, what needs attention (reveal countdowns, timeouts, open battles to join, cards ready to merge, low coins) and recent results. |
+| **Top Up** | Buy coins with ETH, using a preset or any whole number of coins. |
 | **Shop** | Open a pack and watch the new card flip over. |
 | **My Cards** | See every card you own, filter by rarity and element, and sort by power. |
-| **Forge** | Pick three cards of one rarity, or let the page pick the three weakest, and merge them. |
-| **Arena** | Create or join a battle with a chosen card and stake, reveal before the countdown ends, settle a timeout, or cancel a battle nobody has joined. Active battles show both cards: only you can see yours before you reveal, and your opponent's stays face down until they reveal. Cancelled and finished battles leave this list. |
-| **History** | Your last 20 finished battles, with both cards, any element bonus, the result and the ETH won or lost. Cards appear as they were when revealed, even if they were merged or transferred later. |
-| **Drop Rates** | The drop rates and power ranges, read directly from the contract. |
+| **Forge** | Four tabs: Merge (or let the page pick the three weakest cards), Enchant, Decompose and Breed. Breed has one male and one female slot: clicking a slot greys out the other gender, and the page previews the child and its fee. A card committed to a battle cannot be merged or decomposed here. |
+| **Arena** | Create or join a battle with a chosen card and a stake in coins, reveal before the countdown ends, settle a timeout, or cancel a battle nobody has joined. Active battles show both cards: only you can see yours before you reveal, and your opponent's stays face down until they reveal. Cancelled and finished battles leave this list. |
+| **History** | Your last 20 finished battles, with both cards, how each card's power was worked out, the result and the coins won or lost. Cards appear as they were when revealed, even if they were merged or decomposed later. |
+| **Rules** | Drop rates, prices and all 27 species, read directly from the contract, plus the element chart and passives. |
 
 ## Why a blockchain?
 
 - **Players own their cards.** Cards are standard ERC-721 tokens held in the player's wallet,
   not rows in a company database.
-- **Auditable odds.** Drop rates are written into a deployed contract that nobody can change,
-  unlike opaque loot-box odds in Web2 games.
+- **Auditable odds and prices.** Drop rates and prices are written into a deployed contract that
+  nobody can change, unlike opaque loot-box odds in Web2 games.
 - **Trustless stakes.** The Arena contract escrows both stakes and pays the winner by its own
   rules; no operator can withhold the pot.
-- **Composability.** `Arena` reads card data straight from `ElementCards`, the "Lego block"
-  property of smart contracts.
+- **Composability.** `Arena` reads card data straight from `ElementCards`, and both spend the same
+  `GameCoin`, the "Lego block" property of smart contracts.
 
 ## Architecture
 
@@ -51,26 +77,30 @@ flowchart LR
     UI --> Ethers["ethers.js<br/>ABI + addresses"]
     Ethers --> MM["MetaMask<br/>provider + signer"]
     MM <--> Chain["Hardhat local node<br/>or Sepolia"]
-    Chain <--> Cards["ElementCards<br/>ERC-721, packs, merge"]
+    Chain <--> Coin["GameCoin<br/>ERC-20, top-ups"]
+    Chain <--> Cards["ElementCards<br/>ERC-721, packs, merge,<br/>enchant, breed"]
     Chain <--> Arena["Arena<br/>commit-reveal duels"]
     Arena -- reads cards --> Cards
+    Arena -- holds stakes --> Coin
+    Cards -- spends and pays --> Coin
 ```
 
 ## Repository layout
 
 ```text
 contracts/                 Hardhat 3 project
-  contracts/ElementCards.sol   card NFT, packs, merging
+  contracts/GameCoin.sol       in-game ERC-20, top-ups with ETH
+  contracts/ElementCards.sol   card NFT, species, packs, merge, decompose, enchant, breed
   contracts/Arena.sol          staked commit-reveal battles
   contracts/mocks/             test-only card contract with chosen attributes (never deploy)
   test/                        mocha tests for both contracts
-  scripts/deploy.ts            deploy both contracts and update the frontend config
+  scripts/deploy.ts            deploy all contracts, authorize them and update the frontend config
   scripts/export-abi.ts        copy ABIs into the frontend
 frontend/                  Vite + React + ethers v6
-  src/config/                  chains, contract addresses (deployments.json) and ABIs
-  src/hooks/                   useWallet, useTx, useMyCards, useBattles, useNow
+  src/config/                  chains, contract addresses, ABIs, prices, species names
+  src/hooks/                   useWallet, useCoins, useTx, useMyCards, useBattles, useNow
   src/components/              Header, WalletGate, Card, BattleCards, TxStatus
-  src/pages/                   Home, Shop, Collection, Forge, Arena, History, Odds
+  src/pages/                   Home, TopUp, Shop, Collection, Forge, Arena, History, Odds (Rules)
   src/lib/                     game rules, commit-reveal helpers, error messages, formatting
 docs/
   INTERFACE.md                 frozen contract interface
@@ -132,8 +162,8 @@ paste one of the private keys printed in step 2.
 
 **6. Try a duel.** Import a second test account the same way, then connect it to the site from
 MetaMask's connected accounts settings. Until you do, the page keeps showing the first account.
-With the first account, pick a card in the Arena and create a battle. Switch MetaMask to the
-second account, open a pack, then join the battle. Each account reveals its card, and the second
+With the first account, top up, open a pack, pick a card in the Arena and create a battle. Switch MetaMask to the
+second account, top up, open a pack, then join the battle. Each account reveals its card, and the second
 reveal settles the battle. The result then appears on the Home dashboard and in History.
 
 **After restarting the local node**, reset MetaMask's cached nonce for each test account, with
@@ -145,17 +175,20 @@ transactions fail with a nonce error.
 
 Deploying with Remix and MetaMask keeps private keys out of every file.
 
-1. In [Remix](https://remix.ethereum.org/), create `ElementCards.sol` and `Arena.sol` with the
-   contents of `contracts/contracts/` (skip `mocks/`, which is for tests only). Remix downloads the OpenZeppelin imports automatically.
-2. Compile with Solidity 0.8.28 or newer.
+1. In [Remix](https://remix.ethereum.org/), create `GameCoin.sol`, `ElementCards.sol` and
+   `Arena.sol` with the contents of `contracts/contracts/` (skip `mocks/`, which is for tests
+   only). Remix downloads the OpenZeppelin imports automatically.
+2. Compile with Solidity 0.8.28 or newer, with **optimization enabled** (200 runs). Without it
+   `ElementCards` can exceed the contract size limit.
 3. In *Deploy & Run*, choose **Injected Provider - MetaMask** with MetaMask on Sepolia.
-4. Deploy `ElementCards`, copy its address, then deploy `Arena` with that address as the
-   constructor argument.
-5. Add both addresses to `frontend/src/config/deployments.json`:
+4. Deploy `GameCoin`. Deploy `ElementCards` with the coin's address as the constructor argument,
+   then `Arena` with the card contract's address. On `GameCoin`, call `setGameContract` twice, with
+   each of those two addresses and `true`. Until then, packs and stakes fail with `NotGameContract`.
+5. Add the three addresses to `frontend/src/config/deployments.json`:
 
    ```json
    {
-     "11155111": { "ElementCards": "0x...", "Arena": "0x..." }
+     "11155111": { "GameCoin": "0x...", "ElementCards": "0x...", "Arena": "0x..." }
    }
    ```
 
