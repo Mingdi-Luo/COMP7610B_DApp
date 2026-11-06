@@ -14,6 +14,7 @@ contracts/cache/
 contracts/types/
 contracts/coverage/
 contracts/ignition/deployments/chain-31337/
+.runtime/
 
 # Local editor and assistant settings.
 .claude/

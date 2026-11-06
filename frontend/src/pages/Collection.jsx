@@ -6,8 +6,8 @@ import { useMyCards } from "../hooks/useMyCards.js";
 
 const SORTS = {
   newest: { label: "Newest", compare: (a, b) => b.tokenId - a.tokenId },
-  strongest: { label: "Strongest", compare: (a, b) => b.power - a.power },
-  weakest: { label: "Weakest", compare: (a, b) => a.power - b.power },
+  strongest: { label: "Highest ATK", compare: (a, b) => b.atk - a.atk },
+  weakest: { label: "Lowest ATK", compare: (a, b) => a.atk - b.atk },
 };
 
 export default function Collection({ onNavigate }) {
@@ -80,7 +80,7 @@ function CardList({ onNavigate }) {
           <span>Element</span>
           <select value={element} onChange={(event) => setElement(event.target.value)}>
             <option value="all">All</option>
-            {ELEMENTS.map((name, index) => <option key={name} value={index}>{name}</option>)}
+            {ELEMENTS.slice(0, 9).map((name, index) => <option key={name} value={index}>{name}</option>)}
           </select>
         </label>
         <label className="field">

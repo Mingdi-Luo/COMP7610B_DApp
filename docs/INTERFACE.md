@@ -39,13 +39,13 @@ Collection name `Elemental Duel Card`, symbol `EDC`. Token IDs start at 1. Const
 ### Types
 
 ```solidity
-enum Element { Neutral, Fire, Water, Grass, Electric, Ground, Ice, Dragon, Dark }  // 0..8
+enum Element { Neutral, Fire, Water, Grass, Electric, Ground, Ice, Dragon, Dark, None }  // 0..9
 enum Rarity  { Common, Rare, Legendary }                                           // 0, 1, 2
 enum Passive { None, Pierce, Underdog, Resonance, Guard, Focus }                   // 0..5
 enum Gender  { Male, Female }                                                      // 0, 1
 
-// secondElement equals element for a single-element species.
-struct Species { Element element; Element secondElement; Rarity rarity; uint8 basePower; uint16 breedRank; }
+// secondElement is None (9) for a single-element species. Neutral is a real element (0).
+struct Species { Element element; Element secondElement; Rarity rarity; uint8 basePower; uint16 breedRank; uint16 maxHP; uint16 atk; uint16 def; }
 struct Card {
     uint8 speciesId;
     Element element;
@@ -56,10 +56,20 @@ struct Card {
     Gender gender;         // rolled at random when the card is minted
     uint8 generation;      // 0 for packs and merges; breeding gives max(parents) + 1
     uint64 breedReadyAt;   // unix seconds; 0 if the card has never bred
+    uint16 maxHP;          // official Hp
+    uint16 atk;            // official ShotAttack
+    uint16 def;            // official Defense
 }
 ```
 
 ### Rules
+
+136 species use the fixed `palworld-dataset.json` array order, pinned by
+`scripts/species-order.json`. `node scripts/sync-palworld.mjs --check` verifies generated
+chain/frontend tables and all slug-matched PNG copies. Changing these structs requires
+redeployment and `npm run export-abi`; original deployed contracts cannot serve the new frontend.
+The Power column below is legacy collectible metadata and never affects combat.
+
 
 | Rarity | Drop rate | Power | Decompose value | Enchant cost | Breed fee (by child) |
 | --- | --- | --- | --- | --- | --- |
@@ -76,8 +86,11 @@ and then decomposing loses coins even though the parents are kept.
 **Breeding:** the parents must be one male and one female, in either order. A special recipe wins
 if one exists. Otherwise the child is the species whose
 `breedRank` is closest to the average of the parents' ranks, with ties going to the lower species
-ID. After breeding, a parent rests for `BREED_COOLDOWN * (generation + 1)`. Recipes, by species ID:
-4 + 7 → 5, 13 + 16 → 14, 19 + 22 → 20.
+ID. After breeding, a parent rests for `BREED_COOLDOWN * (generation + 1)`.
+Ranks come from `combiRank`; 28 primary-parent recipes come from `specialCombos` in
+`palworld-dataset.json` and are generated into both the constructor and `RECIPES` in
+`frontend/src/config/species.js`. `ignoreCombi`, `combiDuplicatePriority`, and
+`altLegendaryParent` do not add new breeding rules in this version.
 
 A merged card has a random species of the next rarity. New cards from packs, merges and breeding
 have no passive.
@@ -95,9 +108,9 @@ have no passive.
 | `getCard(uint256 tokenId) returns (Card)` | view | Reverts with `ERC721NonexistentToken` for unknown or burned IDs. |
 | `cardsOf(address owner) returns (uint256[])` | view | All token IDs owned by `owner`. |
 | `getSpecies(uint256 speciesId) returns (Species)` | view | Reverts with `UnknownSpecies` for unknown IDs. |
-| `speciesCount() returns (uint256)` | view | 27. |
+| `speciesCount() returns (uint256)` | view | 136. |
 | `dropRate(Rarity) returns (uint16)` | pure | Drop rate in basis points. |
-| `powerRange(Rarity) returns (uint8 min, uint8 max)` | pure | Inclusive power range. |
+| `powerRange(Rarity) returns (uint8 min, uint8 max)` | pure | Legacy collectible power range; not used in combat. |
 | `decomposeValue(Rarity)`, `enchantCost(Rarity)`, `breedFee(Rarity)` | pure | Prices in coins. |
 | `coin() returns (address)` | view | The GameCoin contract. |
 
@@ -136,8 +149,8 @@ struct Battle {
     uint256 stake;
     bytes32 creatorCommitment;
     bytes32 opponentCommitment;
-    uint256 creatorTokenId;
-    uint256 opponentTokenId;
+    uint256[3] creatorTokenIds;
+    uint256[3] opponentTokenIds;
     bool creatorRevealed;
     bool opponentRevealed;
     uint64 revealDeadline;     // unix seconds; set when the opponent joins
@@ -148,8 +161,12 @@ struct Battle {
 
 ### Commitment
 
+This is the 3v3 relay interface. Old single-card Arena deployments and commitments are
+incompatible; redeploy Arena and export the ABI before using the new frontend.
+
+
 ```text
-commitment = keccak256(abi.encodePacked(uint256 tokenId, bytes32 salt, address player))
+commitment = keccak256(abi.encodePacked(uint256[3] tokenIds, bytes32 salt, address player))
 ```
 
 In the browser: `computeCommitment` in `frontend/src/lib/commitment.js`, which matches
@@ -166,22 +183,28 @@ createBattle ──► Open ──joinBattle──► Joined ──both reveal�
               Cancelled              Resolved
 ```
 
-The higher battle power wins `2 * stake`; a tie refunds both stakes. After the deadline, if exactly
+The automatic battle winner receives `2 * stake`; a tie refunds both stakes. After the deadline, if exactly
 one player has revealed, that player wins `2 * stake`; if nobody revealed, both are refunded.
 
 A card's attributes are copied when it is revealed, so burning, transferring or enchanting a
 revealed card does not change or block the result.
 
-### Battle power
+### Deterministic automatic battle
+
+Official Hp, ShotAttack and Defense map directly to MaxHP, ATK and DEF. Rarity is only
+an economic tier: official rarity 1–4 / 5–9 / 10+ maps to Common / Rare / Legendary.
+Legacy power has no effect in combat. Each card can have one passive; the stored official
+base stats stay unchanged.
 
 ```text
-battle power = power * attack multiplier * (100% + passive bonus), rounded down
+damage = max(1, floor(ATK * E * 100 / (10000 * (100 + enemy DEF))))
 ```
 
-The attack multiplier uses the attacker's first element against each of the defender's elements,
-multiplied together:
+The attacker's primary element attacks each defense element. None is ignored.
+Strengths use 12500, reverse resistance uses 8000, all other pairs use 10000.
+Multiply both defense multipliers before clamping E to 7000–15000.
 
-| Attacker | Strong against (200%) |
+| Attacker | Strong against |
 | --- | --- |
 | Water | Fire |
 | Fire | Grass, Ice |
@@ -192,16 +215,50 @@ multiplied together:
 | Dragon | Dark |
 | Dark | Neutral |
 
-An attack is resisted (50%) when the defender is strong against the attacker. An element attacks
-itself at 100%. Neutral always attacks at 100%, including against Dark.
+#### Passives
 
 | Passive | Effect |
 | --- | --- |
-| Pierce | A resisted attack still deals 100%. |
-| Underdog | +30% if the card's power is below the enemy's. |
-| Resonance | +20% if the two cards share an element. |
-| Guard | +25% if the enemy is strong against this card. |
-| Focus | +10% always. |
+| Pierce | Use `floor(enemy DEF * 80 / 100)` in the base damage formula. |
+| Underdog | If `current HP * 2 <= MaxHP` at round start, multiply base damage by 120/100. |
+| Resonance | Multiply base damage by `(100 + 5 * matches) / 100`, where matches counts other cards with the same primary element, up to two. Count the original lineup, including knocked-out cards. |
+| Guard | Multiply incoming damage by 90/100 after the attacker's bonus. |
+| Focus | Multiply base damage by 125/100 on this card's first attack in the battle. Each replacement has its own first attack. |
+
+Apply Pierce to DEF, calculate base damage (minimum 1), apply the attacker's bonus, then
+Guard. Floor each division separately and clamp final damage to at least 1. Read both
+cards' HP and triggers before either takes damage; lethal hits do not cancel retaliation.
+Focus state is local to a simulation and never written back to the NFT. Enchanting still
+rolls each of the five passives with equal odds, replacing the previous one, and new/bred
+cards have none. Passives are not inherited or scaled by rarity.
+
+These rules require redeploying Arena; existing deployments do not gain passive effects
+when the frontend is updated. The Card structure and 3v3 commitment format are unchanged.
+
+Each team has three distinct NFT IDs in a fixed, committed order. Both active cards attack
+simultaneously. Survivors keep HP; fallen cards are replaced on the next round, without
+same-round replacement attacks or damage overflow. A team with all three cards knocked out
+loses; simultaneous elimination of both teams draws.
+
+There is one global limit of 20 rounds for the entire relay. If both teams remain, compare
+`sum(hp[i] / maxHP[i])` over all three cards. Unused cards retain full HP; fallen cards contribute
+zero. For each team compute `D = maxHP[0] * maxHP[1] * maxHP[2]` and
+`N = sum(hp[i] * (D / maxHP[i]))`, then compare `N_A * D_B` and `N_B * D_A` exactly.
+The frontend uses BigInt; the contract products fit uint256 because all MaxHP values are uint16.
+Displayed percentages are for presentation and never decide the result.
+
+`simulateTeamBattle(Card[3] a, Card[3] b)` returns `TeamCombatResult { uint256[3] hpA;
+uint256[3] hpB; uint8 rounds; uint8 winner; }`. Winner is 0 (draw), 1 (A), or 2 (B).
+This helper drives settlement. The single-card `simulateBattle` helper remains available for
+formula diagnostics and does not settle team battles.
+RunSpeed, randomness, critical hits, dodge, active skills and cooldowns have no role.
+
+`simulateBattle` returns `CombatResult { uint256 hpA; uint256 hpB; uint256 damageA;
+uint256 damageB; uint8 rounds; uint8 winner; }`. Winner is 0 for draw, 1 for A, 2 for B.
+`damageA` and `damageB` are the last round's damages, which may change as passives trigger.
+The single-card helper has no teammates for Resonance. The frontend uses BigInt for damage
+and HP calculations in both helpers, converting the single-card result to numbers for display.
+History replays the ordered teams from reveal snapshots.
 
 ### Functions
 
@@ -209,18 +266,22 @@ itself at 100%. Neutral always attacks at 100%, including against Dark.
 | --- | --- | --- |
 | `createBattle(bytes32 commitment, uint256 stake) returns (uint256 battleId)` | | Takes `stake` coins from the caller; 0 makes a friendly match. |
 | `joinBattle(uint256 battleId, bytes32 commitment)` | | Needs `Open` and a caller other than the creator. Takes the same stake and starts the `REVEAL_WINDOW`. |
-| `reveal(uint256 battleId, uint256 tokenId, bytes32 salt)` | | Needs `Joined`, the window still open, a matching commitment, and the caller still owning the card. The second reveal resolves the battle. |
+| `reveal(uint256 battleId, uint256[3] tokenIds, bytes32 salt)` | | Needs `Joined`, the window still open, a matching ordered-team commitment, three distinct IDs, and the caller owning all three cards. The second reveal resolves the battle. |
 | `claimTimeout(uint256 battleId)` | | After `revealDeadline`, settles a `Joined` battle as described above. Anyone may call it; the coins only go to the players. |
 | `cancelBattle(uint256 battleId)` | | The creator refunds an `Open` battle. |
 | `getBattle(uint256 battleId) returns (Battle)` | view | Reverts with `BattleNotFound` for unknown IDs. |
 | `battleCount() returns (uint256)` | view | The latest battle ID; iterate `1..battleCount` to list battles. |
 | `battlesOf(address player) returns (uint256[])` | view | IDs of every battle the player created or joined, oldest first. |
-| `getRevealedCards(uint256 battleId) returns (Card creatorCard, Card opponentCard)` | view | Both cards as they were when revealed; a side that has not revealed comes back zeroed. Reverts with `BattleNotFound` for unknown IDs. |
-| `computeCommitment(uint256, bytes32, address) returns (bytes32)` | pure | Reference implementation of the commitment. |
+| `getRevealedCards(uint256 battleId) returns (Card[3] creatorCards, Card[3] opponentCards)` | view | Both ordered teams as they were when revealed; a side that has not revealed comes back zeroed. Reverts with `BattleNotFound` for unknown IDs. |
+| `computeCommitment(uint256[3], bytes32, address) returns (bytes32)` | pure | Reference implementation of the commitment. |
 | `beats(Element attacker, Element defender) returns (bool)` | pure | The element chart. |
-| `elementMultiplier(Element attacker, Element defender) returns (uint256)` | pure | 200, 100 or 50. |
-| `attackMultiplier(Card attacker, Card defender) returns (uint256)` | pure | Percent, including a dual-element defender. |
-| `battlePower(Card card, Card enemy) returns (uint256)` | pure | Battle power after the multiplier and passive. |
+| `elementMultiplier(Element attacker, Element defender) returns (uint256)` | pure | Basis points: 12500, 10000 or 8000. |
+| `attackMultiplier(Card attacker, Card defender) returns (uint256)` | pure | Basis points after multiplying defense elements and clamping to 7000–15000. |
+| `damage(Card attacker, Card defender) returns (uint256)` | pure | Base damage before passives, floor then minimum 1; battle simulations apply passive effects separately. |
+| `simulateBattle(Card a, Card b) returns (CombatResult)` | pure | At most 20 simultaneous rounds and the final HP ratio decision. |
+| `simulateTeamBattle(Card[3] a, Card[3] b) returns (TeamCombatResult)` | pure | Fixed-order relay with one global 20-round limit and exact summed HP fraction comparison. |
+| `TEAM_SIZE() returns (uint8)` | constant | 3 distinct NFTs; repeated species allowed. |
+| `MAX_ROUNDS() returns (uint8)` | constant | 20 across the whole team battle. |
 | `REVEAL_WINDOW() returns (uint256)` | constant | 600 seconds. |
 | `cards() returns (address)`, `coin() returns (address)` | view | The ElementCards and GameCoin contracts. |
 
@@ -229,7 +290,7 @@ itself at 100%. Neutral always attacks at 100%, including against Dark.
 ```solidity
 event BattleCreated(uint256 indexed battleId, address indexed creator, uint256 stake);
 event BattleJoined(uint256 indexed battleId, address indexed opponent, uint64 revealDeadline);
-event CardRevealed(uint256 indexed battleId, address indexed player, uint256 tokenId);
+event TeamRevealed(uint256 indexed battleId, address indexed player, uint256[3] tokenIds);
 event BattleResolved(uint256 indexed battleId, address indexed winner, uint256 payout);
 event BattleCancelled(uint256 indexed battleId);
 ```
@@ -241,7 +302,7 @@ In `BattleResolved`, `payout` is the coins sent to the winner (`2 * stake`). For
 
 `BattleNotFound(battleId)`, `InvalidStatus(current)`, `CannotJoinOwnBattle()`, `NotPlayer()`,
 `NotCreator()`, `AlreadyRevealed()`, `CommitmentMismatch()`, `NotCardOwner(tokenId)`,
-`RevealWindowClosed()`, `RevealWindowOpen()`. `frontend/src/lib/errors.js` turns each into a
+`RevealWindowClosed()`, `RevealWindowOpen()`, `DuplicateCard(tokenId)`, `InvalidCombatStats()`. `frontend/src/lib/errors.js` turns each into a
 readable message.
 
 ## Security notes for the report

@@ -25,8 +25,9 @@ const CONTRACT_ERRORS = {
   CannotJoinOwnBattle: "You cannot join your own battle.",
   NotPlayer: "You are not a player in this battle.",
   NotCreator: "Only the battle creator can do this.",
-  AlreadyRevealed: "You have already revealed your card.",
-  CommitmentMismatch: "That card and salt do not match your commitment.",
+  InvalidCombatStats: "Every team member must have positive MaxHP.",
+  AlreadyRevealed: "You have already revealed your team.",
+  CommitmentMismatch: "That team order and salt do not match your commitment.",
   RevealWindowClosed: "The reveal window has closed.",
   RevealWindowOpen: "The reveal window is still open.",
 };

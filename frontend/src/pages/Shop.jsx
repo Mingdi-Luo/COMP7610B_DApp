@@ -65,7 +65,7 @@ function PackCounter({ onNavigate }) {
         <CardReveal card={newCard} shaking={opening} />
         {newCard && (
           <p className={`reveal-caption rarity-${RARITIES[newCard.rarity].toLowerCase()}`}>
-            {RARITIES[newCard.rarity]} {SPECIES[newCard.speciesId].name}, {GENDERS[newCard.gender]}, {ELEMENTS[newCard.element]}, power {newCard.power}
+            {RARITIES[newCard.rarity]} {SPECIES[newCard.speciesId].name}, {GENDERS[newCard.gender]}, {ELEMENTS[newCard.element]}, HP {newCard.maxHP}, ATK {newCard.atk}, DEF {newCard.def}
           </p>
         )}
       </div>

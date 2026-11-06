@@ -24,7 +24,8 @@ contract ElementCards is ERC721Enumerable {
         Ground,
         Ice,
         Dragon,
-        Dark
+        Dark,
+        None
     }
 
     enum Rarity {
@@ -33,7 +34,7 @@ contract ElementCards is ERC721Enumerable {
         Legendary
     }
 
-    // Each is rolled at random by enchant(); Arena applies the effects.
+    // One passive per card. Arena applies its deterministic battle effect.
     enum Passive {
         None,
         Pierce,
@@ -49,13 +50,16 @@ contract ElementCards is ERC721Enumerable {
         Female
     }
 
-    // secondElement equals element for a single-element species.
+    // None is distinct from Neutral; it never contributes a defense multiplier.
     struct Species {
         Element element;
         Element secondElement;
         Rarity rarity;
         uint8 basePower;
         uint16 breedRank;
+        uint16 maxHP;
+        uint16 atk;
+        uint16 def;
     }
 
     struct Card {
@@ -68,6 +72,9 @@ contract ElementCards is ERC721Enumerable {
         Gender gender;
         uint8 generation;
         uint64 breedReadyAt;
+        uint16 maxHP;
+        uint16 atk;
+        uint16 def;
     }
 
     uint256 public constant PACK_PRICE = 1_000;
@@ -119,40 +126,174 @@ contract ElementCards is ERC721Enumerable {
     constructor(address coinAddress) ERC721("Elemental Duel Card", "EDC") {
         coin = GameCoin(coinAddress);
 
-        // Species IDs follow this order. Common ranks are lowest and Legendary highest,
-        // so parents of different rarities tend to breed something in between.
-        _addSpecies(Element.Neutral, Element.Neutral, Rarity.Common, 20, 100); //     0 Puffkin
-        _addSpecies(Element.Neutral, Element.Neutral, Rarity.Rare, 50, 300); //       1 Driftmane
-        _addSpecies(Element.Neutral, Element.Neutral, Rarity.Legendary, 80, 500); //  2 Halcyra
-        _addSpecies(Element.Fire, Element.Fire, Rarity.Common, 22, 110); //           3 Emberkit
-        _addSpecies(Element.Fire, Element.Fire, Rarity.Rare, 54, 310); //             4 Cindrake
-        _addSpecies(Element.Fire, Element.Dragon, Rarity.Legendary, 86, 510); //      5 Pyrovane
-        _addSpecies(Element.Water, Element.Water, Rarity.Common, 18, 120); //         6 Ripplet
-        _addSpecies(Element.Water, Element.Water, Rarity.Rare, 48, 320); //           7 Tidewarden
-        _addSpecies(Element.Water, Element.Water, Rarity.Legendary, 82, 520); //      8 Abyssara
-        _addSpecies(Element.Grass, Element.Grass, Rarity.Common, 16, 130); //         9 Sproutle
-        _addSpecies(Element.Grass, Element.Ground, Rarity.Rare, 46, 330); //         10 Thornback
-        _addSpecies(Element.Grass, Element.Grass, Rarity.Legendary, 78, 530); //     11 Verdantis
-        _addSpecies(Element.Electric, Element.Electric, Rarity.Common, 20, 140); //  12 Zapling
-        _addSpecies(Element.Electric, Element.Electric, Rarity.Rare, 52, 340); //    13 Voltarch
-        _addSpecies(Element.Electric, Element.Dragon, Rarity.Legendary, 84, 540); // 14 Stormregent
-        _addSpecies(Element.Ground, Element.Ground, Rarity.Common, 24, 150); //      15 Burrowpaw
-        _addSpecies(Element.Ground, Element.Dark, Rarity.Rare, 50, 350); //          16 Cragmaw
-        _addSpecies(Element.Ground, Element.Ground, Rarity.Legendary, 80, 550); //   17 Terravault
-        _addSpecies(Element.Ice, Element.Ice, Rarity.Common, 18, 160); //            18 Frostlet
-        _addSpecies(Element.Ice, Element.Water, Rarity.Rare, 48, 360); //            19 Rimefang
-        _addSpecies(Element.Ice, Element.Dark, Rarity.Legendary, 82, 560); //        20 Cryomere
-        _addSpecies(Element.Dragon, Element.Dragon, Rarity.Common, 24, 170); //      21 Wyrmlet
-        _addSpecies(Element.Dragon, Element.Dark, Rarity.Rare, 56, 370); //          22 Drakeshade
-        _addSpecies(Element.Dragon, Element.Dragon, Rarity.Legendary, 86, 570); //   23 Aethwyrm
-        _addSpecies(Element.Dark, Element.Dark, Rarity.Common, 20, 180); //          24 Gloomlet
-        _addSpecies(Element.Dark, Element.Dark, Rarity.Rare, 52, 380); //            25 Umbralynx
-        _addSpecies(Element.Dark, Element.Dark, Rarity.Legendary, 84, 580); //       26 Nocthrone
+        // Species IDs follow this order. Generated from palworld-dataset.json.
+        // Order locked by scripts/species-order.json; rarity and power are economic metadata only.
+        _addSpecies(Element.Neutral, Element.None, Rarity.Common, 20, 3050, 70, 70, 70); // 0: SheepBall -> lamball
+        _addSpecies(Element.Neutral, Element.None, Rarity.Common, 20, 2760, 70, 70, 70); // 1: PinkCat -> cattiva
+        _addSpecies(Element.Neutral, Element.None, Rarity.Common, 20, 3080, 60, 60, 60); // 2: ChickenPal -> chikipi
+        _addSpecies(Element.Grass, Element.None, Rarity.Common, 20, 3020, 75, 70, 70); // 3: Carbunclo -> lifmunk
+        _addSpecies(Element.Water, Element.None, Rarity.Common, 20, 2980, 60, 80, 60); // 4: BluePlatypus -> fuack
+        _addSpecies(Element.Neutral, Element.None, Rarity.Common, 20, 3060, 70, 70, 70); // 5: CuteFox -> vixy
+        _addSpecies(Element.Water, Element.None, Rarity.Common, 20, 2740, 80, 70, 80); // 6: FlyingManta -> celaray
+        _addSpecies(Element.Neutral, Element.None, Rarity.Common, 20, 2890, 70, 70, 75); // 7: WoolFox -> cremis
+        _addSpecies(Element.Water, Element.None, Rarity.Common, 20, 3070, 70, 60, 70); // 8: Ganesha -> teafant
+        _addSpecies(Element.Grass, Element.Ground, Rarity.Common, 20, 2950, 70, 70, 70); // 9: PlantSlime -> gumoss
+        _addSpecies(Element.Electric, Element.None, Rarity.Common, 20, 3030, 70, 75, 70); // 10: Hedgehog -> jolthog
+        _addSpecies(Element.Ice, Element.None, Rarity.Common, 20, 2850, 70, 75, 80); // 11: Hedgehog_Ice -> jolthog-cryst
+        _addSpecies(Element.Dark, Element.None, Rarity.Common, 20, 3000, 70, 70, 70); // 12: NegativeKoala -> depresso
+        _addSpecies(Element.Water, Element.Ice, Rarity.Common, 20, 2960, 70, 75, 70); // 13: Penguin -> pengullet
+        _addSpecies(Element.Water, Element.Ice, Rarity.Rare, 50, 2070, 95, 95, 95); // 14: CaptainPenguin -> penking
+        _addSpecies(Element.Dark, Element.None, Rarity.Common, 20, 2940, 70, 70, 80); // 15: WizardOwl -> hoocrates
+        _addSpecies(Element.Neutral, Element.None, Rarity.Common, 20, 2720, 90, 75, 90); // 16: Alpaca -> melpaca
+        _addSpecies(Element.Neutral, Element.None, Rarity.Rare, 50, 2220, 120, 85, 90); // 17: KingAlpaca -> kingpaca
+        _addSpecies(Element.Ice, Element.None, Rarity.Rare, 50, 1530, 120, 85, 90); // 18: KingAlpaca_Ice -> kingpaca-cryst
+        _addSpecies(Element.Dark, Element.None, Rarity.Common, 20, 2910, 70, 75, 60); // 19: DreamDemon -> daedream
+        _addSpecies(Element.Grass, Element.None, Rarity.Common, 20, 2900, 80, 70, 70); // 20: Monkey -> tanzee
+        _addSpecies(Element.Dark, Element.None, Rarity.Rare, 50, 2920, 75, 85, 70); // 21: NightFox -> nox
+        _addSpecies(Element.Fire, Element.None, Rarity.Common, 20, 2700, 60, 70, 80); // 22: LavaGirl -> flambelle
+        _addSpecies(Element.Fire, Element.None, Rarity.Common, 20, 2870, 75, 70, 75); // 23: FlameBambi -> rooby
+        _addSpecies(Element.Dark, Element.None, Rarity.Common, 20, 3040, 70, 60, 70); // 24: Bastet -> mau
+        _addSpecies(Element.Ice, Element.None, Rarity.Common, 20, 2750, 70, 65, 70); // 25: Bastet_Ice -> mau-cryst
+        _addSpecies(Element.Ground, Element.None, Rarity.Common, 20, 2880, 80, 70, 70); // 26: Boar -> rushoar
+        _addSpecies(Element.Fire, Element.None, Rarity.Common, 20, 2990, 65, 75, 70); // 27: Kitsunebi -> foxparks
+        _addSpecies(Element.Dark, Element.Water, Rarity.Common, 20, 2770, 60, 60, 70); // 28: NegativeOctopus -> killamari
+        _addSpecies(Element.Ground, Element.None, Rarity.Common, 20, 2790, 65, 80, 50); // 29: CuteMole -> fuddler
+        _addSpecies(Element.Neutral, Element.None, Rarity.Rare, 50, 2710, 95, 80, 80); // 30: Deer -> eikthyrdeer
+        _addSpecies(Element.Ground, Element.None, Rarity.Rare, 50, 2580, 95, 80, 80); // 31: Deer_Ground -> eikthyrdeer-terra
+        _addSpecies(Element.Neutral, Element.None, Rarity.Common, 20, 2680, 80, 90, 75); // 32: Garm -> direhowl
+        _addSpecies(Element.Grass, Element.None, Rarity.Common, 20, 2610, 100, 70, 90); // 33: BerryGoat -> caprity
+        _addSpecies(Element.Ice, Element.None, Rarity.Common, 20, 2840, 60, 60, 60); // 34: MopBaby -> swee
+        _addSpecies(Element.Ice, Element.None, Rarity.Rare, 50, 2150, 100, 90, 90); // 35: MopKing -> sweepa
+        _addSpecies(Element.Ground, Element.None, Rarity.Common, 20, 2780, 80, 70, 70); // 36: WindChimes -> hangyu
+        _addSpecies(Element.Ice, Element.None, Rarity.Common, 20, 2510, 80, 80, 70); // 37: WindChimes_Ice -> hangyu-cryst
+        _addSpecies(Element.Neutral, Element.None, Rarity.Common, 20, 2820, 70, 70, 90); // 38: SweetsSheep -> woolipop
+        _addSpecies(Element.Neutral, Element.None, Rarity.Common, 20, 2800, 90, 50, 80); // 39: CowPal -> mozzarina
+        _addSpecies(Element.Water, Element.Dragon, Rarity.Rare, 50, 1830, 110, 100, 100); // 40: BlueDragon -> azurobe
+        _addSpecies(Element.Electric, Element.None, Rarity.Common, 20, 3010, 60, 75, 70); // 41: ElecCat -> sparkit
+        _addSpecies(Element.Water, Element.None, Rarity.Common, 20, 2810, 70, 70, 70); // 42: Kelpie -> kelpsea
+        _addSpecies(Element.Fire, Element.None, Rarity.Common, 20, 2470, 70, 70, 70); // 43: Kelpie_Fire -> kelpsea-ignis
+        _addSpecies(Element.Neutral, Element.None, Rarity.Common, 20, 2570, 75, 85, 60); // 44: Eagle -> galeclaw
+        _addSpecies(Element.Neutral, Element.None, Rarity.Common, 20, 2560, 100, 95, 80); // 45: HawkBird -> nitewing
+        _addSpecies(Element.Dark, Element.None, Rarity.Rare, 50, 2340, 95, 95, 80); // 46: CatBat -> tombat
+        _addSpecies(Element.Neutral, Element.None, Rarity.Common, 20, 2730, 60, 75, 70); // 47: ColorfulBird -> tocotoco
+        _addSpecies(Element.Electric, Element.None, Rarity.Rare, 50, 2270, 80, 105, 105); // 48: Kirin -> univolt
+        _addSpecies(Element.Water, Element.None, Rarity.Common, 20, 2550, 90, 90, 75); // 49: SharkKid -> gobfin
+        _addSpecies(Element.Fire, Element.None, Rarity.Common, 20, 2430, 90, 90, 75); // 50: SharkKid_Fire -> gobfin-ignis
+        _addSpecies(Element.Dark, Element.None, Rarity.Common, 20, 2110, 80, 100, 80); // 51: Werewolf -> loupmoon
+        _addSpecies(Element.Dark, Element.None, Rarity.Common, 20, 2370, 75, 95, 80); // 52: DarkCrow -> cawgnito
+        _addSpecies(Element.Fire, Element.None, Rarity.Common, 20, 2320, 85, 95, 95); // 53: FlameBuffalo -> arsox
+        _addSpecies(Element.Grass, Element.None, Rarity.Common, 20, 2690, 80, 80, 80); // 54: LittleBriarRose -> bristla
+        _addSpecies(Element.Grass, Element.None, Rarity.Common, 20, 2620, 70, 80, 80); // 55: CuteButterfly -> cinnamoth
+        _addSpecies(Element.Dragon, Element.None, Rarity.Rare, 50, 2280, 110, 80, 90); // 56: FairyDragon -> elphidran
+        _addSpecies(Element.Dragon, Element.Water, Rarity.Rare, 50, 1640, 115, 80, 95); // 57: FairyDragon_Water -> elphidran-aqua
+        _addSpecies(Element.Fire, Element.Dark, Rarity.Rare, 50, 1650, 90, 115, 90); // 58: BirdDragon -> vanwyrm
+        _addSpecies(Element.Ice, Element.Dark, Rarity.Rare, 50, 1430, 90, 120, 95); // 59: BirdDragon_Ice -> vanwyrm-cryst
+        _addSpecies(Element.Dark, Element.None, Rarity.Rare, 50, 1570, 100, 105, 110); // 60: CatVampire -> felbat
+        _addSpecies(Element.Grass, Element.None, Rarity.Rare, 50, 1480, 100, 100, 120); // 61: VioletFairy -> vaelet
+        _addSpecies(Element.Grass, Element.None, Rarity.Common, 20, 2350, 80, 90, 90); // 62: SoldierBee -> beegarde
+        _addSpecies(Element.Grass, Element.None, Rarity.Rare, 50, 1790, 90, 105, 100); // 63: QueenBee -> elizabee
+        _addSpecies(Element.Dark, Element.None, Rarity.Rare, 50, 2090, 120, 70, 70); // 64: PinkLizard -> lovander
+        _addSpecies(Element.Neutral, Element.None, Rarity.Rare, 50, 2120, 110, 80, 80); // 65: NaughtyCat -> grintale
+        _addSpecies(Element.Dark, Element.None, Rarity.Common, 20, 2670, 80, 80, 50); // 66: LizardMan -> leezpunk
+        _addSpecies(Element.Fire, Element.None, Rarity.Common, 20, 2640, 80, 80, 50); // 67: LizardMan_Fire -> leezpunk-ignis
+        _addSpecies(Element.Neutral, Element.None, Rarity.Rare, 50, 2140, 90, 95, 90); // 68: Gorilla -> gorirat
+        _addSpecies(Element.Water, Element.None, Rarity.Common, 20, 2440, 90, 90, 80); // 69: Serpent -> surfent
+        _addSpecies(Element.Ground, Element.None, Rarity.Rare, 50, 1840, 90, 90, 100); // 70: Serpent_Ground -> surfent-terra
+        _addSpecies(Element.Grass, Element.None, Rarity.Rare, 50, 2260, 90, 105, 80); // 71: RobinHood -> robinquill
+        _addSpecies(Element.Grass, Element.Ground, Rarity.Rare, 50, 2050, 90, 105, 80); // 72: RobinHood_Ground -> robinquill-terra
+        _addSpecies(Element.Grass, Element.None, Rarity.Common, 20, 2660, 75, 65, 70); // 73: FlowerRabbit -> flopie
+        _addSpecies(Element.Fire, Element.None, Rarity.Rare, 50, 2080, 90, 110, 80); // 74: FoxMage -> wixen
+        _addSpecies(Element.Dark, Element.None, Rarity.Rare, 50, 2040, 90, 105, 90); // 75: CatMage -> katress
+        _addSpecies(Element.Dark, Element.None, Rarity.Rare, 50, 1130, 100, 125, 100); // 76: HadesBird -> helzephyr
+        _addSpecies(Element.Neutral, Element.None, Rarity.Rare, 50, 2010, 90, 100, 90); // 77: Mutant -> lunaris
+        _addSpecies(Element.Neutral, Element.None, Rarity.Common, 20, 1960, 110, 110, 90); // 78: FengyunDeeper -> fenglope
+        _addSpecies(Element.Grass, Element.Dragon, Rarity.Rare, 50, 2100, 110, 85, 90); // 79: FlowerDinosaur -> dinossom
+        _addSpecies(Element.Electric, Element.Dragon, Rarity.Rare, 50, 1890, 110, 90, 90); // 80: FlowerDinosaur_Electric -> dinossom-lux
+        _addSpecies(Element.Fire, Element.None, Rarity.Rare, 50, 1560, 80, 125, 80); // 81: Ronin -> bushi
+        _addSpecies(Element.Grass, Element.Ground, Rarity.Rare, 50, 1340, 150, 85, 90); // 82: GrassMammoth -> mammorest
+        _addSpecies(Element.Ice, Element.Ground, Rarity.Rare, 50, 1070, 150, 85, 90); // 83: GrassMammoth_Ice -> mammorest-cryst
+        _addSpecies(Element.Grass, Element.None, Rarity.Rare, 50, 1720, 100, 95, 100); // 84: FlowerDoll -> petallia
+        _addSpecies(Element.Fire, Element.Dark, Rarity.Common, 20, 1470, 95, 100, 85); // 85: Baphomet -> incineram
+        _addSpecies(Element.Dark, Element.None, Rarity.Rare, 50, 1310, 95, 105, 85); // 86: Baphomet_Dark -> incineram-noct
+        _addSpecies(Element.Electric, Element.None, Rarity.Common, 20, 2400, 70, 80, 70); // 87: RaijinDaughter -> dazzi
+        _addSpecies(Element.Fire, Element.None, Rarity.Rare, 50, 1980, 100, 95, 90); // 88: FireKirin -> pyrin
+        _addSpecies(Element.Fire, Element.Dark, Rarity.Rare, 50, 1870, 100, 95, 90); // 89: FireKirin_Dark -> pyrin-noct
+        _addSpecies(Element.Dragon, Element.Water, Rarity.Rare, 50, 1090, 120, 115, 110); // 90: LazyDragon -> relaxaurus
+        _addSpecies(Element.Dragon, Element.Electric, Rarity.Rare, 50, 770, 120, 120, 110); // 91: LazyDragon_Electric -> relaxaurus-lux
+        _addSpecies(Element.Ice, Element.None, Rarity.Rare, 50, 1970, 90, 95, 105); // 92: IceFox -> foxcicle
+        _addSpecies(Element.Electric, Element.None, Rarity.Rare, 50, 1690, 105, 115, 80); // 93: ThunderBird -> beakon
+        _addSpecies(Element.Electric, Element.None, Rarity.Rare, 50, 1920, 90, 100, 80); // 94: ThunderDog -> rayhound
+        _addSpecies(Element.Dark, Element.Ground, Rarity.Rare, 50, 1120, 100, 100, 130); // 95: DarkScorpion -> menasting
+        _addSpecies(Element.Ice, Element.None, Rarity.Common, 20, 1930, 100, 85, 110); // 96: IceDeer -> reindrix
+        _addSpecies(Element.Grass, Element.None, Rarity.Rare, 50, 2060, 100, 90, 90); // 97: GrassPanda -> mossanda
+        _addSpecies(Element.Electric, Element.None, Rarity.Rare, 50, 1440, 100, 100, 100); // 98: GrassPanda_Electric -> mossanda-lux
+        _addSpecies(Element.Ice, Element.Dragon, Rarity.Common, 20, 2330, 90, 80, 80); // 99: WeaselDragon -> chillet
+        _addSpecies(Element.Fire, Element.None, Rarity.Rare, 50, 1050, 95, 105, 120); // 100: RedArmorBird -> ragnahawk
+        _addSpecies(Element.Ground, Element.None, Rarity.Rare, 50, 1550, 80, 95, 120); // 101: DrillGame -> digtoise
+        _addSpecies(Element.Grass, Element.None, Rarity.Rare, 50, 1380, 120, 90, 100); // 102: SakuraSaurus -> broncherry
+        _addSpecies(Element.Grass, Element.Water, Rarity.Rare, 50, 1080, 120, 95, 100); // 103: SakuraSaurus_Water -> broncherry-aqua
+        _addSpecies(Element.Ground, Element.Water, Rarity.Common, 20, 2290, 100, 70, 95); // 104: LazyCatfish -> dumud
+        _addSpecies(Element.Fire, Element.None, Rarity.Rare, 50, 1670, 100, 115, 100); // 105: AmaterasuWolf -> kitsun
+        _addSpecies(Element.Fire, Element.None, Rarity.Rare, 50, 1360, 105, 110, 80); // 106: Manticore -> blazehowl
+        _addSpecies(Element.Fire, Element.Dark, Rarity.Rare, 50, 1270, 105, 115, 80); // 107: Manticore_Dark -> blazehowl-noct
+        _addSpecies(Element.Ground, Element.Grass, Rarity.Rare, 50, 1280, 120, 100, 120); // 108: HerculesBeetle -> warsect
+        _addSpecies(Element.Ice, Element.None, Rarity.Rare, 50, 1810, 110, 90, 100); // 109: WhiteMoth -> sibelyx
+        _addSpecies(Element.Dark, Element.None, Rarity.Rare, 50, 1710, 75, 105, 80); // 110: GhostBeast -> maraith
+        _addSpecies(Element.Dragon, Element.Water, Rarity.Rare, 50, 590, 130, 120, 100); // 111: Umihebi -> jormuntide
+        _addSpecies(Element.Dragon, Element.Fire, Rarity.Rare, 50, 170, 130, 130, 100); // 112: Umihebi_Fire -> jormuntide-ignis
+        _addSpecies(Element.Fire, Element.None, Rarity.Rare, 50, 1200, 120, 105, 105); // 113: Suzaku -> suzaku
+        _addSpecies(Element.Water, Element.None, Rarity.Rare, 50, 740, 125, 105, 105); // 114: Suzaku_Water -> suzaku-aqua
+        _addSpecies(Element.Dragon, Element.None, Rarity.Rare, 50, 1210, 105, 100, 100); // 115: SkyDragon -> quivern
+        _addSpecies(Element.Fire, Element.Ground, Rarity.Rare, 50, 1060, 110, 105, 120); // 116: VolcanicMonster -> reptyro
+        _addSpecies(Element.Ice, Element.Ground, Rarity.Rare, 50, 600, 110, 105, 130); // 117: VolcanicMonster_Ice -> reptyro-cryst
+        _addSpecies(Element.Ice, Element.None, Rarity.Rare, 50, 1040, 100, 100, 110); // 118: WhiteTiger -> cryolinx
+        _addSpecies(Element.Ice, Element.None, Rarity.Rare, 50, 830, 140, 80, 100); // 119: Yeti -> wumpo
+        _addSpecies(Element.Grass, Element.None, Rarity.Rare, 50, 610, 140, 80, 110); // 120: Yeti_Grass -> wumpo-botan
+        _addSpecies(Element.Fire, Element.None, Rarity.Rare, 50, 410, 100, 125, 120); // 121: KingBahamut -> blazamut
+        _addSpecies(Element.Ground, Element.None, Rarity.Legendary, 80, 480, 120, 130, 100); // 122: Anubis -> anubis
+        _addSpecies(Element.Grass, Element.None, Rarity.Rare, 50, 1160, 90, 115, 90); // 123: GrassRabbitMan -> verdash
+        _addSpecies(Element.Dragon, Element.Dark, Rarity.Rare, 50, 490, 100, 125, 125); // 124: BlackMetalDragon -> astegon
+        _addSpecies(Element.Electric, Element.None, Rarity.Rare, 50, 1020, 120, 105, 105); // 125: ElecPanda -> grizzbolt
+        _addSpecies(Element.Grass, Element.None, Rarity.Rare, 50, 240, 120, 120, 110); // 126: LilyQueen -> lyleen
+        _addSpecies(Element.Dark, Element.None, Rarity.Legendary, 80, 220, 115, 120, 115); // 127: LilyQueen_Dark -> lyleen-noct
+        _addSpecies(Element.Dragon, Element.Electric, Rarity.Rare, 50, 120, 120, 130, 115); // 128: ThunderDragonMan -> orserk
+        _addSpecies(Element.Fire, Element.None, Rarity.Rare, 50, 500, 105, 110, 115); // 129: Horus -> faleris
+        _addSpecies(Element.Dark, Element.None, Rarity.Legendary, 80, 550, 120, 120, 140); // 130: BlackGriffon -> shadowbeak
+        _addSpecies(Element.Neutral, Element.None, Rarity.Legendary, 80, 180, 130, 120, 145); // 131: SaintCentaur -> paladius
+        _addSpecies(Element.Dark, Element.None, Rarity.Legendary, 80, 190, 130, 145, 120); // 132: BlackCentaur -> necromus
+        _addSpecies(Element.Ice, Element.None, Rarity.Legendary, 80, 150, 140, 140, 120); // 133: IceHorse -> frostallion
+        _addSpecies(Element.Dark, Element.None, Rarity.Legendary, 80, 110, 140, 140, 135); // 134: IceHorse_Dark -> frostallion-noct
+        _addSpecies(Element.Dragon, Element.None, Rarity.Legendary, 80, 70, 115, 140, 120); // 135: JetDragon -> jetragon
 
-        // The only way to breed these Legendary cards from two Rare parents.
-        _recipes[_recipeKey(4, 7)] = 5 + 1; //    Cindrake + Tidewarden -> Pyrovane
-        _recipes[_recipeKey(13, 16)] = 14 + 1; // Voltarch + Cragmaw    -> Stormregent
-        _recipes[_recipeKey(19, 22)] = 20 + 1; // Rimefang + Drakeshade -> Cryomere
+        // Dataset special recipes; keep the existing rank-average fallback and lower-ID tie break.
+        _recipes[_recipeKey(90, 41)] = 92; // LazyDragon_Electric
+        _recipes[_recipeKey(85, 110)] = 87; // Baphomet_Dark
+        _recipes[_recipeKey(24, 13)] = 26; // Bastet_Ice
+        _recipes[_recipeKey(58, 92)] = 60; // BirdDragon_Ice
+        _recipes[_recipeKey(30, 36)] = 32; // Deer_Ground
+        _recipes[_recipeKey(56, 69)] = 58; // FairyDragon_Water
+        _recipes[_recipeKey(88, 75)] = 90; // FireKirin_Dark
+        _recipes[_recipeKey(82, 119)] = 84; // GrassMammoth_Ice
+        _recipes[_recipeKey(97, 125)] = 99; // GrassPanda_Electric
+        _recipes[_recipeKey(79, 94)] = 81; // FlowerDinosaur_Electric
+        _recipes[_recipeKey(10, 13)] = 12; // Hedgehog_Ice
+        _recipes[_recipeKey(133, 76)] = 135; // IceHorse_Dark
+        _recipes[_recipeKey(17, 96)] = 19; // KingAlpaca_Ice
+        _recipes[_recipeKey(126, 95)] = 128; // LilyQueen_Dark
+        _recipes[_recipeKey(66, 22)] = 68; // LizardMan_Fire
+        _recipes[_recipeKey(106, 60)] = 108; // Manticore_Dark
+        _recipes[_recipeKey(71, 29)] = 73; // RobinHood_Ground
+        _recipes[_recipeKey(102, 4)] = 104; // SakuraSaurus_Water
+        _recipes[_recipeKey(69, 104)] = 71; // Serpent_Ground
+        _recipes[_recipeKey(49, 23)] = 51; // SharkKid_Fire
+        _recipes[_recipeKey(113, 111)] = 115; // Suzaku_Water
+        _recipes[_recipeKey(116, 92)] = 118; // VolcanicMonster_Ice
+        _recipes[_recipeKey(36, 34)] = 38; // WindChimes_Ice
+        _recipes[_recipeKey(97, 84)] = 127; // LilyQueen
+        _recipes[_recipeKey(58, 122)] = 130; // Horus
+        _recipes[_recipeKey(97, 94)] = 126; // ElecPanda
+        _recipes[_recipeKey(125, 90)] = 129; // ThunderDragonMan
+        _recipes[_recipeKey(105, 124)] = 131; // BlackGriffon
     }
 
     /**
@@ -339,10 +480,13 @@ contract ElementCards is ERC721Enumerable {
         Element secondElement,
         Rarity rarity,
         uint8 basePower,
-        uint16 breedRank
+        uint16 breedRank,
+        uint16 maxHP,
+        uint16 atk,
+        uint16 def
     ) private {
         _speciesByRarity[rarity].push(uint8(_species.length));
-        _species.push(Species(element, secondElement, rarity, basePower, breedRank));
+        _species.push(Species(element, secondElement, rarity, basePower, breedRank, maxHP, atk, def));
     }
 
     /// @dev The same key for either parent order.
@@ -391,7 +535,10 @@ contract ElementCards is ERC721Enumerable {
                     Passive.None,
                     gender,
                     generation,
-                    0
+                    0,
+                    species.maxHP,
+                    species.atk,
+                    species.def
                 )
             );
     }

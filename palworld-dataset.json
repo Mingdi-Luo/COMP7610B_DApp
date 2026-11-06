@@ -1,0 +1,4311 @@
+{
+  "meta": {
+    "name": "palworld-dataset",
+    "gameVersion": "1.0 (2026-07 正式版，Feybreak 内容，图鉴至 204)",
+    "exportedAt": "2026-11-05",
+    "source": [
+      "DT_PalMonsterParameter_Common.json（游戏本体 DataTable 导出，现版本）",
+      "pal-name-map.json",
+      "帕鲁配种组合_原始数据.xlsx（Reddit blahable 数据挖掘表，Unique Combos 页）",
+      "幻兽帕鲁_数据(1).xlsx（用于元素枚举对账）"
+    ],
+    "imageRoot": "art-references/palworld-fullbody/site-images",
+    "imageNote": "每只的 image 字段为相对 Dapp 根目录路径。接入前端时：把 site-images/ 整个拷到 frontend/public/images/pals/ 后，把 imageRoot 替换为 /images/pals 即可。",
+    "count": 136,
+    "fieldNotes": {
+      "combiRank": "繁殖力（1.0 重排后的值，约 20~3100；9999=塔主不参与）",
+      "combiDuplicatePriority": "繁殖平局裁决值 = combiRank × 100",
+      "ignoreCombi": "true = 不参与繁殖力算法",
+      "rarity": "游戏稀有度 1~20",
+      "element1/element2": "游戏枚举 id，0=None 1=Normal 2=Fire 3=Water 4=Leaf 5=Electricity 6=Ice 7=Earth 8=Dark 9=Dragon"
+    }
+  },
+  "pals": [
+    {
+      "paldexNo": "001",
+      "codename": "SheepBall",
+      "nameEn": "Lamball",
+      "nameZh": "棉悠悠",
+      "slug": "lamball",
+      "image": "art-references/palworld-fullbody/site-images/lamball.png",
+      "hp": 70,
+      "shotAttack": 70,
+      "defense": 70,
+      "runSpeed": 400,
+      "element1": {
+        "id": 1,
+        "name": "Normal",
+        "zh": "一般"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 1,
+      "maleProbability": 50,
+      "combiRank": 3050,
+      "combiDuplicatePriority": 305000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "002",
+      "codename": "PinkCat",
+      "nameEn": "Cattiva",
+      "nameZh": "捣蛋猫",
+      "slug": "cattiva",
+      "image": "art-references/palworld-fullbody/site-images/cattiva.png",
+      "hp": 70,
+      "shotAttack": 70,
+      "defense": 70,
+      "runSpeed": 400,
+      "element1": {
+        "id": 1,
+        "name": "Normal",
+        "zh": "一般"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 1,
+      "maleProbability": 50,
+      "combiRank": 2760,
+      "combiDuplicatePriority": 276000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "003",
+      "codename": "ChickenPal",
+      "nameEn": "Chikipi",
+      "nameZh": "皮皮鸡",
+      "slug": "chikipi",
+      "image": "art-references/palworld-fullbody/site-images/chikipi.png",
+      "hp": 60,
+      "shotAttack": 60,
+      "defense": 60,
+      "runSpeed": 375,
+      "element1": {
+        "id": 1,
+        "name": "Normal",
+        "zh": "一般"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 1,
+      "maleProbability": 50,
+      "combiRank": 3080,
+      "combiDuplicatePriority": 308000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "004",
+      "codename": "Carbunclo",
+      "nameEn": "Lifmunk",
+      "nameZh": "翠叶鼠",
+      "slug": "lifmunk",
+      "image": "art-references/palworld-fullbody/site-images/lifmunk.png",
+      "hp": 75,
+      "shotAttack": 70,
+      "defense": 70,
+      "runSpeed": 400,
+      "element1": {
+        "id": 4,
+        "name": "Leaf",
+        "zh": "木"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 1,
+      "maleProbability": 50,
+      "combiRank": 3020,
+      "combiDuplicatePriority": 302000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "005",
+      "codename": "BluePlatypus",
+      "nameEn": "Fuack",
+      "nameZh": "冲浪鸭",
+      "slug": "fuack",
+      "image": "art-references/palworld-fullbody/site-images/fuack.png",
+      "hp": 60,
+      "shotAttack": 80,
+      "defense": 60,
+      "runSpeed": 300,
+      "element1": {
+        "id": 3,
+        "name": "Water",
+        "zh": "水"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 1,
+      "maleProbability": 50,
+      "combiRank": 2980,
+      "combiDuplicatePriority": 298000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "006",
+      "codename": "CuteFox",
+      "nameEn": "Vixy",
+      "nameZh": "玉藻狐",
+      "slug": "vixy",
+      "image": "art-references/palworld-fullbody/site-images/vixy.png",
+      "hp": 70,
+      "shotAttack": 70,
+      "defense": 70,
+      "runSpeed": 350,
+      "element1": {
+        "id": 1,
+        "name": "Normal",
+        "zh": "一般"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 2,
+      "maleProbability": 50,
+      "combiRank": 3060,
+      "combiDuplicatePriority": 306000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "007",
+      "codename": "FlyingManta",
+      "nameEn": "Celaray",
+      "nameZh": "鲁米儿",
+      "slug": "celaray",
+      "image": "art-references/palworld-fullbody/site-images/celaray.png",
+      "hp": 80,
+      "shotAttack": 70,
+      "defense": 80,
+      "runSpeed": 550,
+      "element1": {
+        "id": 3,
+        "name": "Water",
+        "zh": "水"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 3,
+      "maleProbability": 50,
+      "combiRank": 2740,
+      "combiDuplicatePriority": 274000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "008",
+      "codename": "WoolFox",
+      "nameEn": "Cremis",
+      "nameZh": "米露菲",
+      "slug": "cremis",
+      "image": "art-references/palworld-fullbody/site-images/cremis.png",
+      "hp": 70,
+      "shotAttack": 70,
+      "defense": 75,
+      "runSpeed": 300,
+      "element1": {
+        "id": 1,
+        "name": "Normal",
+        "zh": "一般"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 1,
+      "maleProbability": 50,
+      "combiRank": 2890,
+      "combiDuplicatePriority": 289000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "011",
+      "codename": "Ganesha",
+      "nameEn": "Teafant",
+      "nameZh": "壶小象",
+      "slug": "teafant",
+      "image": "art-references/palworld-fullbody/site-images/teafant.png",
+      "hp": 70,
+      "shotAttack": 60,
+      "defense": 70,
+      "runSpeed": 300,
+      "element1": {
+        "id": 3,
+        "name": "Water",
+        "zh": "水"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 1,
+      "maleProbability": 50,
+      "combiRank": 3070,
+      "combiDuplicatePriority": 307000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "012",
+      "codename": "PlantSlime",
+      "nameEn": "Gumoss",
+      "nameZh": "叶泥泥",
+      "slug": "gumoss",
+      "image": "art-references/palworld-fullbody/site-images/gumoss.png",
+      "hp": 70,
+      "shotAttack": 70,
+      "defense": 70,
+      "runSpeed": 300,
+      "element1": {
+        "id": 4,
+        "name": "Leaf",
+        "zh": "木"
+      },
+      "element2": {
+        "id": 7,
+        "name": "Earth",
+        "zh": "地"
+      },
+      "rarity": 1,
+      "maleProbability": 50,
+      "combiRank": 2950,
+      "combiDuplicatePriority": 295000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "015",
+      "codename": "Hedgehog",
+      "nameEn": "Jolthog",
+      "nameZh": "电棘鼠",
+      "slug": "jolthog",
+      "image": "art-references/palworld-fullbody/site-images/jolthog.png",
+      "hp": 70,
+      "shotAttack": 75,
+      "defense": 70,
+      "runSpeed": 400,
+      "element1": {
+        "id": 5,
+        "name": "Electricity",
+        "zh": "电"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 1,
+      "maleProbability": 50,
+      "combiRank": 3030,
+      "combiDuplicatePriority": 303000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "015B",
+      "codename": "Hedgehog_Ice",
+      "nameEn": "Jolthog Cryst",
+      "nameZh": "冰刺鼠",
+      "slug": "jolthog-cryst",
+      "image": "art-references/palworld-fullbody/site-images/jolthog-cryst.png",
+      "hp": 70,
+      "shotAttack": 75,
+      "defense": 80,
+      "runSpeed": 400,
+      "element1": {
+        "id": 6,
+        "name": "Ice",
+        "zh": "冰"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 2,
+      "maleProbability": 50,
+      "combiRank": 2850,
+      "combiDuplicatePriority": 285000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "016",
+      "codename": "NegativeKoala",
+      "nameEn": "Depresso",
+      "nameZh": "瞅什魔",
+      "slug": "depresso",
+      "image": "art-references/palworld-fullbody/site-images/depresso.png",
+      "hp": 70,
+      "shotAttack": 70,
+      "defense": 70,
+      "runSpeed": 300,
+      "element1": {
+        "id": 8,
+        "name": "Dark",
+        "zh": "暗"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 1,
+      "maleProbability": 50,
+      "combiRank": 3000,
+      "combiDuplicatePriority": 300000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "017",
+      "codename": "Penguin",
+      "nameEn": "Pengullet",
+      "nameZh": "企丸丸",
+      "slug": "pengullet",
+      "image": "art-references/palworld-fullbody/site-images/pengullet.png",
+      "hp": 70,
+      "shotAttack": 75,
+      "defense": 70,
+      "runSpeed": 500,
+      "element1": {
+        "id": 3,
+        "name": "Water",
+        "zh": "水"
+      },
+      "element2": {
+        "id": 6,
+        "name": "Ice",
+        "zh": "冰"
+      },
+      "rarity": 1,
+      "maleProbability": 50,
+      "combiRank": 2960,
+      "combiDuplicatePriority": 296000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "018",
+      "codename": "CaptainPenguin",
+      "nameEn": "Penking",
+      "nameZh": "企丸王",
+      "slug": "penking",
+      "image": "art-references/palworld-fullbody/site-images/penking.png",
+      "hp": 95,
+      "shotAttack": 95,
+      "defense": 95,
+      "runSpeed": 450,
+      "element1": {
+        "id": 3,
+        "name": "Water",
+        "zh": "水"
+      },
+      "element2": {
+        "id": 6,
+        "name": "Ice",
+        "zh": "冰"
+      },
+      "rarity": 6,
+      "maleProbability": 50,
+      "combiRank": 2070,
+      "combiDuplicatePriority": 207000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "019",
+      "codename": "WizardOwl",
+      "nameEn": "Hoocrates",
+      "nameZh": "啼卡尔",
+      "slug": "hoocrates",
+      "image": "art-references/palworld-fullbody/site-images/hoocrates.png",
+      "hp": 70,
+      "shotAttack": 70,
+      "defense": 80,
+      "runSpeed": 380,
+      "element1": {
+        "id": 8,
+        "name": "Dark",
+        "zh": "暗"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 1,
+      "maleProbability": 50,
+      "combiRank": 2940,
+      "combiDuplicatePriority": 294000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "020",
+      "codename": "Alpaca",
+      "nameEn": "Melpaca",
+      "nameZh": "美露帕",
+      "slug": "melpaca",
+      "image": "art-references/palworld-fullbody/site-images/melpaca.png",
+      "hp": 90,
+      "shotAttack": 75,
+      "defense": 90,
+      "runSpeed": 500,
+      "element1": {
+        "id": 1,
+        "name": "Normal",
+        "zh": "一般"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 3,
+      "maleProbability": 50,
+      "combiRank": 2720,
+      "combiDuplicatePriority": 272000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "021",
+      "codename": "KingAlpaca",
+      "nameEn": "Kingpaca",
+      "nameZh": "君王美露帕",
+      "slug": "kingpaca",
+      "image": "art-references/palworld-fullbody/site-images/kingpaca.png",
+      "hp": 120,
+      "shotAttack": 85,
+      "defense": 90,
+      "runSpeed": 700,
+      "element1": {
+        "id": 1,
+        "name": "Normal",
+        "zh": "一般"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 8,
+      "maleProbability": 90,
+      "combiRank": 2220,
+      "combiDuplicatePriority": 222000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "021B",
+      "codename": "KingAlpaca_Ice",
+      "nameEn": "Kingpaca Cryst",
+      "nameZh": "冰帝美露帕",
+      "slug": "kingpaca-cryst",
+      "image": "art-references/palworld-fullbody/site-images/kingpaca-cryst.png",
+      "hp": 120,
+      "shotAttack": 85,
+      "defense": 90,
+      "runSpeed": 700,
+      "element1": {
+        "id": 6,
+        "name": "Ice",
+        "zh": "冰"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 9,
+      "maleProbability": 90,
+      "combiRank": 1530,
+      "combiDuplicatePriority": 153000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "022",
+      "codename": "DreamDemon",
+      "nameEn": "Daedream",
+      "nameZh": "寐魔",
+      "slug": "daedream",
+      "image": "art-references/palworld-fullbody/site-images/daedream.png",
+      "hp": 70,
+      "shotAttack": 75,
+      "defense": 60,
+      "runSpeed": 300,
+      "element1": {
+        "id": 8,
+        "name": "Dark",
+        "zh": "暗"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 1,
+      "maleProbability": 50,
+      "combiRank": 2910,
+      "combiDuplicatePriority": 291000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "023",
+      "codename": "Monkey",
+      "nameEn": "Tanzee",
+      "nameZh": "新叶猿",
+      "slug": "tanzee",
+      "image": "art-references/palworld-fullbody/site-images/tanzee.png",
+      "hp": 80,
+      "shotAttack": 70,
+      "defense": 70,
+      "runSpeed": 300,
+      "element1": {
+        "id": 4,
+        "name": "Leaf",
+        "zh": "木"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 1,
+      "maleProbability": 50,
+      "combiRank": 2900,
+      "combiDuplicatePriority": 290000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "024",
+      "codename": "NightFox",
+      "nameEn": "Nox",
+      "nameZh": "露娜蒂",
+      "slug": "nox",
+      "image": "art-references/palworld-fullbody/site-images/nox.png",
+      "hp": 75,
+      "shotAttack": 85,
+      "defense": 70,
+      "runSpeed": 300,
+      "element1": {
+        "id": 8,
+        "name": "Dark",
+        "zh": "暗"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 6,
+      "maleProbability": 50,
+      "combiRank": 2920,
+      "combiDuplicatePriority": 292000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "025",
+      "codename": "LavaGirl",
+      "nameEn": "Flambelle",
+      "nameZh": "融焰娘",
+      "slug": "flambelle",
+      "image": "art-references/palworld-fullbody/site-images/flambelle.png",
+      "hp": 60,
+      "shotAttack": 70,
+      "defense": 80,
+      "runSpeed": 250,
+      "element1": {
+        "id": 2,
+        "name": "Fire",
+        "zh": "火"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 1,
+      "maleProbability": 50,
+      "combiRank": 2700,
+      "combiDuplicatePriority": 270000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "026",
+      "codename": "FlameBambi",
+      "nameEn": "Rooby",
+      "nameZh": "燎火鹿",
+      "slug": "rooby",
+      "image": "art-references/palworld-fullbody/site-images/rooby.png",
+      "hp": 75,
+      "shotAttack": 70,
+      "defense": 75,
+      "runSpeed": 400,
+      "element1": {
+        "id": 2,
+        "name": "Fire",
+        "zh": "火"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 2,
+      "maleProbability": 50,
+      "combiRank": 2870,
+      "combiDuplicatePriority": 287000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "027",
+      "codename": "Bastet",
+      "nameEn": "Mau",
+      "nameZh": "喵丝特",
+      "slug": "mau",
+      "image": "art-references/palworld-fullbody/site-images/mau.png",
+      "hp": 70,
+      "shotAttack": 60,
+      "defense": 70,
+      "runSpeed": 475,
+      "element1": {
+        "id": 8,
+        "name": "Dark",
+        "zh": "暗"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 1,
+      "maleProbability": 50,
+      "combiRank": 3040,
+      "combiDuplicatePriority": 304000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "027B",
+      "codename": "Bastet_Ice",
+      "nameEn": "Mau Cryst",
+      "nameZh": "冰丝特",
+      "slug": "mau-cryst",
+      "image": "art-references/palworld-fullbody/site-images/mau-cryst.png",
+      "hp": 70,
+      "shotAttack": 65,
+      "defense": 70,
+      "runSpeed": 475,
+      "element1": {
+        "id": 6,
+        "name": "Ice",
+        "zh": "冰"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 2,
+      "maleProbability": 50,
+      "combiRank": 2750,
+      "combiDuplicatePriority": 275000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "028",
+      "codename": "Boar",
+      "nameEn": "Rushoar",
+      "nameZh": "草莽猪",
+      "slug": "rushoar",
+      "image": "art-references/palworld-fullbody/site-images/rushoar.png",
+      "hp": 80,
+      "shotAttack": 70,
+      "defense": 70,
+      "runSpeed": 500,
+      "element1": {
+        "id": 7,
+        "name": "Earth",
+        "zh": "地"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 1,
+      "maleProbability": 50,
+      "combiRank": 2880,
+      "combiDuplicatePriority": 288000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "029",
+      "codename": "Kitsunebi",
+      "nameEn": "Foxparks",
+      "nameZh": "火绒狐",
+      "slug": "foxparks",
+      "image": "art-references/palworld-fullbody/site-images/foxparks.png",
+      "hp": 65,
+      "shotAttack": 75,
+      "defense": 70,
+      "runSpeed": 400,
+      "element1": {
+        "id": 2,
+        "name": "Fire",
+        "zh": "火"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 1,
+      "maleProbability": 50,
+      "combiRank": 2990,
+      "combiDuplicatePriority": 299000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "030",
+      "codename": "NegativeOctopus",
+      "nameEn": "Killamari",
+      "nameZh": "勾魂鱿",
+      "slug": "killamari",
+      "image": "art-references/palworld-fullbody/site-images/killamari.png",
+      "hp": 60,
+      "shotAttack": 60,
+      "defense": 70,
+      "runSpeed": 400,
+      "element1": {
+        "id": 8,
+        "name": "Dark",
+        "zh": "暗"
+      },
+      "element2": {
+        "id": 3,
+        "name": "Water",
+        "zh": "水"
+      },
+      "rarity": 1,
+      "maleProbability": 50,
+      "combiRank": 2770,
+      "combiDuplicatePriority": 277000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "031",
+      "codename": "CuteMole",
+      "nameEn": "Fuddler",
+      "nameZh": "遁地鼠",
+      "slug": "fuddler",
+      "image": "art-references/palworld-fullbody/site-images/fuddler.png",
+      "hp": 65,
+      "shotAttack": 80,
+      "defense": 50,
+      "runSpeed": 300,
+      "element1": {
+        "id": 7,
+        "name": "Earth",
+        "zh": "地"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 1,
+      "maleProbability": 50,
+      "combiRank": 2790,
+      "combiDuplicatePriority": 279000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "032",
+      "codename": "Deer",
+      "nameEn": "Eikthyrdeer",
+      "nameZh": "紫霞鹿",
+      "slug": "eikthyrdeer",
+      "image": "art-references/palworld-fullbody/site-images/eikthyrdeer.png",
+      "hp": 95,
+      "shotAttack": 80,
+      "defense": 80,
+      "runSpeed": 700,
+      "element1": {
+        "id": 1,
+        "name": "Normal",
+        "zh": "一般"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 5,
+      "maleProbability": 50,
+      "combiRank": 2710,
+      "combiDuplicatePriority": 271000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "032B",
+      "codename": "Deer_Ground",
+      "nameEn": "Eikthyrdeer Terra",
+      "nameZh": "祇岳鹿",
+      "slug": "eikthyrdeer-terra",
+      "image": "art-references/palworld-fullbody/site-images/eikthyrdeer-terra.png",
+      "hp": 95,
+      "shotAttack": 80,
+      "defense": 80,
+      "runSpeed": 700,
+      "element1": {
+        "id": 7,
+        "name": "Earth",
+        "zh": "地"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 6,
+      "maleProbability": 50,
+      "combiRank": 2580,
+      "combiDuplicatePriority": 258000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "033",
+      "codename": "Garm",
+      "nameEn": "Direhowl",
+      "nameZh": "猎狼",
+      "slug": "direhowl",
+      "image": "art-references/palworld-fullbody/site-images/direhowl.png",
+      "hp": 80,
+      "shotAttack": 90,
+      "defense": 75,
+      "runSpeed": 800,
+      "element1": {
+        "id": 1,
+        "name": "Normal",
+        "zh": "一般"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 2,
+      "maleProbability": 50,
+      "combiRank": 2680,
+      "combiDuplicatePriority": 268000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "034",
+      "codename": "BerryGoat",
+      "nameEn": "Caprity",
+      "nameZh": "灌木羊",
+      "slug": "caprity",
+      "image": "art-references/palworld-fullbody/site-images/caprity.png",
+      "hp": 100,
+      "shotAttack": 70,
+      "defense": 90,
+      "runSpeed": 400,
+      "element1": {
+        "id": 4,
+        "name": "Leaf",
+        "zh": "木"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 3,
+      "maleProbability": 50,
+      "combiRank": 2610,
+      "combiDuplicatePriority": 261000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "035",
+      "codename": "MopBaby",
+      "nameEn": "Swee",
+      "nameZh": "毛掸儿",
+      "slug": "swee",
+      "image": "art-references/palworld-fullbody/site-images/swee.png",
+      "hp": 60,
+      "shotAttack": 60,
+      "defense": 60,
+      "runSpeed": 250,
+      "element1": {
+        "id": 6,
+        "name": "Ice",
+        "zh": "冰"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 1,
+      "maleProbability": 50,
+      "combiRank": 2840,
+      "combiDuplicatePriority": 284000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "036",
+      "codename": "MopKing",
+      "nameEn": "Sweepa",
+      "nameZh": "毛老爹",
+      "slug": "sweepa",
+      "image": "art-references/palworld-fullbody/site-images/sweepa.png",
+      "hp": 100,
+      "shotAttack": 90,
+      "defense": 90,
+      "runSpeed": 650,
+      "element1": {
+        "id": 6,
+        "name": "Ice",
+        "zh": "冰"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 6,
+      "maleProbability": 50,
+      "combiRank": 2150,
+      "combiDuplicatePriority": 215000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "038",
+      "codename": "WindChimes",
+      "nameEn": "Hangyu",
+      "nameZh": "吊缚灵",
+      "slug": "hangyu",
+      "image": "art-references/palworld-fullbody/site-images/hangyu.png",
+      "hp": 80,
+      "shotAttack": 70,
+      "defense": 70,
+      "runSpeed": 400,
+      "element1": {
+        "id": 7,
+        "name": "Earth",
+        "zh": "地"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 1,
+      "maleProbability": 50,
+      "combiRank": 2780,
+      "combiDuplicatePriority": 278000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "038B",
+      "codename": "WindChimes_Ice",
+      "nameEn": "Hangyu Cryst",
+      "nameZh": "冰缚灵",
+      "slug": "hangyu-cryst",
+      "image": "art-references/palworld-fullbody/site-images/hangyu-cryst.png",
+      "hp": 80,
+      "shotAttack": 80,
+      "defense": 70,
+      "runSpeed": 400,
+      "element1": {
+        "id": 6,
+        "name": "Ice",
+        "zh": "冰"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 2,
+      "maleProbability": 50,
+      "combiRank": 2510,
+      "combiDuplicatePriority": 251000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "039",
+      "codename": "SweetsSheep",
+      "nameEn": "Woolipop",
+      "nameZh": "棉花糖",
+      "slug": "woolipop",
+      "image": "art-references/palworld-fullbody/site-images/woolipop.png",
+      "hp": 70,
+      "shotAttack": 70,
+      "defense": 90,
+      "runSpeed": 300,
+      "element1": {
+        "id": 1,
+        "name": "Normal",
+        "zh": "一般"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 3,
+      "maleProbability": 50,
+      "combiRank": 2820,
+      "combiDuplicatePriority": 282000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "040",
+      "codename": "CowPal",
+      "nameEn": "Mozzarina",
+      "nameZh": "波霸牛",
+      "slug": "mozzarina",
+      "image": "art-references/palworld-fullbody/site-images/mozzarina.png",
+      "hp": 90,
+      "shotAttack": 50,
+      "defense": 80,
+      "runSpeed": 580,
+      "element1": {
+        "id": 1,
+        "name": "Normal",
+        "zh": "一般"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 2,
+      "maleProbability": 20,
+      "combiRank": 2800,
+      "combiDuplicatePriority": 280000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "041",
+      "codename": "BlueDragon",
+      "nameEn": "Azurobe",
+      "nameZh": "碧海龙",
+      "slug": "azurobe",
+      "image": "art-references/palworld-fullbody/site-images/azurobe.png",
+      "hp": 110,
+      "shotAttack": 100,
+      "defense": 100,
+      "runSpeed": 600,
+      "element1": {
+        "id": 3,
+        "name": "Water",
+        "zh": "水"
+      },
+      "element2": {
+        "id": 9,
+        "name": "Dragon",
+        "zh": "龙"
+      },
+      "rarity": 7,
+      "maleProbability": 50,
+      "combiRank": 1830,
+      "combiDuplicatePriority": 183000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "042",
+      "codename": "ElecCat",
+      "nameEn": "Sparkit",
+      "nameZh": "伏特喵",
+      "slug": "sparkit",
+      "image": "art-references/palworld-fullbody/site-images/sparkit.png",
+      "hp": 60,
+      "shotAttack": 75,
+      "defense": 70,
+      "runSpeed": 350,
+      "element1": {
+        "id": 5,
+        "name": "Electricity",
+        "zh": "电"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 1,
+      "maleProbability": 50,
+      "combiRank": 3010,
+      "combiDuplicatePriority": 301000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "043",
+      "codename": "Kelpie",
+      "nameEn": "Kelpsea",
+      "nameZh": "水灵儿",
+      "slug": "kelpsea",
+      "image": "art-references/palworld-fullbody/site-images/kelpsea.png",
+      "hp": 70,
+      "shotAttack": 70,
+      "defense": 70,
+      "runSpeed": 700,
+      "element1": {
+        "id": 3,
+        "name": "Water",
+        "zh": "水"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 1,
+      "maleProbability": 50,
+      "combiRank": 2810,
+      "combiDuplicatePriority": 281000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "043B",
+      "codename": "Kelpie_Fire",
+      "nameEn": "Kelpsea Ignis",
+      "nameZh": "火灵儿",
+      "slug": "kelpsea-ignis",
+      "image": "art-references/palworld-fullbody/site-images/kelpsea-ignis.png",
+      "hp": 70,
+      "shotAttack": 70,
+      "defense": 70,
+      "runSpeed": 700,
+      "element1": {
+        "id": 2,
+        "name": "Fire",
+        "zh": "火"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 2,
+      "maleProbability": 50,
+      "combiRank": 2470,
+      "combiDuplicatePriority": 247000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "049",
+      "codename": "Eagle",
+      "nameEn": "Galeclaw",
+      "nameZh": "天擒鸟",
+      "slug": "galeclaw",
+      "image": "art-references/palworld-fullbody/site-images/galeclaw.png",
+      "hp": 75,
+      "shotAttack": 85,
+      "defense": 60,
+      "runSpeed": 600,
+      "element1": {
+        "id": 1,
+        "name": "Normal",
+        "zh": "一般"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 2,
+      "maleProbability": 50,
+      "combiRank": 2570,
+      "combiDuplicatePriority": 257000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "051",
+      "codename": "HawkBird",
+      "nameEn": "Nitewing",
+      "nameZh": "疾风隼",
+      "slug": "nitewing",
+      "image": "art-references/palworld-fullbody/site-images/nitewing.png",
+      "hp": 100,
+      "shotAttack": 95,
+      "defense": 80,
+      "runSpeed": 600,
+      "element1": {
+        "id": 1,
+        "name": "Normal",
+        "zh": "一般"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 3,
+      "maleProbability": 50,
+      "combiRank": 2560,
+      "combiDuplicatePriority": 256000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "052",
+      "codename": "CatBat",
+      "nameEn": "Tombat",
+      "nameZh": "猫蝠怪",
+      "slug": "tombat",
+      "image": "art-references/palworld-fullbody/site-images/tombat.png",
+      "hp": 95,
+      "shotAttack": 95,
+      "defense": 80,
+      "runSpeed": 400,
+      "element1": {
+        "id": 8,
+        "name": "Dark",
+        "zh": "暗"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 5,
+      "maleProbability": 50,
+      "combiRank": 2340,
+      "combiDuplicatePriority": 234000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "053",
+      "codename": "ColorfulBird",
+      "nameEn": "Tocotoco",
+      "nameZh": "炸蛋鸟",
+      "slug": "tocotoco",
+      "image": "art-references/palworld-fullbody/site-images/tocotoco.png",
+      "hp": 60,
+      "shotAttack": 75,
+      "defense": 70,
+      "runSpeed": 300,
+      "element1": {
+        "id": 1,
+        "name": "Normal",
+        "zh": "一般"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 1,
+      "maleProbability": 50,
+      "combiRank": 2730,
+      "combiDuplicatePriority": 273000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "054",
+      "codename": "Kirin",
+      "nameEn": "Univolt",
+      "nameZh": "雷角马",
+      "slug": "univolt",
+      "image": "art-references/palworld-fullbody/site-images/univolt.png",
+      "hp": 80,
+      "shotAttack": 105,
+      "defense": 105,
+      "runSpeed": 720,
+      "element1": {
+        "id": 5,
+        "name": "Electricity",
+        "zh": "电"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 5,
+      "maleProbability": 50,
+      "combiRank": 2270,
+      "combiDuplicatePriority": 227000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "055",
+      "codename": "SharkKid",
+      "nameEn": "Gobfin",
+      "nameZh": "鲨小子",
+      "slug": "gobfin",
+      "image": "art-references/palworld-fullbody/site-images/gobfin.png",
+      "hp": 90,
+      "shotAttack": 90,
+      "defense": 75,
+      "runSpeed": 400,
+      "element1": {
+        "id": 3,
+        "name": "Water",
+        "zh": "水"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 2,
+      "maleProbability": 50,
+      "combiRank": 2550,
+      "combiDuplicatePriority": 255000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "055B",
+      "codename": "SharkKid_Fire",
+      "nameEn": "Gobfin Ignis",
+      "nameZh": "红小鲨",
+      "slug": "gobfin-ignis",
+      "image": "art-references/palworld-fullbody/site-images/gobfin-ignis.png",
+      "hp": 90,
+      "shotAttack": 90,
+      "defense": 75,
+      "runSpeed": 400,
+      "element1": {
+        "id": 2,
+        "name": "Fire",
+        "zh": "火"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 3,
+      "maleProbability": 50,
+      "combiRank": 2430,
+      "combiDuplicatePriority": 243000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "056",
+      "codename": "Werewolf",
+      "nameEn": "Loupmoon",
+      "nameZh": "月镰魔",
+      "slug": "loupmoon",
+      "image": "art-references/palworld-fullbody/site-images/loupmoon.png",
+      "hp": 80,
+      "shotAttack": 100,
+      "defense": 80,
+      "runSpeed": 600,
+      "element1": {
+        "id": 8,
+        "name": "Dark",
+        "zh": "暗"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 3,
+      "maleProbability": 50,
+      "combiRank": 2110,
+      "combiDuplicatePriority": 211000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "057",
+      "codename": "DarkCrow",
+      "nameEn": "Cawgnito",
+      "nameZh": "黑鸦隐士",
+      "slug": "cawgnito",
+      "image": "art-references/palworld-fullbody/site-images/cawgnito.png",
+      "hp": 75,
+      "shotAttack": 95,
+      "defense": 80,
+      "runSpeed": 920,
+      "element1": {
+        "id": 8,
+        "name": "Dark",
+        "zh": "暗"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 3,
+      "maleProbability": 50,
+      "combiRank": 2370,
+      "combiDuplicatePriority": 237000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "058",
+      "codename": "FlameBuffalo",
+      "nameEn": "Arsox",
+      "nameZh": "炽焰牛",
+      "slug": "arsox",
+      "image": "art-references/palworld-fullbody/site-images/arsox.png",
+      "hp": 85,
+      "shotAttack": 95,
+      "defense": 95,
+      "runSpeed": 700,
+      "element1": {
+        "id": 2,
+        "name": "Fire",
+        "zh": "火"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 4,
+      "maleProbability": 50,
+      "combiRank": 2320,
+      "combiDuplicatePriority": 232000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "060",
+      "codename": "LittleBriarRose",
+      "nameEn": "Bristla",
+      "nameZh": "荊棘魔仙",
+      "slug": "bristla",
+      "image": "art-references/palworld-fullbody/site-images/bristla.png",
+      "hp": 80,
+      "shotAttack": 80,
+      "defense": 80,
+      "runSpeed": 400,
+      "element1": {
+        "id": 4,
+        "name": "Leaf",
+        "zh": "木"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 1,
+      "maleProbability": 50,
+      "combiRank": 2690,
+      "combiDuplicatePriority": 269000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "061",
+      "codename": "CuteButterfly",
+      "nameEn": "Cinnamoth",
+      "nameZh": "幻悦蝶",
+      "slug": "cinnamoth",
+      "image": "art-references/palworld-fullbody/site-images/cinnamoth.png",
+      "hp": 70,
+      "shotAttack": 80,
+      "defense": 80,
+      "runSpeed": 550,
+      "element1": {
+        "id": 4,
+        "name": "Leaf",
+        "zh": "木"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 4,
+      "maleProbability": 50,
+      "combiRank": 2620,
+      "combiDuplicatePriority": 262000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "063",
+      "codename": "FairyDragon",
+      "nameEn": "Elphidran",
+      "nameZh": "精灵龙",
+      "slug": "elphidran",
+      "image": "art-references/palworld-fullbody/site-images/elphidran.png",
+      "hp": 110,
+      "shotAttack": 80,
+      "defense": 90,
+      "runSpeed": 630,
+      "element1": {
+        "id": 9,
+        "name": "Dragon",
+        "zh": "龙"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 7,
+      "maleProbability": 50,
+      "combiRank": 2280,
+      "combiDuplicatePriority": 228000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "063B",
+      "codename": "FairyDragon_Water",
+      "nameEn": "Elphidran Aqua",
+      "nameZh": "水灵龙",
+      "slug": "elphidran-aqua",
+      "image": "art-references/palworld-fullbody/site-images/elphidran-aqua.png",
+      "hp": 115,
+      "shotAttack": 80,
+      "defense": 95,
+      "runSpeed": 630,
+      "element1": {
+        "id": 9,
+        "name": "Dragon",
+        "zh": "龙"
+      },
+      "element2": {
+        "id": 3,
+        "name": "Water",
+        "zh": "水"
+      },
+      "rarity": 8,
+      "maleProbability": 50,
+      "combiRank": 1640,
+      "combiDuplicatePriority": 164000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "064",
+      "codename": "BirdDragon",
+      "nameEn": "Vanwyrm",
+      "nameZh": "烽歌龙",
+      "slug": "vanwyrm",
+      "image": "art-references/palworld-fullbody/site-images/vanwyrm.png",
+      "hp": 90,
+      "shotAttack": 115,
+      "defense": 90,
+      "runSpeed": 700,
+      "element1": {
+        "id": 2,
+        "name": "Fire",
+        "zh": "火"
+      },
+      "element2": {
+        "id": 8,
+        "name": "Dark",
+        "zh": "暗"
+      },
+      "rarity": 5,
+      "maleProbability": 50,
+      "combiRank": 1650,
+      "combiDuplicatePriority": 165000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "064B",
+      "codename": "BirdDragon_Ice",
+      "nameEn": "Vanwyrm Cryst",
+      "nameZh": "霜歌龙",
+      "slug": "vanwyrm-cryst",
+      "image": "art-references/palworld-fullbody/site-images/vanwyrm-cryst.png",
+      "hp": 90,
+      "shotAttack": 120,
+      "defense": 95,
+      "runSpeed": 700,
+      "element1": {
+        "id": 6,
+        "name": "Ice",
+        "zh": "冰"
+      },
+      "element2": {
+        "id": 8,
+        "name": "Dark",
+        "zh": "暗"
+      },
+      "rarity": 5,
+      "maleProbability": 50,
+      "combiRank": 1430,
+      "combiDuplicatePriority": 143000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "065",
+      "codename": "CatVampire",
+      "nameEn": "Felbat",
+      "nameZh": "夜幕魔蝠",
+      "slug": "felbat",
+      "image": "art-references/palworld-fullbody/site-images/felbat.png",
+      "hp": 100,
+      "shotAttack": 105,
+      "defense": 110,
+      "runSpeed": 550,
+      "element1": {
+        "id": 8,
+        "name": "Dark",
+        "zh": "暗"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 6,
+      "maleProbability": 50,
+      "combiRank": 1570,
+      "combiDuplicatePriority": 157000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "066",
+      "codename": "VioletFairy",
+      "nameEn": "Vaelet",
+      "nameZh": "薇莉塔",
+      "slug": "vaelet",
+      "image": "art-references/palworld-fullbody/site-images/vaelet.png",
+      "hp": 100,
+      "shotAttack": 100,
+      "defense": 120,
+      "runSpeed": 400,
+      "element1": {
+        "id": 4,
+        "name": "Leaf",
+        "zh": "木"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 8,
+      "maleProbability": 50,
+      "combiRank": 1480,
+      "combiDuplicatePriority": 148000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "067",
+      "codename": "SoldierBee",
+      "nameEn": "Beegarde",
+      "nameZh": "骑士蜂",
+      "slug": "beegarde",
+      "image": "art-references/palworld-fullbody/site-images/beegarde.png",
+      "hp": 80,
+      "shotAttack": 90,
+      "defense": 90,
+      "runSpeed": 450,
+      "element1": {
+        "id": 4,
+        "name": "Leaf",
+        "zh": "木"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 4,
+      "maleProbability": 10,
+      "combiRank": 2350,
+      "combiDuplicatePriority": 235000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "068",
+      "codename": "QueenBee",
+      "nameEn": "Elizabee",
+      "nameZh": "女皇蜂",
+      "slug": "elizabee",
+      "image": "art-references/palworld-fullbody/site-images/elizabee.png",
+      "hp": 90,
+      "shotAttack": 105,
+      "defense": 100,
+      "runSpeed": 450,
+      "element1": {
+        "id": 4,
+        "name": "Leaf",
+        "zh": "木"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 8,
+      "maleProbability": 10,
+      "combiRank": 1790,
+      "combiDuplicatePriority": 179000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "069",
+      "codename": "PinkLizard",
+      "nameEn": "Lovander",
+      "nameZh": "博爱蜥",
+      "slug": "lovander",
+      "image": "art-references/palworld-fullbody/site-images/lovander.png",
+      "hp": 120,
+      "shotAttack": 70,
+      "defense": 70,
+      "runSpeed": 750,
+      "element1": {
+        "id": 8,
+        "name": "Dark",
+        "zh": "暗"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 5,
+      "maleProbability": 30,
+      "combiRank": 2090,
+      "combiDuplicatePriority": 209000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "070",
+      "codename": "NaughtyCat",
+      "nameEn": "Grintale",
+      "nameZh": "笑魇猫",
+      "slug": "grintale",
+      "image": "art-references/palworld-fullbody/site-images/grintale.png",
+      "hp": 110,
+      "shotAttack": 80,
+      "defense": 80,
+      "runSpeed": 650,
+      "element1": {
+        "id": 1,
+        "name": "Normal",
+        "zh": "一般"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 6,
+      "maleProbability": 50,
+      "combiRank": 2120,
+      "combiDuplicatePriority": 212000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "073",
+      "codename": "LizardMan",
+      "nameEn": "Leezpunk",
+      "nameZh": "朋克蜥",
+      "slug": "leezpunk",
+      "image": "art-references/palworld-fullbody/site-images/leezpunk.png",
+      "hp": 80,
+      "shotAttack": 80,
+      "defense": 50,
+      "runSpeed": 600,
+      "element1": {
+        "id": 8,
+        "name": "Dark",
+        "zh": "暗"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 2,
+      "maleProbability": 50,
+      "combiRank": 2670,
+      "combiDuplicatePriority": 267000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "073B",
+      "codename": "LizardMan_Fire",
+      "nameEn": "Leezpunk Ignis",
+      "nameZh": "热血蜥",
+      "slug": "leezpunk-ignis",
+      "image": "art-references/palworld-fullbody/site-images/leezpunk-ignis.png",
+      "hp": 80,
+      "shotAttack": 80,
+      "defense": 50,
+      "runSpeed": 400,
+      "element1": {
+        "id": 2,
+        "name": "Fire",
+        "zh": "火"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 3,
+      "maleProbability": 50,
+      "combiRank": 2640,
+      "combiDuplicatePriority": 264000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "074",
+      "codename": "Gorilla",
+      "nameEn": "Gorirat",
+      "nameZh": "铁拳猿",
+      "slug": "gorirat",
+      "image": "art-references/palworld-fullbody/site-images/gorirat.png",
+      "hp": 90,
+      "shotAttack": 95,
+      "defense": 90,
+      "runSpeed": 550,
+      "element1": {
+        "id": 1,
+        "name": "Normal",
+        "zh": "一般"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 5,
+      "maleProbability": 50,
+      "combiRank": 2140,
+      "combiDuplicatePriority": 214000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "075",
+      "codename": "Serpent",
+      "nameEn": "Surfent",
+      "nameZh": "滑水蛇",
+      "slug": "surfent",
+      "image": "art-references/palworld-fullbody/site-images/surfent.png",
+      "hp": 90,
+      "shotAttack": 90,
+      "defense": 80,
+      "runSpeed": 500,
+      "element1": {
+        "id": 3,
+        "name": "Water",
+        "zh": "水"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 4,
+      "maleProbability": 50,
+      "combiRank": 2440,
+      "combiDuplicatePriority": 244000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "075B",
+      "codename": "Serpent_Ground",
+      "nameEn": "Surfent Terra",
+      "nameZh": "流沙蛇",
+      "slug": "surfent-terra",
+      "image": "art-references/palworld-fullbody/site-images/surfent-terra.png",
+      "hp": 90,
+      "shotAttack": 90,
+      "defense": 100,
+      "runSpeed": 500,
+      "element1": {
+        "id": 7,
+        "name": "Earth",
+        "zh": "地"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 5,
+      "maleProbability": 50,
+      "combiRank": 1840,
+      "combiDuplicatePriority": 184000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "076",
+      "codename": "RobinHood",
+      "nameEn": "Robinquill",
+      "nameZh": "羽箭射手",
+      "slug": "robinquill",
+      "image": "art-references/palworld-fullbody/site-images/robinquill.png",
+      "hp": 90,
+      "shotAttack": 105,
+      "defense": 80,
+      "runSpeed": 600,
+      "element1": {
+        "id": 4,
+        "name": "Leaf",
+        "zh": "木"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 5,
+      "maleProbability": 50,
+      "combiRank": 2260,
+      "combiDuplicatePriority": 226000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "076B",
+      "codename": "RobinHood_Ground",
+      "nameEn": "Robinquill Terra",
+      "nameZh": "山岳射手",
+      "slug": "robinquill-terra",
+      "image": "art-references/palworld-fullbody/site-images/robinquill-terra.png",
+      "hp": 90,
+      "shotAttack": 105,
+      "defense": 80,
+      "runSpeed": 600,
+      "element1": {
+        "id": 4,
+        "name": "Leaf",
+        "zh": "木"
+      },
+      "element2": {
+        "id": 7,
+        "name": "Earth",
+        "zh": "地"
+      },
+      "rarity": 6,
+      "maleProbability": 50,
+      "combiRank": 2050,
+      "combiDuplicatePriority": 205000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "077",
+      "codename": "FlowerRabbit",
+      "nameEn": "Flopie",
+      "nameZh": "波娜兔",
+      "slug": "flopie",
+      "image": "art-references/palworld-fullbody/site-images/flopie.png",
+      "hp": 75,
+      "shotAttack": 65,
+      "defense": 70,
+      "runSpeed": 400,
+      "element1": {
+        "id": 4,
+        "name": "Leaf",
+        "zh": "木"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 1,
+      "maleProbability": 50,
+      "combiRank": 2660,
+      "combiDuplicatePriority": 266000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "078",
+      "codename": "FoxMage",
+      "nameEn": "Wixen",
+      "nameZh": "焰巫狐",
+      "slug": "wixen",
+      "image": "art-references/palworld-fullbody/site-images/wixen.png",
+      "hp": 90,
+      "shotAttack": 110,
+      "defense": 80,
+      "runSpeed": 440,
+      "element1": {
+        "id": 2,
+        "name": "Fire",
+        "zh": "火"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 6,
+      "maleProbability": 50,
+      "combiRank": 2080,
+      "combiDuplicatePriority": 208000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "079",
+      "codename": "CatMage",
+      "nameEn": "Katress",
+      "nameZh": "暗巫猫",
+      "slug": "katress",
+      "image": "art-references/palworld-fullbody/site-images/katress.png",
+      "hp": 90,
+      "shotAttack": 105,
+      "defense": 90,
+      "runSpeed": 440,
+      "element1": {
+        "id": 8,
+        "name": "Dark",
+        "zh": "暗"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 6,
+      "maleProbability": 50,
+      "combiRank": 2040,
+      "combiDuplicatePriority": 204000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "080",
+      "codename": "HadesBird",
+      "nameEn": "Helzephyr",
+      "nameZh": "雷冥鸟",
+      "slug": "helzephyr",
+      "image": "art-references/palworld-fullbody/site-images/helzephyr.png",
+      "hp": 100,
+      "shotAttack": 125,
+      "defense": 100,
+      "runSpeed": 700,
+      "element1": {
+        "id": 8,
+        "name": "Dark",
+        "zh": "暗"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 7,
+      "maleProbability": 50,
+      "combiRank": 1130,
+      "combiDuplicatePriority": 113000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "082",
+      "codename": "Mutant",
+      "nameEn": "Lunaris",
+      "nameZh": "秘斯媞雅",
+      "slug": "lunaris",
+      "image": "art-references/palworld-fullbody/site-images/lunaris.png",
+      "hp": 90,
+      "shotAttack": 100,
+      "defense": 90,
+      "runSpeed": 500,
+      "element1": {
+        "id": 1,
+        "name": "Normal",
+        "zh": "一般"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 6,
+      "maleProbability": 50,
+      "combiRank": 2010,
+      "combiDuplicatePriority": 201000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "083",
+      "codename": "FengyunDeeper",
+      "nameEn": "Fenglope",
+      "nameZh": "云海鹿",
+      "slug": "fenglope",
+      "image": "art-references/palworld-fullbody/site-images/fenglope.png",
+      "hp": 110,
+      "shotAttack": 110,
+      "defense": 90,
+      "runSpeed": 750,
+      "element1": {
+        "id": 1,
+        "name": "Normal",
+        "zh": "一般"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 3,
+      "maleProbability": 50,
+      "combiRank": 1960,
+      "combiDuplicatePriority": 196000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "084",
+      "codename": "FlowerDinosaur",
+      "nameEn": "Dinossom",
+      "nameZh": "花冠龙",
+      "slug": "dinossom",
+      "image": "art-references/palworld-fullbody/site-images/dinossom.png",
+      "hp": 110,
+      "shotAttack": 85,
+      "defense": 90,
+      "runSpeed": 700,
+      "element1": {
+        "id": 4,
+        "name": "Leaf",
+        "zh": "木"
+      },
+      "element2": {
+        "id": 9,
+        "name": "Dragon",
+        "zh": "龙"
+      },
+      "rarity": 6,
+      "maleProbability": 50,
+      "combiRank": 2100,
+      "combiDuplicatePriority": 210000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "084B",
+      "codename": "FlowerDinosaur_Electric",
+      "nameEn": "Dinossom Lux",
+      "nameZh": "雷冠龙",
+      "slug": "dinossom-lux",
+      "image": "art-references/palworld-fullbody/site-images/dinossom-lux.png",
+      "hp": 110,
+      "shotAttack": 90,
+      "defense": 90,
+      "runSpeed": 700,
+      "element1": {
+        "id": 5,
+        "name": "Electricity",
+        "zh": "电"
+      },
+      "element2": {
+        "id": 9,
+        "name": "Dragon",
+        "zh": "龙"
+      },
+      "rarity": 7,
+      "maleProbability": 50,
+      "combiRank": 1890,
+      "combiDuplicatePriority": 189000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "085",
+      "codename": "Ronin",
+      "nameEn": "Bushi",
+      "nameZh": "浪刃武士",
+      "slug": "bushi",
+      "image": "art-references/palworld-fullbody/site-images/bushi.png",
+      "hp": 80,
+      "shotAttack": 125,
+      "defense": 80,
+      "runSpeed": 600,
+      "element1": {
+        "id": 2,
+        "name": "Fire",
+        "zh": "火"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 7,
+      "maleProbability": 50,
+      "combiRank": 1560,
+      "combiDuplicatePriority": 156000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "087",
+      "codename": "GrassMammoth",
+      "nameEn": "Mammorest",
+      "nameZh": "森猛犸",
+      "slug": "mammorest",
+      "image": "art-references/palworld-fullbody/site-images/mammorest.png",
+      "hp": 150,
+      "shotAttack": 85,
+      "defense": 90,
+      "runSpeed": 600,
+      "element1": {
+        "id": 4,
+        "name": "Leaf",
+        "zh": "木"
+      },
+      "element2": {
+        "id": 7,
+        "name": "Earth",
+        "zh": "地"
+      },
+      "rarity": 8,
+      "maleProbability": 50,
+      "combiRank": 1340,
+      "combiDuplicatePriority": 134000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "087B",
+      "codename": "GrassMammoth_Ice",
+      "nameEn": "Mammorest Cryst",
+      "nameZh": "雪猛犸",
+      "slug": "mammorest-cryst",
+      "image": "art-references/palworld-fullbody/site-images/mammorest-cryst.png",
+      "hp": 150,
+      "shotAttack": 85,
+      "defense": 90,
+      "runSpeed": 600,
+      "element1": {
+        "id": 6,
+        "name": "Ice",
+        "zh": "冰"
+      },
+      "element2": {
+        "id": 7,
+        "name": "Earth",
+        "zh": "地"
+      },
+      "rarity": 9,
+      "maleProbability": 50,
+      "combiRank": 1070,
+      "combiDuplicatePriority": 107000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "089",
+      "codename": "FlowerDoll",
+      "nameEn": "Petallia",
+      "nameZh": "花丽娜",
+      "slug": "petallia",
+      "image": "art-references/palworld-fullbody/site-images/petallia.png",
+      "hp": 100,
+      "shotAttack": 95,
+      "defense": 100,
+      "runSpeed": 550,
+      "element1": {
+        "id": 4,
+        "name": "Leaf",
+        "zh": "木"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 8,
+      "maleProbability": 50,
+      "combiRank": 1720,
+      "combiDuplicatePriority": 172000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "091",
+      "codename": "Baphomet",
+      "nameEn": "Incineram",
+      "nameZh": "炎魔羊",
+      "slug": "incineram",
+      "image": "art-references/palworld-fullbody/site-images/incineram.png",
+      "hp": 95,
+      "shotAttack": 100,
+      "defense": 85,
+      "runSpeed": 700,
+      "element1": {
+        "id": 2,
+        "name": "Fire",
+        "zh": "火"
+      },
+      "element2": {
+        "id": 8,
+        "name": "Dark",
+        "zh": "暗"
+      },
+      "rarity": 4,
+      "maleProbability": 50,
+      "combiRank": 1470,
+      "combiDuplicatePriority": 147000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "091B",
+      "codename": "Baphomet_Dark",
+      "nameEn": "Incineram Noct",
+      "nameZh": "暗魔羊",
+      "slug": "incineram-noct",
+      "image": "art-references/palworld-fullbody/site-images/incineram-noct.png",
+      "hp": 95,
+      "shotAttack": 105,
+      "defense": 85,
+      "runSpeed": 700,
+      "element1": {
+        "id": 8,
+        "name": "Dark",
+        "zh": "暗"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 5,
+      "maleProbability": 50,
+      "combiRank": 1310,
+      "combiDuplicatePriority": 131000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "092",
+      "codename": "RaijinDaughter",
+      "nameEn": "Dazzi",
+      "nameZh": "雷鸣童子",
+      "slug": "dazzi",
+      "image": "art-references/palworld-fullbody/site-images/dazzi.png",
+      "hp": 70,
+      "shotAttack": 80,
+      "defense": 70,
+      "runSpeed": 400,
+      "element1": {
+        "id": 5,
+        "name": "Electricity",
+        "zh": "电"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 2,
+      "maleProbability": 20,
+      "combiRank": 2400,
+      "combiDuplicatePriority": 240000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "093",
+      "codename": "FireKirin",
+      "nameEn": "Pyrin",
+      "nameZh": "火麒麟",
+      "slug": "pyrin",
+      "image": "art-references/palworld-fullbody/site-images/pyrin.png",
+      "hp": 100,
+      "shotAttack": 95,
+      "defense": 90,
+      "runSpeed": 850,
+      "element1": {
+        "id": 2,
+        "name": "Fire",
+        "zh": "火"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 6,
+      "maleProbability": 50,
+      "combiRank": 1980,
+      "combiDuplicatePriority": 198000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "093B",
+      "codename": "FireKirin_Dark",
+      "nameEn": "Pyrin Noct",
+      "nameZh": "邪麒麟",
+      "slug": "pyrin-noct",
+      "image": "art-references/palworld-fullbody/site-images/pyrin-noct.png",
+      "hp": 100,
+      "shotAttack": 95,
+      "defense": 90,
+      "runSpeed": 850,
+      "element1": {
+        "id": 2,
+        "name": "Fire",
+        "zh": "火"
+      },
+      "element2": {
+        "id": 8,
+        "name": "Dark",
+        "zh": "暗"
+      },
+      "rarity": 7,
+      "maleProbability": 50,
+      "combiRank": 1870,
+      "combiDuplicatePriority": 187000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "094",
+      "codename": "LazyDragon",
+      "nameEn": "Relaxaurus",
+      "nameZh": "佩克龙",
+      "slug": "relaxaurus",
+      "image": "art-references/palworld-fullbody/site-images/relaxaurus.png",
+      "hp": 120,
+      "shotAttack": 115,
+      "defense": 110,
+      "runSpeed": 650,
+      "element1": {
+        "id": 9,
+        "name": "Dragon",
+        "zh": "龙"
+      },
+      "element2": {
+        "id": 3,
+        "name": "Water",
+        "zh": "水"
+      },
+      "rarity": 8,
+      "maleProbability": 50,
+      "combiRank": 1090,
+      "combiDuplicatePriority": 109000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "094B",
+      "codename": "LazyDragon_Electric",
+      "nameEn": "Relaxaurus Lux",
+      "nameZh": "派克龙",
+      "slug": "relaxaurus-lux",
+      "image": "art-references/palworld-fullbody/site-images/relaxaurus-lux.png",
+      "hp": 120,
+      "shotAttack": 120,
+      "defense": 110,
+      "runSpeed": 650,
+      "element1": {
+        "id": 9,
+        "name": "Dragon",
+        "zh": "龙"
+      },
+      "element2": {
+        "id": 5,
+        "name": "Electricity",
+        "zh": "电"
+      },
+      "rarity": 9,
+      "maleProbability": 50,
+      "combiRank": 770,
+      "combiDuplicatePriority": 77000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "095",
+      "codename": "IceFox",
+      "nameEn": "Foxcicle",
+      "nameZh": "吹雪狐",
+      "slug": "foxcicle",
+      "image": "art-references/palworld-fullbody/site-images/foxcicle.png",
+      "hp": 90,
+      "shotAttack": 95,
+      "defense": 105,
+      "runSpeed": 600,
+      "element1": {
+        "id": 6,
+        "name": "Ice",
+        "zh": "冰"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 5,
+      "maleProbability": 50,
+      "combiRank": 1970,
+      "combiDuplicatePriority": 197000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "096",
+      "codename": "ThunderBird",
+      "nameEn": "Beakon",
+      "nameZh": "迅雷鸟",
+      "slug": "beakon",
+      "image": "art-references/palworld-fullbody/site-images/beakon.png",
+      "hp": 105,
+      "shotAttack": 115,
+      "defense": 80,
+      "runSpeed": 750,
+      "element1": {
+        "id": 5,
+        "name": "Electricity",
+        "zh": "电"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 6,
+      "maleProbability": 50,
+      "combiRank": 1690,
+      "combiDuplicatePriority": 169000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "098",
+      "codename": "ThunderDog",
+      "nameEn": "Rayhound",
+      "nameZh": "霹雳犬",
+      "slug": "rayhound",
+      "image": "art-references/palworld-fullbody/site-images/rayhound.png",
+      "hp": 90,
+      "shotAttack": 100,
+      "defense": 80,
+      "runSpeed": 700,
+      "element1": {
+        "id": 5,
+        "name": "Electricity",
+        "zh": "电"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 5,
+      "maleProbability": 50,
+      "combiRank": 1920,
+      "combiDuplicatePriority": 192000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "099",
+      "codename": "DarkScorpion",
+      "nameEn": "Menasting",
+      "nameZh": "冥铠蝎",
+      "slug": "menasting",
+      "image": "art-references/palworld-fullbody/site-images/menasting.png",
+      "hp": 100,
+      "shotAttack": 100,
+      "defense": 130,
+      "runSpeed": 1000,
+      "element1": {
+        "id": 8,
+        "name": "Dark",
+        "zh": "暗"
+      },
+      "element2": {
+        "id": 7,
+        "name": "Earth",
+        "zh": "地"
+      },
+      "rarity": 9,
+      "maleProbability": 50,
+      "combiRank": 1120,
+      "combiDuplicatePriority": 112000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "101",
+      "codename": "IceDeer",
+      "nameEn": "Reindrix",
+      "nameZh": "严冬鹿",
+      "slug": "reindrix",
+      "image": "art-references/palworld-fullbody/site-images/reindrix.png",
+      "hp": 100,
+      "shotAttack": 85,
+      "defense": 110,
+      "runSpeed": 700,
+      "element1": {
+        "id": 6,
+        "name": "Ice",
+        "zh": "冰"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 4,
+      "maleProbability": 50,
+      "combiRank": 1930,
+      "combiDuplicatePriority": 193000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "102",
+      "codename": "GrassPanda",
+      "nameEn": "Mossanda",
+      "nameZh": "叶胖达",
+      "slug": "mossanda",
+      "image": "art-references/palworld-fullbody/site-images/mossanda.png",
+      "hp": 100,
+      "shotAttack": 90,
+      "defense": 90,
+      "runSpeed": 600,
+      "element1": {
+        "id": 4,
+        "name": "Leaf",
+        "zh": "木"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 6,
+      "maleProbability": 50,
+      "combiRank": 2060,
+      "combiDuplicatePriority": 206000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "102B",
+      "codename": "GrassPanda_Electric",
+      "nameEn": "Mossanda Lux",
+      "nameZh": "雷胖达",
+      "slug": "mossanda-lux",
+      "image": "art-references/palworld-fullbody/site-images/mossanda-lux.png",
+      "hp": 100,
+      "shotAttack": 100,
+      "defense": 100,
+      "runSpeed": 600,
+      "element1": {
+        "id": 5,
+        "name": "Electricity",
+        "zh": "电"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 7,
+      "maleProbability": 50,
+      "combiRank": 1440,
+      "combiDuplicatePriority": 144000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "103",
+      "codename": "WeaselDragon",
+      "nameEn": "Chillet",
+      "nameZh": "疾旋鼬",
+      "slug": "chillet",
+      "image": "art-references/palworld-fullbody/site-images/chillet.png",
+      "hp": 90,
+      "shotAttack": 80,
+      "defense": 80,
+      "runSpeed": 750,
+      "element1": {
+        "id": 6,
+        "name": "Ice",
+        "zh": "冰"
+      },
+      "element2": {
+        "id": 9,
+        "name": "Dragon",
+        "zh": "龙"
+      },
+      "rarity": 4,
+      "maleProbability": 50,
+      "combiRank": 2330,
+      "combiDuplicatePriority": 233000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "104",
+      "codename": "RedArmorBird",
+      "nameEn": "Ragnahawk",
+      "nameZh": "燧火鸟",
+      "slug": "ragnahawk",
+      "image": "art-references/palworld-fullbody/site-images/ragnahawk.png",
+      "hp": 95,
+      "shotAttack": 105,
+      "defense": 120,
+      "runSpeed": 800,
+      "element1": {
+        "id": 2,
+        "name": "Fire",
+        "zh": "火"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 7,
+      "maleProbability": 50,
+      "combiRank": 1050,
+      "combiDuplicatePriority": 105000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "107",
+      "codename": "DrillGame",
+      "nameEn": "Digtoise",
+      "nameZh": "碎岩龟",
+      "slug": "digtoise",
+      "image": "art-references/palworld-fullbody/site-images/digtoise.png",
+      "hp": 80,
+      "shotAttack": 95,
+      "defense": 120,
+      "runSpeed": 300,
+      "element1": {
+        "id": 7,
+        "name": "Earth",
+        "zh": "地"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 5,
+      "maleProbability": 50,
+      "combiRank": 1550,
+      "combiDuplicatePriority": 155000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "108",
+      "codename": "SakuraSaurus",
+      "nameEn": "Broncherry",
+      "nameZh": "连理龙",
+      "slug": "broncherry",
+      "image": "art-references/palworld-fullbody/site-images/broncherry.png",
+      "hp": 120,
+      "shotAttack": 90,
+      "defense": 100,
+      "runSpeed": 550,
+      "element1": {
+        "id": 4,
+        "name": "Leaf",
+        "zh": "木"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 8,
+      "maleProbability": 50,
+      "combiRank": 1380,
+      "combiDuplicatePriority": 138000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "108B",
+      "codename": "SakuraSaurus_Water",
+      "nameEn": "Broncherry Aqua",
+      "nameZh": "海誓龙",
+      "slug": "broncherry-aqua",
+      "image": "art-references/palworld-fullbody/site-images/broncherry-aqua.png",
+      "hp": 120,
+      "shotAttack": 95,
+      "defense": 100,
+      "runSpeed": 550,
+      "element1": {
+        "id": 4,
+        "name": "Leaf",
+        "zh": "木"
+      },
+      "element2": {
+        "id": 3,
+        "name": "Water",
+        "zh": "水"
+      },
+      "rarity": 8,
+      "maleProbability": 50,
+      "combiRank": 1080,
+      "combiDuplicatePriority": 108000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "109",
+      "codename": "LazyCatfish",
+      "nameEn": "Dumud",
+      "nameZh": "趴趴鲶",
+      "slug": "dumud",
+      "image": "art-references/palworld-fullbody/site-images/dumud.png",
+      "hp": 100,
+      "shotAttack": 70,
+      "defense": 95,
+      "runSpeed": 450,
+      "element1": {
+        "id": 7,
+        "name": "Earth",
+        "zh": "地"
+      },
+      "element2": {
+        "id": 3,
+        "name": "Water",
+        "zh": "水"
+      },
+      "rarity": 4,
+      "maleProbability": 50,
+      "combiRank": 2290,
+      "combiDuplicatePriority": 229000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "111",
+      "codename": "AmaterasuWolf",
+      "nameEn": "Kitsun",
+      "nameZh": "苍焰狼",
+      "slug": "kitsun",
+      "image": "art-references/palworld-fullbody/site-images/kitsun.png",
+      "hp": 100,
+      "shotAttack": 115,
+      "defense": 100,
+      "runSpeed": 700,
+      "element1": {
+        "id": 2,
+        "name": "Fire",
+        "zh": "火"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 6,
+      "maleProbability": 50,
+      "combiRank": 1670,
+      "combiDuplicatePriority": 167000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "112",
+      "codename": "Manticore",
+      "nameEn": "Blazehowl",
+      "nameZh": "狱焰王",
+      "slug": "blazehowl",
+      "image": "art-references/palworld-fullbody/site-images/blazehowl.png",
+      "hp": 105,
+      "shotAttack": 110,
+      "defense": 80,
+      "runSpeed": 800,
+      "element1": {
+        "id": 2,
+        "name": "Fire",
+        "zh": "火"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 7,
+      "maleProbability": 50,
+      "combiRank": 1360,
+      "combiDuplicatePriority": 136000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "112B",
+      "codename": "Manticore_Dark",
+      "nameEn": "Blazehowl Noct",
+      "nameZh": "狱阎王",
+      "slug": "blazehowl-noct",
+      "image": "art-references/palworld-fullbody/site-images/blazehowl-noct.png",
+      "hp": 105,
+      "shotAttack": 115,
+      "defense": 80,
+      "runSpeed": 800,
+      "element1": {
+        "id": 2,
+        "name": "Fire",
+        "zh": "火"
+      },
+      "element2": {
+        "id": 8,
+        "name": "Dark",
+        "zh": "暗"
+      },
+      "rarity": 8,
+      "maleProbability": 50,
+      "combiRank": 1270,
+      "combiDuplicatePriority": 127000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "113",
+      "codename": "HerculesBeetle",
+      "nameEn": "Warsect",
+      "nameZh": "铠格力斯",
+      "slug": "warsect",
+      "image": "art-references/palworld-fullbody/site-images/warsect.png",
+      "hp": 120,
+      "shotAttack": 100,
+      "defense": 120,
+      "runSpeed": 500,
+      "element1": {
+        "id": 7,
+        "name": "Earth",
+        "zh": "地"
+      },
+      "element2": {
+        "id": 4,
+        "name": "Leaf",
+        "zh": "木"
+      },
+      "rarity": 8,
+      "maleProbability": 85,
+      "combiRank": 1280,
+      "combiDuplicatePriority": 128000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "116",
+      "codename": "WhiteMoth",
+      "nameEn": "Sibelyx",
+      "nameZh": "绸笠蛾",
+      "slug": "sibelyx",
+      "image": "art-references/palworld-fullbody/site-images/sibelyx.png",
+      "hp": 110,
+      "shotAttack": 90,
+      "defense": 100,
+      "runSpeed": 400,
+      "element1": {
+        "id": 6,
+        "name": "Ice",
+        "zh": "冰"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 7,
+      "maleProbability": 50,
+      "combiRank": 1810,
+      "combiDuplicatePriority": 181000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "117",
+      "codename": "GhostBeast",
+      "nameEn": "Maraith",
+      "nameZh": "噬魂兽",
+      "slug": "maraith",
+      "image": "art-references/palworld-fullbody/site-images/maraith.png",
+      "hp": 75,
+      "shotAttack": 105,
+      "defense": 80,
+      "runSpeed": 700,
+      "element1": {
+        "id": 8,
+        "name": "Dark",
+        "zh": "暗"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 6,
+      "maleProbability": 50,
+      "combiRank": 1710,
+      "combiDuplicatePriority": 171000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "121",
+      "codename": "Umihebi",
+      "nameEn": "Jormuntide",
+      "nameZh": "覆海龙",
+      "slug": "jormuntide",
+      "image": "art-references/palworld-fullbody/site-images/jormuntide.png",
+      "hp": 130,
+      "shotAttack": 120,
+      "defense": 100,
+      "runSpeed": 600,
+      "element1": {
+        "id": 9,
+        "name": "Dragon",
+        "zh": "龙"
+      },
+      "element2": {
+        "id": 3,
+        "name": "Water",
+        "zh": "水"
+      },
+      "rarity": 8,
+      "maleProbability": 50,
+      "combiRank": 590,
+      "combiDuplicatePriority": 59000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "121B",
+      "codename": "Umihebi_Fire",
+      "nameEn": "Jormuntide Ignis",
+      "nameZh": "腾炎龙",
+      "slug": "jormuntide-ignis",
+      "image": "art-references/palworld-fullbody/site-images/jormuntide-ignis.png",
+      "hp": 130,
+      "shotAttack": 130,
+      "defense": 100,
+      "runSpeed": 600,
+      "element1": {
+        "id": 9,
+        "name": "Dragon",
+        "zh": "龙"
+      },
+      "element2": {
+        "id": 2,
+        "name": "Fire",
+        "zh": "火"
+      },
+      "rarity": 9,
+      "maleProbability": 50,
+      "combiRank": 170,
+      "combiDuplicatePriority": 17000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "122",
+      "codename": "Suzaku",
+      "nameEn": "Suzaku",
+      "nameZh": "朱雀",
+      "slug": "suzaku",
+      "image": "art-references/palworld-fullbody/site-images/suzaku.png",
+      "hp": 120,
+      "shotAttack": 105,
+      "defense": 105,
+      "runSpeed": 850,
+      "element1": {
+        "id": 2,
+        "name": "Fire",
+        "zh": "火"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 8,
+      "maleProbability": 50,
+      "combiRank": 1200,
+      "combiDuplicatePriority": 120000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "122B",
+      "codename": "Suzaku_Water",
+      "nameEn": "Suzaku Aqua",
+      "nameZh": "清雀",
+      "slug": "suzaku-aqua",
+      "image": "art-references/palworld-fullbody/site-images/suzaku-aqua.png",
+      "hp": 125,
+      "shotAttack": 105,
+      "defense": 105,
+      "runSpeed": 850,
+      "element1": {
+        "id": 3,
+        "name": "Water",
+        "zh": "水"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 9,
+      "maleProbability": 50,
+      "combiRank": 740,
+      "combiDuplicatePriority": 74000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "124",
+      "codename": "SkyDragon",
+      "nameEn": "Quivern",
+      "nameZh": "天羽龙",
+      "slug": "quivern",
+      "image": "art-references/palworld-fullbody/site-images/quivern.png",
+      "hp": 105,
+      "shotAttack": 100,
+      "defense": 100,
+      "runSpeed": 800,
+      "element1": {
+        "id": 9,
+        "name": "Dragon",
+        "zh": "龙"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 7,
+      "maleProbability": 50,
+      "combiRank": 1210,
+      "combiDuplicatePriority": 121000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "129",
+      "codename": "VolcanicMonster",
+      "nameEn": "Reptyro",
+      "nameZh": "熔岩兽",
+      "slug": "reptyro",
+      "image": "art-references/palworld-fullbody/site-images/reptyro.png",
+      "hp": 110,
+      "shotAttack": 105,
+      "defense": 120,
+      "runSpeed": 550,
+      "element1": {
+        "id": 2,
+        "name": "Fire",
+        "zh": "火"
+      },
+      "element2": {
+        "id": 7,
+        "name": "Earth",
+        "zh": "地"
+      },
+      "rarity": 6,
+      "maleProbability": 50,
+      "combiRank": 1060,
+      "combiDuplicatePriority": 106000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "129B",
+      "codename": "VolcanicMonster_Ice",
+      "nameEn": "Reptyro Cryst",
+      "nameZh": "寒霜兽",
+      "slug": "reptyro-cryst",
+      "image": "art-references/palworld-fullbody/site-images/reptyro-cryst.png",
+      "hp": 110,
+      "shotAttack": 105,
+      "defense": 130,
+      "runSpeed": 550,
+      "element1": {
+        "id": 6,
+        "name": "Ice",
+        "zh": "冰"
+      },
+      "element2": {
+        "id": 7,
+        "name": "Earth",
+        "zh": "地"
+      },
+      "rarity": 7,
+      "maleProbability": 50,
+      "combiRank": 600,
+      "combiDuplicatePriority": 60000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "132",
+      "codename": "WhiteTiger",
+      "nameEn": "Cryolinx",
+      "nameZh": "冰棘兽",
+      "slug": "cryolinx",
+      "image": "art-references/palworld-fullbody/site-images/cryolinx.png",
+      "hp": 100,
+      "shotAttack": 100,
+      "defense": 110,
+      "runSpeed": 720,
+      "element1": {
+        "id": 6,
+        "name": "Ice",
+        "zh": "冰"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 7,
+      "maleProbability": 50,
+      "combiRank": 1040,
+      "combiDuplicatePriority": 104000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "134",
+      "codename": "Yeti",
+      "nameEn": "Wumpo",
+      "nameZh": "白绒雪怪",
+      "slug": "wumpo",
+      "image": "art-references/palworld-fullbody/site-images/wumpo.png",
+      "hp": 140,
+      "shotAttack": 80,
+      "defense": 100,
+      "runSpeed": 600,
+      "element1": {
+        "id": 6,
+        "name": "Ice",
+        "zh": "冰"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 7,
+      "maleProbability": 50,
+      "combiRank": 830,
+      "combiDuplicatePriority": 83000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "134B",
+      "codename": "Yeti_Grass",
+      "nameEn": "Wumpo Botan",
+      "nameZh": "绿苔绒怪",
+      "slug": "wumpo-botan",
+      "image": "art-references/palworld-fullbody/site-images/wumpo-botan.png",
+      "hp": 140,
+      "shotAttack": 80,
+      "defense": 110,
+      "runSpeed": 600,
+      "element1": {
+        "id": 4,
+        "name": "Leaf",
+        "zh": "木"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 8,
+      "maleProbability": 50,
+      "combiRank": 610,
+      "combiDuplicatePriority": 61000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "137",
+      "codename": "KingBahamut",
+      "nameEn": "Blazamut",
+      "nameZh": "焰煌",
+      "slug": "blazamut",
+      "image": "art-references/palworld-fullbody/site-images/blazamut.png",
+      "hp": 100,
+      "shotAttack": 125,
+      "defense": 120,
+      "runSpeed": 800,
+      "element1": {
+        "id": 2,
+        "name": "Fire",
+        "zh": "火"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 9,
+      "maleProbability": 50,
+      "combiRank": 410,
+      "combiDuplicatePriority": 41000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "139",
+      "codename": "Anubis",
+      "nameEn": "Anubis",
+      "nameZh": "阿努比斯",
+      "slug": "anubis",
+      "image": "art-references/palworld-fullbody/site-images/anubis.png",
+      "hp": 120,
+      "shotAttack": 130,
+      "defense": 100,
+      "runSpeed": 800,
+      "element1": {
+        "id": 7,
+        "name": "Earth",
+        "zh": "地"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 10,
+      "maleProbability": 50,
+      "combiRank": 480,
+      "combiDuplicatePriority": 48000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "152",
+      "codename": "GrassRabbitMan",
+      "nameEn": "Verdash",
+      "nameZh": "踏春兔",
+      "slug": "verdash",
+      "image": "art-references/palworld-fullbody/site-images/verdash.png",
+      "hp": 90,
+      "shotAttack": 115,
+      "defense": 90,
+      "runSpeed": 500,
+      "element1": {
+        "id": 4,
+        "name": "Leaf",
+        "zh": "木"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 8,
+      "maleProbability": 50,
+      "combiRank": 1160,
+      "combiDuplicatePriority": 116000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "158",
+      "codename": "BlackMetalDragon",
+      "nameEn": "Astegon",
+      "nameZh": "魔渊龙",
+      "slug": "astegon",
+      "image": "art-references/palworld-fullbody/site-images/astegon.png",
+      "hp": 100,
+      "shotAttack": 125,
+      "defense": 125,
+      "runSpeed": 700,
+      "element1": {
+        "id": 9,
+        "name": "Dragon",
+        "zh": "龙"
+      },
+      "element2": {
+        "id": 8,
+        "name": "Dark",
+        "zh": "暗"
+      },
+      "rarity": 9,
+      "maleProbability": 50,
+      "combiRank": 490,
+      "combiDuplicatePriority": 49000,
+      "ignoreCombi": false
+    },
+    {
+      "paldexNo": "185",
+      "codename": "ElecPanda",
+      "nameEn": "Grizzbolt",
+      "nameZh": "暴电熊",
+      "slug": "grizzbolt",
+      "image": "art-references/palworld-fullbody/site-images/grizzbolt.png",
+      "hp": 120,
+      "shotAttack": 105,
+      "defense": 105,
+      "runSpeed": 600,
+      "element1": {
+        "id": 5,
+        "name": "Electricity",
+        "zh": "电"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 8,
+      "maleProbability": 50,
+      "combiRank": 1020,
+      "combiDuplicatePriority": 102000,
+      "ignoreCombi": true
+    },
+    {
+      "paldexNo": "186",
+      "codename": "LilyQueen",
+      "nameEn": "Lyleen",
+      "nameZh": "百合女王",
+      "slug": "lyleen",
+      "image": "art-references/palworld-fullbody/site-images/lyleen.png",
+      "hp": 120,
+      "shotAttack": 120,
+      "defense": 110,
+      "runSpeed": 450,
+      "element1": {
+        "id": 4,
+        "name": "Leaf",
+        "zh": "木"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 9,
+      "maleProbability": 30,
+      "combiRank": 240,
+      "combiDuplicatePriority": 24000,
+      "ignoreCombi": true
+    },
+    {
+      "paldexNo": "186B",
+      "codename": "LilyQueen_Dark",
+      "nameEn": "Lyleen Noct",
+      "nameZh": "黑月女王",
+      "slug": "lyleen-noct",
+      "image": "art-references/palworld-fullbody/site-images/lyleen-noct.png",
+      "hp": 115,
+      "shotAttack": 120,
+      "defense": 115,
+      "runSpeed": 450,
+      "element1": {
+        "id": 8,
+        "name": "Dark",
+        "zh": "暗"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 10,
+      "maleProbability": 30,
+      "combiRank": 220,
+      "combiDuplicatePriority": 22000,
+      "ignoreCombi": true
+    },
+    {
+      "paldexNo": "187",
+      "codename": "ThunderDragonMan",
+      "nameEn": "Orserk",
+      "nameZh": "波鲁杰克斯",
+      "slug": "orserk",
+      "image": "art-references/palworld-fullbody/site-images/orserk.png",
+      "hp": 120,
+      "shotAttack": 130,
+      "defense": 115,
+      "runSpeed": 900,
+      "element1": {
+        "id": 9,
+        "name": "Dragon",
+        "zh": "龙"
+      },
+      "element2": {
+        "id": 5,
+        "name": "Electricity",
+        "zh": "电"
+      },
+      "rarity": 9,
+      "maleProbability": 50,
+      "combiRank": 120,
+      "combiDuplicatePriority": 12000,
+      "ignoreCombi": true
+    },
+    {
+      "paldexNo": "188",
+      "codename": "Horus",
+      "nameEn": "Faleris",
+      "nameZh": "荷鲁斯",
+      "slug": "faleris",
+      "image": "art-references/palworld-fullbody/site-images/faleris.png",
+      "hp": 105,
+      "shotAttack": 110,
+      "defense": 115,
+      "runSpeed": 1000,
+      "element1": {
+        "id": 2,
+        "name": "Fire",
+        "zh": "火"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 9,
+      "maleProbability": 50,
+      "combiRank": 500,
+      "combiDuplicatePriority": 50000,
+      "ignoreCombi": true
+    },
+    {
+      "paldexNo": "189",
+      "codename": "BlackGriffon",
+      "nameEn": "Shadowbeak",
+      "nameZh": "异构格里芬",
+      "slug": "shadowbeak",
+      "image": "art-references/palworld-fullbody/site-images/shadowbeak.png",
+      "hp": 120,
+      "shotAttack": 120,
+      "defense": 140,
+      "runSpeed": 850,
+      "element1": {
+        "id": 8,
+        "name": "Dark",
+        "zh": "暗"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 10,
+      "maleProbability": 50,
+      "combiRank": 550,
+      "combiDuplicatePriority": 55000,
+      "ignoreCombi": true
+    },
+    {
+      "paldexNo": "198",
+      "codename": "SaintCentaur",
+      "nameEn": "Paladius",
+      "nameZh": "圣光骑士",
+      "slug": "paladius",
+      "image": "art-references/palworld-fullbody/site-images/paladius.png",
+      "hp": 130,
+      "shotAttack": 120,
+      "defense": 145,
+      "runSpeed": 800,
+      "element1": {
+        "id": 1,
+        "name": "Normal",
+        "zh": "一般"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 20,
+      "maleProbability": 50,
+      "combiRank": 180,
+      "combiDuplicatePriority": 18000,
+      "ignoreCombi": true
+    },
+    {
+      "paldexNo": "199",
+      "codename": "BlackCentaur",
+      "nameEn": "Necromus",
+      "nameZh": "混沌骑士",
+      "slug": "necromus",
+      "image": "art-references/palworld-fullbody/site-images/necromus.png",
+      "hp": 130,
+      "shotAttack": 145,
+      "defense": 120,
+      "runSpeed": 1300,
+      "element1": {
+        "id": 8,
+        "name": "Dark",
+        "zh": "暗"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 20,
+      "maleProbability": 50,
+      "combiRank": 190,
+      "combiDuplicatePriority": 19000,
+      "ignoreCombi": true
+    },
+    {
+      "paldexNo": "200",
+      "codename": "IceHorse",
+      "nameEn": "Frostallion",
+      "nameZh": "唤冬兽",
+      "slug": "frostallion",
+      "image": "art-references/palworld-fullbody/site-images/frostallion.png",
+      "hp": 140,
+      "shotAttack": 140,
+      "defense": 120,
+      "runSpeed": 1200,
+      "element1": {
+        "id": 6,
+        "name": "Ice",
+        "zh": "冰"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 20,
+      "maleProbability": 50,
+      "combiRank": 150,
+      "combiDuplicatePriority": 15000,
+      "ignoreCombi": true
+    },
+    {
+      "paldexNo": "200B",
+      "codename": "IceHorse_Dark",
+      "nameEn": "Frostallion Noct",
+      "nameZh": "唤夜兽",
+      "slug": "frostallion-noct",
+      "image": "art-references/palworld-fullbody/site-images/frostallion-noct.png",
+      "hp": 140,
+      "shotAttack": 140,
+      "defense": 135,
+      "runSpeed": 1200,
+      "element1": {
+        "id": 8,
+        "name": "Dark",
+        "zh": "暗"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 20,
+      "maleProbability": 50,
+      "combiRank": 110,
+      "combiDuplicatePriority": 11000,
+      "ignoreCombi": true
+    },
+    {
+      "paldexNo": "202",
+      "codename": "JetDragon",
+      "nameEn": "Jetragon",
+      "nameZh": "空涡龙",
+      "slug": "jetragon",
+      "image": "art-references/palworld-fullbody/site-images/jetragon.png",
+      "hp": 115,
+      "shotAttack": 140,
+      "defense": 120,
+      "runSpeed": 1700,
+      "element1": {
+        "id": 9,
+        "name": "Dragon",
+        "zh": "龙"
+      },
+      "element2": {
+        "id": 0,
+        "name": "None",
+        "zh": ""
+      },
+      "rarity": 20,
+      "maleProbability": 50,
+      "combiRank": 70,
+      "combiDuplicatePriority": 7000,
+      "ignoreCombi": true
+    }
+  ],
+  "specialCombos": [
+    {
+      "child": {
+        "paldexNo": "85",
+        "nameEn": "Relaxaurus Lux",
+        "nameZh": "派克龙"
+      },
+      "parents": [
+        {
+          "paldexNo": "85",
+          "nameEn": "Relaxaurus",
+          "nameZh": "佩克龙"
+        },
+        {
+          "paldexNo": "7",
+          "nameEn": "Sparkit",
+          "nameZh": "伏特喵"
+        }
+      ],
+      "altLegendaryParent": "Frostallion"
+    },
+    {
+      "child": {
+        "paldexNo": "40",
+        "nameEn": "Incineram Noct",
+        "nameZh": "暗魔羊"
+      },
+      "parents": [
+        {
+          "paldexNo": "40",
+          "nameEn": "Incineram",
+          "nameZh": "炎魔羊"
+        },
+        {
+          "paldexNo": "66",
+          "nameEn": "Maraith",
+          "nameZh": "噬魂兽"
+        }
+      ],
+      "altLegendaryParent": "Jetragon"
+    },
+    {
+      "child": {
+        "paldexNo": "24",
+        "nameEn": "Mau Cryst",
+        "nameZh": "冰丝特"
+      },
+      "parents": [
+        {
+          "paldexNo": "24",
+          "nameEn": "Mau",
+          "nameZh": "喵丝特"
+        },
+        {
+          "paldexNo": "10",
+          "nameEn": "Pengullet",
+          "nameZh": "企丸丸"
+        }
+      ],
+      "altLegendaryParent": "Paladius"
+    },
+    {
+      "child": {
+        "paldexNo": "71",
+        "nameEn": "Vanwyrm Cryst",
+        "nameZh": "霜歌龙"
+      },
+      "parents": [
+        {
+          "paldexNo": "71",
+          "nameEn": "Vanwyrm",
+          "nameZh": "烽歌龙"
+        },
+        {
+          "paldexNo": "57",
+          "nameEn": "Foxcicle",
+          "nameZh": "吹雪狐"
+        }
+      ],
+      "altLegendaryParent": "Necromus"
+    },
+    {
+      "child": {
+        "paldexNo": "37",
+        "nameEn": "Eikthyrdeer Terra",
+        "nameZh": "祇岳鹿"
+      },
+      "parents": [
+        {
+          "paldexNo": "37",
+          "nameEn": "Eikthyrdeer",
+          "nameZh": "紫霞鹿"
+        },
+        {
+          "paldexNo": "32",
+          "nameEn": "Hangyu",
+          "nameZh": "吊缚灵"
+        }
+      ],
+      "altLegendaryParent": "Jormuntide Ignis"
+    },
+    {
+      "child": {
+        "paldexNo": "80",
+        "nameEn": "Elphidran Aqua",
+        "nameZh": "水灵龙"
+      },
+      "parents": [
+        {
+          "paldexNo": "80",
+          "nameEn": "Elphidran",
+          "nameZh": "精灵龙"
+        },
+        {
+          "paldexNo": "65",
+          "nameEn": "Surfent",
+          "nameZh": "滑水蛇"
+        }
+      ],
+      "altLegendaryParent": null
+    },
+    {
+      "child": {
+        "paldexNo": "58",
+        "nameEn": "Pyrin Noct",
+        "nameZh": "邪麒麟"
+      },
+      "parents": [
+        {
+          "paldexNo": "58",
+          "nameEn": "Pyrin",
+          "nameZh": "火麒麟"
+        },
+        {
+          "paldexNo": "75",
+          "nameEn": "Katress",
+          "nameZh": "暗巫猫"
+        }
+      ],
+      "altLegendaryParent": null
+    },
+    {
+      "child": {
+        "paldexNo": "90",
+        "nameEn": "Mammorest Cryst",
+        "nameZh": "雪猛犸"
+      },
+      "parents": [
+        {
+          "paldexNo": "90",
+          "nameEn": "Mammorest",
+          "nameZh": "森猛犸"
+        },
+        {
+          "paldexNo": "91",
+          "nameEn": "Wumpo",
+          "nameZh": "白绒雪怪"
+        }
+      ],
+      "altLegendaryParent": null
+    },
+    {
+      "child": {
+        "paldexNo": "33",
+        "nameEn": "Mossanda Lux",
+        "nameZh": "雷胖达"
+      },
+      "parents": [
+        {
+          "paldexNo": "33",
+          "nameEn": "Mossanda",
+          "nameZh": "叶胖达"
+        },
+        {
+          "paldexNo": "103",
+          "nameEn": "Grizzbolt",
+          "nameZh": "暴电熊"
+        }
+      ],
+      "altLegendaryParent": null
+    },
+    {
+      "child": {
+        "paldexNo": "64",
+        "nameEn": "Dinossom Lux",
+        "nameZh": "雷冠龙"
+      },
+      "parents": [
+        {
+          "paldexNo": "64",
+          "nameEn": "Dinossom",
+          "nameZh": "花冠龙"
+        },
+        {
+          "paldexNo": "60",
+          "nameEn": "Rayhound",
+          "nameZh": "霹雳犬"
+        }
+      ],
+      "altLegendaryParent": null
+    },
+    {
+      "child": {
+        "paldexNo": "12",
+        "nameEn": "Jolthog Cryst",
+        "nameZh": "冰刺鼠"
+      },
+      "parents": [
+        {
+          "paldexNo": "12",
+          "nameEn": "Jolthog",
+          "nameZh": "电棘鼠"
+        },
+        {
+          "paldexNo": "10",
+          "nameEn": "Pengullet",
+          "nameZh": "企丸丸"
+        }
+      ],
+      "altLegendaryParent": null
+    },
+    {
+      "child": {
+        "paldexNo": "110",
+        "nameEn": "Frostallion Noct",
+        "nameZh": "唤夜兽"
+      },
+      "parents": [
+        {
+          "paldexNo": "110",
+          "nameEn": "Frostallion",
+          "nameZh": "唤冬兽"
+        },
+        {
+          "paldexNo": "97",
+          "nameEn": "Helzephyr",
+          "nameZh": "雷冥鸟"
+        }
+      ],
+      "altLegendaryParent": null
+    },
+    {
+      "child": {
+        "paldexNo": "89",
+        "nameEn": "Kingpaca Cryst",
+        "nameZh": "冰帝美露帕"
+      },
+      "parents": [
+        {
+          "paldexNo": "89",
+          "nameEn": "Kingpaca",
+          "nameZh": "君王美露帕"
+        },
+        {
+          "paldexNo": "59",
+          "nameEn": "Reindrix",
+          "nameZh": "严冬鹿"
+        }
+      ],
+      "altLegendaryParent": null
+    },
+    {
+      "child": {
+        "paldexNo": "104",
+        "nameEn": "Lyleen Noct",
+        "nameZh": "黑月女王"
+      },
+      "parents": [
+        {
+          "paldexNo": "104",
+          "nameEn": "Lyleen",
+          "nameZh": "百合女王"
+        },
+        {
+          "paldexNo": "99",
+          "nameEn": "Menasting",
+          "nameZh": "冥铠蝎"
+        }
+      ],
+      "altLegendaryParent": null
+    },
+    {
+      "child": {
+        "paldexNo": "45",
+        "nameEn": "Leezpunk Ignis",
+        "nameZh": "热血蜥"
+      },
+      "parents": [
+        {
+          "paldexNo": "45",
+          "nameEn": "Leezpunk",
+          "nameZh": "朋克蜥"
+        },
+        {
+          "paldexNo": "70",
+          "nameEn": "Flambelle",
+          "nameZh": "融焰娘"
+        }
+      ],
+      "altLegendaryParent": null
+    },
+    {
+      "child": {
+        "paldexNo": "84",
+        "nameEn": "Blazehowl Noct",
+        "nameZh": "狱阎王"
+      },
+      "parents": [
+        {
+          "paldexNo": "84",
+          "nameEn": "Blazehowl",
+          "nameZh": "狱焰王"
+        },
+        {
+          "paldexNo": "94",
+          "nameEn": "Felbat",
+          "nameZh": "夜幕魔蝠"
+        }
+      ],
+      "altLegendaryParent": null
+    },
+    {
+      "child": {
+        "paldexNo": "48",
+        "nameEn": "Robinquill Terra",
+        "nameZh": "山岳射手"
+      },
+      "parents": [
+        {
+          "paldexNo": "48",
+          "nameEn": "Robinquill",
+          "nameZh": "羽箭射手"
+        },
+        {
+          "paldexNo": "22",
+          "nameEn": "Fuddler",
+          "nameZh": "遁地鼠"
+        }
+      ],
+      "altLegendaryParent": null
+    },
+    {
+      "child": {
+        "paldexNo": "86",
+        "nameEn": "Broncherry Aqua",
+        "nameZh": "海誓龙"
+      },
+      "parents": [
+        {
+          "paldexNo": "86",
+          "nameEn": "Broncherry",
+          "nameZh": "连理龙"
+        },
+        {
+          "paldexNo": "6",
+          "nameEn": "Fuack",
+          "nameZh": "冲浪鸭"
+        }
+      ],
+      "altLegendaryParent": null
+    },
+    {
+      "child": {
+        "paldexNo": "65",
+        "nameEn": "Surfent Terra",
+        "nameZh": "流沙蛇"
+      },
+      "parents": [
+        {
+          "paldexNo": "65",
+          "nameEn": "Surfent",
+          "nameZh": "滑水蛇"
+        },
+        {
+          "paldexNo": "43",
+          "nameEn": "Dumud",
+          "nameZh": "趴趴鲶"
+        }
+      ],
+      "altLegendaryParent": null
+    },
+    {
+      "child": {
+        "paldexNo": "31",
+        "nameEn": "Gobfin Ignis",
+        "nameZh": "红小鲨"
+      },
+      "parents": [
+        {
+          "paldexNo": "31",
+          "nameEn": "Gobfin",
+          "nameZh": "鲨小子"
+        },
+        {
+          "paldexNo": "9",
+          "nameEn": "Rooby",
+          "nameZh": "燎火鹿"
+        }
+      ],
+      "altLegendaryParent": null
+    },
+    {
+      "child": {
+        "paldexNo": "102",
+        "nameEn": "Suzaku Aqua",
+        "nameZh": "清雀"
+      },
+      "parents": [
+        {
+          "paldexNo": "102",
+          "nameEn": "Suzaku",
+          "nameZh": "朱雀"
+        },
+        {
+          "paldexNo": "101",
+          "nameEn": "Jormuntide",
+          "nameZh": "覆海龙"
+        }
+      ],
+      "altLegendaryParent": null
+    },
+    {
+      "child": {
+        "paldexNo": "88",
+        "nameEn": "Reptyro Cryst",
+        "nameZh": "寒霜兽"
+      },
+      "parents": [
+        {
+          "paldexNo": "88",
+          "nameEn": "Reptyro",
+          "nameZh": "熔岩兽"
+        },
+        {
+          "paldexNo": "57",
+          "nameEn": "Foxcicle",
+          "nameZh": "吹雪狐"
+        }
+      ],
+      "altLegendaryParent": null
+    },
+    {
+      "child": {
+        "paldexNo": "32",
+        "nameEn": "Hangyu Cryst",
+        "nameZh": "冰缚灵"
+      },
+      "parents": [
+        {
+          "paldexNo": "32",
+          "nameEn": "Hangyu",
+          "nameZh": "吊缚灵"
+        },
+        {
+          "paldexNo": "53",
+          "nameEn": "Swee",
+          "nameZh": "毛掸儿"
+        }
+      ],
+      "altLegendaryParent": null
+    },
+    {
+      "child": {
+        "paldexNo": "104",
+        "nameEn": "Lyleen",
+        "nameZh": "百合女王"
+      },
+      "parents": [
+        {
+          "paldexNo": "33",
+          "nameEn": "Mossanda",
+          "nameZh": "叶胖达"
+        },
+        {
+          "paldexNo": "87",
+          "nameEn": "Petallia",
+          "nameZh": "花丽娜"
+        }
+      ],
+      "altLegendaryParent": null
+    },
+    {
+      "child": {
+        "paldexNo": "105",
+        "nameEn": "Faleris",
+        "nameZh": "荷鲁斯"
+      },
+      "parents": [
+        {
+          "paldexNo": "71",
+          "nameEn": "Vanwyrm",
+          "nameZh": "烽歌龙"
+        },
+        {
+          "paldexNo": "100",
+          "nameEn": "Anubis",
+          "nameZh": "阿努比斯"
+        }
+      ],
+      "altLegendaryParent": null
+    },
+    {
+      "child": {
+        "paldexNo": "103",
+        "nameEn": "Grizzbolt",
+        "nameZh": "暴电熊"
+      },
+      "parents": [
+        {
+          "paldexNo": "33",
+          "nameEn": "Mossanda",
+          "nameZh": "叶胖达"
+        },
+        {
+          "paldexNo": "60",
+          "nameEn": "Rayhound",
+          "nameZh": "霹雳犬"
+        }
+      ],
+      "altLegendaryParent": null
+    },
+    {
+      "child": {
+        "paldexNo": "106",
+        "nameEn": "Orserk",
+        "nameZh": "波鲁杰克斯"
+      },
+      "parents": [
+        {
+          "paldexNo": "103",
+          "nameEn": "Grizzbolt",
+          "nameZh": "暴电熊"
+        },
+        {
+          "paldexNo": "85",
+          "nameEn": "Relaxaurus",
+          "nameZh": "佩克龙"
+        }
+      ],
+      "altLegendaryParent": null
+    },
+    {
+      "child": {
+        "paldexNo": "107",
+        "nameEn": "Shadowbeak",
+        "nameZh": "异构格里芬"
+      },
+      "parents": [
+        {
+          "paldexNo": "61",
+          "nameEn": "Kitsun",
+          "nameZh": "苍焰狼"
+        },
+        {
+          "paldexNo": "98",
+          "nameEn": "Astegon",
+          "nameZh": "魔渊龙"
+        }
+      ],
+      "altLegendaryParent": null
+    }
+  ],
+  "elementEnum": [
+    {
+      "id": 0,
+      "name": "None",
+      "zh": ""
+    },
+    {
+      "id": 1,
+      "name": "Normal",
+      "zh": "一般"
+    },
+    {
+      "id": 2,
+      "name": "Fire",
+      "zh": "火"
+    },
+    {
+      "id": 3,
+      "name": "Water",
+      "zh": "水"
+    },
+    {
+      "id": 4,
+      "name": "Leaf",
+      "zh": "木"
+    },
+    {
+      "id": 5,
+      "name": "Electricity",
+      "zh": "电"
+    },
+    {
+      "id": 6,
+      "name": "Ice",
+      "zh": "冰"
+    },
+    {
+      "id": 7,
+      "name": "Earth",
+      "zh": "地"
+    },
+    {
+      "id": 8,
+      "name": "Dark",
+      "zh": "暗"
+    },
+    {
+      "id": 9,
+      "name": "Dragon",
+      "zh": "龙"
+    }
+  ]
+}

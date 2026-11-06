@@ -318,14 +318,14 @@ h1 {
 
 .game-card {
   position: relative;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: 0.8rem minmax(0, 1fr) 1.1rem 0.9rem 1.8rem 0.8rem;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   width: 100%;
   max-width: 180px;
   aspect-ratio: 5 / 7;
-  padding: 14px 10px;
+  padding: 10px 8px;
   border: 3px solid var(--rarity-color);
   border-radius: 16px;
   background: linear-gradient(160deg, color-mix(in srgb, var(--element-color) 35%, #18181b), #18181b 70%);
@@ -364,14 +364,46 @@ button.game-card:hover:not(:disabled) {
   text-transform: uppercase;
 }
 
-.game-card-icon {
-  margin-top: auto;
-  font-size: 2.2rem;
-  line-height: 1.1;
+.game-card-image {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  object-fit: contain;
+  object-position: center;
+}
+
+.species-thumbnail {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  vertical-align: middle;
+}
+
+.combat-replay {
+  margin: 16px 0;
+  font-size: 0.85rem;
+}
+
+.team-battle { width: 100%; min-width: 0; }
+.team-matchup { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 12px; align-items: start; }
+.team-row, .lineup-editor { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.team-row { margin-top: 12px; }
+.team-position, .lineup-position { display: flex; flex-direction: column; align-items: center; gap: 6px; min-width: 0; font-size: 0.8rem; }
+.team-position .card-slot, .lineup-position .card-slot { width: 100%; max-width: 148px; }
+.lineup-editor { max-width: 500px; margin: 24px 0; }
+.lineup-controls { display: flex; gap: 6px; }
+.lineup-controls button { padding: 5px 12px; }
+@media (max-width: 760px) {
+  .team-matchup { grid-template-columns: minmax(0, 1fr); }
+  .team-matchup > .duel-vs { text-align: center; }
 }
 
 .game-card-name {
   font-weight: 700;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .game-card-element {
@@ -384,19 +416,32 @@ button.game-card:hover:not(:disabled) {
   font-weight: 700;
 }
 
-.game-card-power {
-  margin-bottom: auto;
-  font-size: 1.5rem;
+.game-card-stats {
+  display: flex;
+  justify-content: space-around;
+  font-size: 0.65rem;
   line-height: 1.2;
 }
 
+.game-card-stats strong {
+  display: block;
+  font-size: 0.85rem;
+}
+
 .game-card-passive {
+  position: absolute;
+  top: 28px;
+  right: 4px;
   color: var(--legendary);
   font-size: 0.75rem;
   font-weight: 700;
 }
 
 .game-card-tag {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
   padding: 1px 8px;
   border-radius: 999px;
   color: var(--warn);
@@ -419,6 +464,8 @@ button.game-card:hover:not(:disabled) {
 }
 
 .card-back {
+  display: flex;
+  flex-direction: column;
   --rarity-color: var(--accent);
   justify-content: center;
   background:
@@ -725,6 +772,14 @@ h3 {
   text-align: center;
 }
 
+.fighter-power {
+  max-width: 148px;
+  color: var(--muted);
+  font-size: 0.8rem;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
 /* Home dashboard */
 .stat-grid {
   display: grid;
@@ -890,7 +945,8 @@ h3 {
     font-size: 0.6rem;
   }
 
-  .fighter-note {
+  .fighter-note,
+  .fighter-power {
     max-width: 92px;
   }
 
@@ -899,6 +955,7 @@ h3 {
   }
 
   .card-slot .game-card {
+    grid-template-rows: 0.6rem minmax(0, 1fr) 0.8rem 0.7rem 1.2rem 0.6rem;
     gap: 2px;
     padding: 8px 4px;
     border-width: 2px;
@@ -909,8 +966,9 @@ h3 {
     letter-spacing: 0.04em;
   }
 
-  .card-slot .game-card-icon {
-    font-size: 1.6rem;
+  .card-slot .game-card-stats,
+  .card-slot .game-card-stats strong {
+    font-size: 0.55rem;
   }
 
   .card-slot .game-card-element,
@@ -918,8 +976,8 @@ h3 {
     font-size: 0.7rem;
   }
 
-  .card-slot .game-card-power {
-    font-size: 1.2rem;
+  .card-slot .game-card-passive {
+    top: 18px;
   }
 
   .forge-inputs {

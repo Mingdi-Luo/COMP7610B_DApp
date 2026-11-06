@@ -6,7 +6,7 @@ import { useWallet } from "./useWallet.jsx";
 
 /**
  * Cards owned by the connected wallet, as plain objects:
- * { tokenId, element, rarity, power } (all numbers; enums use contracts.js order).
+ * { tokenId, speciesId, element, rarity, maxHP, atk, def } (all numbers; enums use contracts.js order).
  * Call refresh() after a transaction that changes the collection. `loaded` turns
  * true after the first load, so pages can tell "no cards" from "not loaded yet".
  */

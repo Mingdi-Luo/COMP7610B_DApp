@@ -24,7 +24,8 @@ contract MockElementCards is ElementCards {
         return
             _issueCard(
                 to,
-                Card(speciesId, species.element, species.secondElement, species.rarity, power, passive, gender, 0, 0)
+                Card(speciesId, species.element, species.secondElement, species.rarity, power, passive, gender, 0, 0,
+                    species.maxHP, species.atk, species.def)
             );
     }
 }

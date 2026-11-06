@@ -39,6 +39,22 @@
   {
     "inputs": [
       {
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "DuplicateCard",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidCombatStats",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "enum Arena.Status",
         "name": "current",
         "type": "uint8"
@@ -188,13 +204,26 @@
       },
       {
         "indexed": false,
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
+        "internalType": "uint256[3]",
+        "name": "tokenIds",
+        "type": "uint256[3]"
       }
     ],
-    "name": "CardRevealed",
+    "name": "TeamRevealed",
     "type": "event"
+  },
+  {
+    "inputs": [],
+    "name": "MAX_ROUNDS",
+    "outputs": [
+      {
+        "internalType": "uint8",
+        "name": "",
+        "type": "uint8"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
   },
   {
     "inputs": [],
@@ -204,6 +233,19 @@
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "TEAM_SIZE",
+    "outputs": [
+      {
+        "internalType": "uint8",
+        "name": "",
+        "type": "uint8"
       }
     ],
     "stateMutability": "view",
@@ -257,6 +299,21 @@
             "internalType": "uint64",
             "name": "breedReadyAt",
             "type": "uint64"
+          },
+          {
+            "internalType": "uint16",
+            "name": "maxHP",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "atk",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "def",
+            "type": "uint16"
           }
         ],
         "internalType": "struct ElementCards.Card",
@@ -309,6 +366,21 @@
             "internalType": "uint64",
             "name": "breedReadyAt",
             "type": "uint64"
+          },
+          {
+            "internalType": "uint16",
+            "name": "maxHP",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "atk",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "def",
+            "type": "uint16"
           }
         ],
         "internalType": "struct ElementCards.Card",
@@ -320,7 +392,7 @@
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "percent",
+        "name": "multiplier",
         "type": "uint256"
       }
     ],
@@ -338,124 +410,6 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "components": [
-          {
-            "internalType": "uint8",
-            "name": "speciesId",
-            "type": "uint8"
-          },
-          {
-            "internalType": "enum ElementCards.Element",
-            "name": "element",
-            "type": "uint8"
-          },
-          {
-            "internalType": "enum ElementCards.Element",
-            "name": "secondElement",
-            "type": "uint8"
-          },
-          {
-            "internalType": "enum ElementCards.Rarity",
-            "name": "rarity",
-            "type": "uint8"
-          },
-          {
-            "internalType": "uint8",
-            "name": "power",
-            "type": "uint8"
-          },
-          {
-            "internalType": "enum ElementCards.Passive",
-            "name": "passive",
-            "type": "uint8"
-          },
-          {
-            "internalType": "enum ElementCards.Gender",
-            "name": "gender",
-            "type": "uint8"
-          },
-          {
-            "internalType": "uint8",
-            "name": "generation",
-            "type": "uint8"
-          },
-          {
-            "internalType": "uint64",
-            "name": "breedReadyAt",
-            "type": "uint64"
-          }
-        ],
-        "internalType": "struct ElementCards.Card",
-        "name": "card",
-        "type": "tuple"
-      },
-      {
-        "components": [
-          {
-            "internalType": "uint8",
-            "name": "speciesId",
-            "type": "uint8"
-          },
-          {
-            "internalType": "enum ElementCards.Element",
-            "name": "element",
-            "type": "uint8"
-          },
-          {
-            "internalType": "enum ElementCards.Element",
-            "name": "secondElement",
-            "type": "uint8"
-          },
-          {
-            "internalType": "enum ElementCards.Rarity",
-            "name": "rarity",
-            "type": "uint8"
-          },
-          {
-            "internalType": "uint8",
-            "name": "power",
-            "type": "uint8"
-          },
-          {
-            "internalType": "enum ElementCards.Passive",
-            "name": "passive",
-            "type": "uint8"
-          },
-          {
-            "internalType": "enum ElementCards.Gender",
-            "name": "gender",
-            "type": "uint8"
-          },
-          {
-            "internalType": "uint8",
-            "name": "generation",
-            "type": "uint8"
-          },
-          {
-            "internalType": "uint64",
-            "name": "breedReadyAt",
-            "type": "uint64"
-          }
-        ],
-        "internalType": "struct ElementCards.Card",
-        "name": "enemy",
-        "type": "tuple"
-      }
-    ],
-    "name": "battlePower",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "pure",
     "type": "function"
   },
   {
@@ -556,9 +510,9 @@
   {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
+        "internalType": "uint256[3]",
+        "name": "tokenIds",
+        "type": "uint256[3]"
       },
       {
         "internalType": "bytes32",
@@ -604,6 +558,154 @@
       }
     ],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint8",
+            "name": "speciesId",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Element",
+            "name": "element",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Element",
+            "name": "secondElement",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Rarity",
+            "name": "rarity",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "power",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Passive",
+            "name": "passive",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Gender",
+            "name": "gender",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "generation",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint64",
+            "name": "breedReadyAt",
+            "type": "uint64"
+          },
+          {
+            "internalType": "uint16",
+            "name": "maxHP",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "atk",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "def",
+            "type": "uint16"
+          }
+        ],
+        "internalType": "struct ElementCards.Card",
+        "name": "attacker",
+        "type": "tuple"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint8",
+            "name": "speciesId",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Element",
+            "name": "element",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Element",
+            "name": "secondElement",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Rarity",
+            "name": "rarity",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "power",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Passive",
+            "name": "passive",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Gender",
+            "name": "gender",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "generation",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint64",
+            "name": "breedReadyAt",
+            "type": "uint64"
+          },
+          {
+            "internalType": "uint16",
+            "name": "maxHP",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "atk",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "def",
+            "type": "uint16"
+          }
+        ],
+        "internalType": "struct ElementCards.Card",
+        "name": "defender",
+        "type": "tuple"
+      }
+    ],
+    "name": "damage",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "pure",
     "type": "function"
   },
   {
@@ -668,14 +770,14 @@
             "type": "bytes32"
           },
           {
-            "internalType": "uint256",
-            "name": "creatorTokenId",
-            "type": "uint256"
+            "internalType": "uint256[3]",
+            "name": "creatorTokenIds",
+            "type": "uint256[3]"
           },
           {
-            "internalType": "uint256",
-            "name": "opponentTokenId",
-            "type": "uint256"
+            "internalType": "uint256[3]",
+            "name": "opponentTokenIds",
+            "type": "uint256[3]"
           },
           {
             "internalType": "bool",
@@ -767,10 +869,206 @@
             "internalType": "uint64",
             "name": "breedReadyAt",
             "type": "uint64"
+          },
+          {
+            "internalType": "uint16",
+            "name": "maxHP",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "atk",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "def",
+            "type": "uint16"
+          }
+        ],
+        "internalType": "struct ElementCards.Card[3]",
+        "name": "creatorCards",
+        "type": "tuple[3]"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint8",
+            "name": "speciesId",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Element",
+            "name": "element",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Element",
+            "name": "secondElement",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Rarity",
+            "name": "rarity",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "power",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Passive",
+            "name": "passive",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Gender",
+            "name": "gender",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "generation",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint64",
+            "name": "breedReadyAt",
+            "type": "uint64"
+          },
+          {
+            "internalType": "uint16",
+            "name": "maxHP",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "atk",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "def",
+            "type": "uint16"
+          }
+        ],
+        "internalType": "struct ElementCards.Card[3]",
+        "name": "opponentCards",
+        "type": "tuple[3]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "battleId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "commitment",
+        "type": "bytes32"
+      }
+    ],
+    "name": "joinBattle",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "battleId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256[3]",
+        "name": "tokenIds",
+        "type": "uint256[3]"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "salt",
+        "type": "bytes32"
+      }
+    ],
+    "name": "reveal",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint8",
+            "name": "speciesId",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Element",
+            "name": "element",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Element",
+            "name": "secondElement",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Rarity",
+            "name": "rarity",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "power",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Passive",
+            "name": "passive",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Gender",
+            "name": "gender",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "generation",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint64",
+            "name": "breedReadyAt",
+            "type": "uint64"
+          },
+          {
+            "internalType": "uint16",
+            "name": "maxHP",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "atk",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "def",
+            "type": "uint16"
           }
         ],
         "internalType": "struct ElementCards.Card",
-        "name": "creatorCard",
+        "name": "a",
         "type": "tuple"
       },
       {
@@ -819,55 +1117,239 @@
             "internalType": "uint64",
             "name": "breedReadyAt",
             "type": "uint64"
+          },
+          {
+            "internalType": "uint16",
+            "name": "maxHP",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "atk",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "def",
+            "type": "uint16"
           }
         ],
         "internalType": "struct ElementCards.Card",
-        "name": "opponentCard",
+        "name": "b",
         "type": "tuple"
       }
     ],
-    "stateMutability": "view",
+    "name": "simulateBattle",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "hpA",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "hpB",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "damageA",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "damageB",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint8",
+            "name": "rounds",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "winner",
+            "type": "uint8"
+          }
+        ],
+        "internalType": "struct Arena.CombatResult",
+        "name": "result",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "pure",
     "type": "function"
   },
   {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "battleId",
-        "type": "uint256"
+        "components": [
+          {
+            "internalType": "uint8",
+            "name": "speciesId",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Element",
+            "name": "element",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Element",
+            "name": "secondElement",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Rarity",
+            "name": "rarity",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "power",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Passive",
+            "name": "passive",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Gender",
+            "name": "gender",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "generation",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint64",
+            "name": "breedReadyAt",
+            "type": "uint64"
+          },
+          {
+            "internalType": "uint16",
+            "name": "maxHP",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "atk",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "def",
+            "type": "uint16"
+          }
+        ],
+        "internalType": "struct ElementCards.Card[3]",
+        "name": "a",
+        "type": "tuple[3]"
       },
       {
-        "internalType": "bytes32",
-        "name": "commitment",
-        "type": "bytes32"
+        "components": [
+          {
+            "internalType": "uint8",
+            "name": "speciesId",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Element",
+            "name": "element",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Element",
+            "name": "secondElement",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Rarity",
+            "name": "rarity",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "power",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Passive",
+            "name": "passive",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ElementCards.Gender",
+            "name": "gender",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "generation",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint64",
+            "name": "breedReadyAt",
+            "type": "uint64"
+          },
+          {
+            "internalType": "uint16",
+            "name": "maxHP",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "atk",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "def",
+            "type": "uint16"
+          }
+        ],
+        "internalType": "struct ElementCards.Card[3]",
+        "name": "b",
+        "type": "tuple[3]"
       }
     ],
-    "name": "joinBattle",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
+    "name": "simulateTeamBattle",
+    "outputs": [
       {
-        "internalType": "uint256",
-        "name": "battleId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "bytes32",
-        "name": "salt",
-        "type": "bytes32"
+        "components": [
+          {
+            "internalType": "uint256[3]",
+            "name": "hpA",
+            "type": "uint256[3]"
+          },
+          {
+            "internalType": "uint256[3]",
+            "name": "hpB",
+            "type": "uint256[3]"
+          },
+          {
+            "internalType": "uint8",
+            "name": "rounds",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "winner",
+            "type": "uint8"
+          }
+        ],
+        "internalType": "struct Arena.TeamCombatResult",
+        "name": "result",
+        "type": "tuple"
       }
     ],
-    "name": "reveal",
-    "outputs": [],
-    "stateMutability": "nonpayable",
+    "stateMutability": "pure",
     "type": "function"
   }
 ]

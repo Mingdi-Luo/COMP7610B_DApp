@@ -30,20 +30,20 @@ export function getArenaContract(runner) {
 }
 
 // Solidity enums arrive as numbers. These arrays use the same order as the contracts.
-export const ELEMENTS = ["Neutral", "Fire", "Water", "Grass", "Electric", "Ground", "Ice", "Dragon", "Dark"];
+export const ELEMENTS = ["Neutral", "Fire", "Water", "Grass", "Electric", "Ground", "Ice", "Dragon", "Dark", "None"];
 export const RARITIES = ["Common", "Rare", "Legendary"];
 export const PASSIVES = ["None", "Pierce", "Underdog", "Resonance", "Guard", "Focus"];
 export const GENDERS = ["Male", "Female"];
 export const GENDER_SYMBOLS = ["♂", "♀"];
 export const BATTLE_STATUS = ["None", "Open", "Joined", "Resolved", "Cancelled"];
 
-// What each passive does in battle. Mirrors Arena.battlePower.
+// Mirrors Arena's deterministic passive effects. Each card has at most one.
 export const PASSIVE_EFFECTS = {
-  Pierce: "A resisted attack still deals full damage.",
-  Underdog: "+30% power against a stronger card.",
-  Resonance: "+20% power when both cards share an element.",
-  Guard: "+25% power when the enemy is strong against this card.",
-  Focus: "+10% power in every battle.",
+  Pierce: "Ignores 20% of the target's DEF when attacking; effective DEF is rounded down.",
+  Underdog: "Deals 20% more damage when HP is at or below 50% at the start of the round.",
+  Resonance: "Deals 5% more damage per other teammate with the same primary element (up to 10%). Knocked-out teammates still count.",
+  Guard: "Takes 10% less damage. Final damage is always at least 1.",
+  Focus: "Deals 25% more damage on this card's first attack of the battle, including when entering from the bench.",
 };
 
 // Prices in coins, indexed by rarity. Mirror ElementCards; the Rules page reads the live values.

@@ -11,7 +11,9 @@ export default function Card({
   element,
   secondElement,
   rarity,
-  power,
+  maxHP,
+  atk,
+  def,
   passive = 0,
   gender = 0,
   generation = 0,
@@ -25,7 +27,7 @@ export default function Card({
   const rarityName = RARITIES[rarity];
   const passiveName = PASSIVES[passive];
   const genderName = GENDERS[gender];
-  const elementNames = secondElement === element ? [elementName] : [elementName, ELEMENTS[secondElement]];
+  const elementNames = secondElement === 9 || secondElement === element ? [elementName] : [elementName, ELEMENTS[secondElement]];
   const className = [
     "game-card",
     `element-${elementName.toLowerCase()}`,
@@ -36,7 +38,7 @@ export default function Card({
   const content = (
     <>
       <span className="game-card-rarity">{rarityName}</span>
-      <span className="game-card-icon" aria-hidden="true">{species.icon}</span>
+      <img className="game-card-image" src={species.image} alt={`${species.nameZh} / ${species.nameEn}`} loading="lazy" />
       <span className="game-card-name">
         {species.name}{" "}
         <span className={`gender-${genderName.toLowerCase()}`} role="img" aria-label={genderName} title={genderName}>
@@ -51,7 +53,11 @@ export default function Card({
           </span>
         ))}
       </span>
-      <strong className="game-card-power">{power}</strong>
+      <span className="game-card-stats">
+        <span>HP <strong>{maxHP}</strong></span>
+        <span>ATK <strong>{atk}</strong></span>
+        <span>DEF <strong>{def}</strong></span>
+      </span>
       {passive > 0 && (
         <span className="game-card-passive" title={PASSIVE_EFFECTS[passiveName]}>✨ {passiveName}</span>
       )}

@@ -11,6 +11,9 @@ export function toCard(tokenId, card) {
     gender: Number(card.gender),
     generation: Number(card.generation),
     breedReadyAt: Number(card.breedReadyAt),
+    maxHP: Number(card.maxHP),
+    atk: Number(card.atk),
+    def: Number(card.def),
   };
 }
 
@@ -29,49 +32,123 @@ export function findEvent(receipt, contract, name) {
 }
 
 // The rest of this file mirrors Arena.sol, so results can be explained without extra RPC calls.
-const NEUTRAL = 0;
-const PIERCE = 1;
-const UNDERDOG = 2;
-const RESONANCE = 3;
-const GUARD = 4;
-const FOCUS = 5;
+const NONE = 9;
+const PASSIVE = { Pierce: 1, Underdog: 2, Resonance: 3, Guard: 4, Focus: 5 };
 
 // Elements each element is strong against, indexed in contract order
 // (Neutral, Fire, Water, Grass, Electric, Ground, Ice, Dragon, Dark).
-const STRONG_AGAINST = [[], [3, 6], [1], [5], [2], [4], [7], [8], [0]];
+const STRONG_AGAINST = [[], [3, 6], [1], [5], [2], [4], [7], [8], [0], []];
 
 const beats = (attacker, defender) => STRONG_AGAINST[attacker].includes(defender);
 
-function elementMultiplier(attacker, defender) {
-  if (attacker === NEUTRAL) return 100;
-  if (beats(attacker, defender)) return 200;
-  if (beats(defender, attacker)) return 50;
-  return 100;
+export function elementMultiplier(attacker, defender) {
+  if (attacker === NONE || defender === NONE) return 10000;
+  if (beats(attacker, defender)) return 12500;
+  if (beats(defender, attacker)) return 8000;
+  return 10000;
 }
 
-function attackMultiplier(attacker, defender) {
-  const first = elementMultiplier(attacker.element, defender.element);
-  if (defender.secondElement === defender.element) return first;
-  return (first * elementMultiplier(attacker.element, defender.secondElement)) / 100;
+export function attackMultiplier(attacker, defender) {
+  let multiplier = elementMultiplier(attacker.element, defender.element);
+  if (defender.secondElement !== NONE) {
+    multiplier = Math.floor(multiplier * elementMultiplier(attacker.element, defender.secondElement) / 10000);
+  }
+  return Math.max(7000, Math.min(15000, multiplier));
 }
 
-const shareElement = (a, b) =>
-  a.element === b.element ||
-  a.element === b.secondElement ||
-  a.secondElement === b.element ||
-  a.secondElement === b.secondElement;
+/** Damage for one attack, including passives evaluated at the start of the round. */
+export function battleBreakdown(card, enemy, { hp = card.maxHP, firstAttack = true, teammates = 0 } = {}) {
+  const multiplier = attackMultiplier(card, enemy);
+  return { multiplier, total: Number(relayDamage(card, enemy, BigInt(hp), firstAttack, teammates)) };
+}
 
-/**
- * How a card's battle power is worked out against an enemy:
- * { multiplier, bonus, total }, with multiplier and bonus in percent.
- */
-export function battleBreakdown(card, enemy) {
-  let multiplier = attackMultiplier(card, enemy);
-  let bonus = 0;
-  if (card.passive === PIERCE && multiplier < 100) multiplier = 100;
-  else if (card.passive === UNDERDOG && card.power < enemy.power) bonus = 30;
-  else if (card.passive === RESONANCE && shareElement(card, enemy)) bonus = 20;
-  else if (card.passive === GUARD && attackMultiplier(enemy, card) > 100) bonus = 25;
-  else if (card.passive === FOCUS) bonus = 10;
-  return { multiplier, bonus, total: Math.floor((card.power * multiplier * (100 + bonus)) / 10_000) };
+/** Mirrors Arena.simulateBattle; history uses the attributes snapshotted at reveal. */
+export function simulateBattle(a, b) {
+  let damageA = 0n;
+  let damageB = 0n;
+  let hpA = BigInt(a.maxHP);
+  let hpB = BigInt(b.maxHP);
+  const log = [];
+  while (log.length < 20 && hpA > 0n && hpB > 0n) {
+    damageA = relayDamage(a, b, hpA, log.length === 0, 0);
+    damageB = relayDamage(b, a, hpB, log.length === 0, 0);
+    hpA = damageB >= hpA ? 0n : hpA - damageB;
+    hpB = damageA >= hpB ? 0n : hpB - damageA;
+    log.push({ round: log.length + 1, hpA: Number(hpA), hpB: Number(hpB), damageA: Number(damageA), damageB: Number(damageB) });
+  }
+  let winner = 0;
+  if (hpA === 0n && hpB === 0n) winner = 0;
+  else if (hpA === 0n) winner = 2;
+  else if (hpB === 0n) winner = 1;
+  else if (hpA * BigInt(b.maxHP) > hpB * BigInt(a.maxHP)) winner = 1;
+  else if (hpA * BigInt(b.maxHP) < hpB * BigInt(a.maxHP)) winner = 2;
+  return { hpA: Number(hpA), hpB: Number(hpB), damageA: Number(damageA), damageB: Number(damageB), rounds: log.length, winner, log };
+}
+
+// Exact integer arithmetic for both battle helpers. Display metadata may stay Number.
+function relayDamage(a, b, hp, firstAttack, teammates) {
+  let multiplier = BigInt(elementMultiplier(a.element, b.element));
+  if (b.secondElement !== NONE) multiplier = multiplier * BigInt(elementMultiplier(a.element, b.secondElement)) / 10000n;
+  if (multiplier < 7000n) multiplier = 7000n;
+  if (multiplier > 15000n) multiplier = 15000n;
+  let defense = BigInt(b.def);
+  if (a.passive === PASSIVE.Pierce) defense = defense * 80n / 100n;
+  let amount = BigInt(a.atk) * multiplier * 100n / (10000n * (100n + defense));
+  if (amount === 0n) amount = 1n;
+  if (a.passive === PASSIVE.Underdog && hp * 2n <= BigInt(a.maxHP)) {
+    amount = amount * 120n / 100n;
+  } else if (a.passive === PASSIVE.Resonance) {
+    amount = amount * (100n + BigInt(teammates) * 5n) / 100n;
+  } else if (a.passive === PASSIVE.Focus && firstAttack) {
+    amount = amount * 125n / 100n;
+  }
+  if (b.passive === PASSIVE.Guard) amount = amount * 90n / 100n;
+  return amount > 0n ? amount : 1n;
+}
+
+export function teamHpFraction(team, hp) {
+  const denominator = team.reduce((product, card) => product * BigInt(card.maxHP), 1n);
+  const numerator = hp.reduce((sum, value, i) => sum + BigInt(value) * (denominator / BigInt(team[i].maxHP)), 0n);
+  return { numerator, denominator };
+}
+
+/** Ordered 3v3 relay, one global 20-round limit, survivor HP carries over. */
+export function simulateTeamBattle(a, b) {
+  if (a.length !== 3 || b.length !== 3 || [...a, ...b].some(card => BigInt(card.maxHP) <= 0n)) {
+    throw new Error("Relay battles require three cards with positive MaxHP on each team.");
+  }
+  const hpA = a.map(card => BigInt(card.maxHP));
+  const hpB = b.map(card => BigInt(card.maxHP));
+  const attackedA = [false, false, false];
+  const attackedB = [false, false, false];
+  const matches = team => team.map((card, index) => team.filter((other, i) => i !== index && other.element === card.element).length);
+  const teammatesA = matches(a);
+  const teammatesB = matches(b);
+  let activeA = 0;
+  let activeB = 0;
+  const log = [];
+  while (log.length < 20 && activeA < 3 && activeB < 3) {
+    const damageA = relayDamage(a[activeA], b[activeB], hpA[activeA], !attackedA[activeA], teammatesA[activeA]);
+    const damageB = relayDamage(b[activeB], a[activeA], hpB[activeB], !attackedB[activeB], teammatesB[activeB]);
+    attackedA[activeA] = true;
+    attackedB[activeB] = true;
+    hpA[activeA] = damageB >= hpA[activeA] ? 0n : hpA[activeA] - damageB;
+    hpB[activeB] = damageA >= hpB[activeB] ? 0n : hpB[activeB] - damageA;
+    log.push({ round: log.length + 1, activeA, activeB, damageA, damageB, hpA: [...hpA], hpB: [...hpB] });
+    if (hpA[activeA] === 0n) activeA++;
+    if (hpB[activeB] === 0n) activeB++;
+  }
+  let winner = 0;
+  if (activeA === 3 && activeB === 3) winner = 0;
+  else if (activeA === 3) winner = 2;
+  else if (activeB === 3) winner = 1;
+  else {
+    const scoreA = teamHpFraction(a, hpA);
+    const scoreB = teamHpFraction(b, hpB);
+    const crossA = scoreA.numerator * scoreB.denominator;
+    const crossB = scoreB.numerator * scoreA.denominator;
+    if (crossA > crossB) winner = 1;
+    else if (crossB > crossA) winner = 2;
+  }
+  return { hpA, hpB, rounds: log.length, winner, log };
 }

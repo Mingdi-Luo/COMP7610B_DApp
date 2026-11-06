@@ -18,24 +18,43 @@ card.
 | **Decompose** | Burn a card and receive coins, worth less than the card cost to get. |
 | **Enchant** | Pay coins to give a card one random passive. Enchanting again replaces it. |
 | **Breed** | Pay coins to mint a child from one male and one female card. The parents stay yours but rest afterwards. |
-| **Duel** | Both players commit `hash(card, salt, address)` and stake the same coins, then reveal. The stronger card wins the pot. |
+| **Duel** | Both players commit `hash(ordered tokenIds[3], salt, address)` and stake the same coins, then reveal. A deterministic 3v3 relay with one global 20-round limit decides the pot. |
 
-- **Species:** 27 original creatures, nine of each rarity. Stats are in the `ElementCards`
-  constructor; names and settings are in `frontend/src/config/species.js`.
-- **Rarities:** Common 70% (power 10–39), Rare 25% (40–69), Legendary 5% (70–100).
-  The rates are public constants in the contract.
+- **Species:** 136 Pals from `palworld-dataset.json`, in its existing array order. `speciesId`
+  is the array index, locked in `scripts/species-order.json`. Official keys match `codename`;
+  images match each record's `slug` and are served from `frontend/public/pals/`.
+- **Rarities:** Common 70%, Rare 25%, Legendary 5%, retaining the original prices and merge rules.
+  Official rarity 1–4 / 5–9 / 10+ maps to these three economic tiers only; it never changes combat stats.
 - **Elements:** Water beats Fire. Fire beats Grass and Ice. Grass beats Ground. Ground beats
   Electric. Electric beats Water. Ice beats Dragon. Dragon beats Dark. Dark beats Neutral.
-- **Battle power:** a strong attack deals 2x and a resisted one 0.5x. A card attacks with its first
-  element; against a dual-element card both results multiply, so two strengths make 4x and a
-  strength plus a resistance make 1x. An element attacks itself at 1x, and Neutral always attacks
-  at 1x. The passive is applied last.
-- **Passives:** Pierce (a resisted attack deals full damage), Underdog (+30% against a stronger
-  card), Resonance (+20% when the cards share an element), Guard (+25% when the enemy is strong
-  against this card), Focus (+10% always).
+  A strength uses E=12500, reverse resistance E=8000, otherwise E=10000 (basis points).
+  Only the primary element attacks; multiply both defense elements, ignore None, then clamp to 7000–15000.
+- **Battle:** official Hp → MaxHP, ShotAttack → ATK, Defense → DEF, with no scaling.
+  Every round both cards simultaneously deal
+  `max(1, floor(ATK * E * 100 / (10000 * (100 + enemy DEF))))` damage.
+  Each player commits three different NFT IDs in a fixed order. The current pair attacks
+  simultaneously; fallen cards are replaced next round, survivors keep HP, and damage never
+  spills onto the bench. Eliminating the opposing team wins; simultaneous team elimination draws.
+  The whole battle lasts at most 20 rounds. At the limit compare the exact sum of
+  `remaining HP / MaxHP` for all three cards, including full-health unused cards and zero-HP
+  fallen cards. Equal sums draw. The frontend relay uses BigInt and the contract cross-multiplies
+  exact fractions without rounding percentages.
+  No speed, active skills, critical hits, dodge or random combat modifiers are used.
+- **Passives:** each card has at most one. Enchanting rolls the five effects with equal odds,
+  replacing the previous passive (the same passive can roll again). New and bred cards have none.
+  Pierce ignores 20% of target DEF; Underdog deals 20% more damage at or below half HP at the
+  start of a round; Resonance deals 5% more per other teammate with the same primary element
+  (up to 10%, including knocked-out teammates); Guard reduces incoming damage by 10%; Focus
+  deals 25% more on that card's first attack of the battle, including replacements.
+  Apply Pierce to DEF, compute base damage, apply attack bonuses, then Guard. Round down at
+  each step; final damage is at least 1. Both triggers read the state before either attack lands.
+  Base stats stay unchanged; the original random `power` field has no effect in combat.
 - **Gender:** every card is male or female, rolled at random when it is minted.
 - **Breeding:** the parents must be one male and one female. A special recipe wins if one exists. Otherwise the child is the species whose
-  breeding rank is closest to the average of the parents' ranks.
+  breeding rank is closest to the average of the parents' ranks, with lower species ID breaking ties.
+  Ranks use `combiRank`; 28 primary-parent recipes use the dataset's `specialCombos`.
+  The existing averaging rule is retained; `ignoreCombi`, `combiDuplicatePriority`, and ambiguous
+  `altLegendaryParent` metadata do not introduce additional breeding rules in this version.
 
 | Rarity | Decompose for | Enchant | Breed a child |
 | --- | --- | --- | --- |
@@ -49,14 +68,14 @@ The coin balance stays visible in the header on every page.
 
 | Page | What you can do |
 | --- | --- |
-| **Home** | New players see an introduction. Returning players see a live dashboard, refreshed every 10 seconds: coins, cards owned, battle record, net battle earnings, strongest card, what needs attention (reveal countdowns, timeouts, open battles to join, cards ready to merge, low coins) and recent results. |
+| **Home** | New players see an introduction. Returning players see a live dashboard, refreshed every 10 seconds: coins, cards owned, battle record, net battle earnings, highest ATK card, what needs attention (reveal countdowns, timeouts, open battles to join, cards ready to merge, low coins) and recent results. |
 | **Top Up** | Buy coins with ETH, using a preset or any whole number of coins. |
 | **Shop** | Open a pack and watch the new card flip over. |
-| **My Cards** | See every card you own, filter by rarity and element, and sort by power. |
-| **Forge** | Four tabs: Merge (or let the page pick the three weakest cards), Enchant, Decompose and Breed. Breed has one male and one female slot: clicking a slot greys out the other gender, and the page previews the child and its fee. A card committed to a battle cannot be merged or decomposed here. |
-| **Arena** | Create or join a battle with a chosen card and a stake in coins, reveal before the countdown ends, settle a timeout, or cancel a battle nobody has joined. Active battles show both cards: only you can see yours before you reveal, and your opponent's stays face down until they reveal. Cancelled and finished battles leave this list. |
-| **History** | Your last 20 finished battles, with both cards, how each card's power was worked out, the result and the coins won or lost. Cards appear as they were when revealed, even if they were merged or decomposed later. |
-| **Rules** | Drop rates, prices and all 27 species, read directly from the contract, plus the element chart and passives. |
+| **My Cards** | See every card you own, filter by rarity and element, and sort by ATK. |
+| **Forge** | Four tabs: Merge (or let the page pick the three lowest-ATK cards), Enchant, Decompose and Breed. Breed has one male and one female slot: clicking a slot greys out the other gender, and the page previews the child and its fee. A card committed to a battle cannot be merged or decomposed here. |
+| **Arena** | Create or join a battle with an ordered three-card team and a stake in coins, reveal before the countdown ends, settle a timeout, or cancel a battle nobody has joined. Active battles show both teams: only you can see yours before you reveal, and your opponent's team stays face down until they reveal. Cancelled and finished battles leave this list. |
+| **History** | Your last 20 finished battles, with both teams, damage per round and an expandable deterministic round replay, the result and the coins won or lost. Cards appear as they were when revealed, even if they were merged or decomposed later. |
+| **Rules** | Drop rates, prices and all 136 species, read directly from the contract, plus the element chart and passives. |
 
 ## Why a blockchain?
 
@@ -103,7 +122,7 @@ frontend/                  Vite + React + ethers v6
   src/pages/                   Home, TopUp, Shop, Collection, Forge, Arena, History, Odds (Rules)
   src/lib/                     game rules, commit-reveal helpers, error messages, formatting
 docs/
-  INTERFACE.md                 frozen contract interface
+  INTERFACE.md                 contract interface
   PLAN.md                      team roles, timeline and conventions (Chinese)
 ```
 
@@ -118,7 +137,23 @@ docs/
 
 Local development uses a Hardhat node: free test ETH, instant blocks, unlimited redeploys.
 
-**1. Install and test the contracts**
+**1. Verify generated species and images, then test the contracts**
+
+```bash
+node scripts/sync-palworld.mjs --check
+# After intentionally editing the source dataset, regenerate with:
+# node scripts/sync-palworld.mjs
+```
+
+This uses only the JSON files and slug-matched PNG files, never Excel. The check validates
+all official core fields, chain/frontend fixed order, recipes, and all 136 image copies.
+Changing the species order requires an explicit migration. The new Card/Species structs and
+battle helpers require fresh `ElementCards` and `Arena` deployments and exported ABIs;
+existing deployed bytecode is not upgraded by editing files.
+The passive battle rules also require a fresh Arena deployment; the Card structure and
+commitment format are unchanged from the 3v3 relay version.
+
+**Install and test:**
 
 ```bash
 cd contracts
@@ -162,8 +197,8 @@ paste one of the private keys printed in step 2.
 
 **6. Try a duel.** Import a second test account the same way, then connect it to the site from
 MetaMask's connected accounts settings. Until you do, the page keeps showing the first account.
-With the first account, top up, open a pack, pick a card in the Arena and create a battle. Switch MetaMask to the
-second account, top up, open a pack, then join the battle. Each account reveals its card, and the second
+With the first account, top up, open at least three packs, pick and order three cards in the Arena and create a battle. Switch MetaMask to the
+second account, top up, open at least three packs, then pick and order three cards to join the battle. Each account reveals its team, and the second
 reveal settles the battle. The result then appears on the Home dashboard and in History.
 
 **After restarting the local node**, reset MetaMask's cached nonce for each test account, with
@@ -226,6 +261,10 @@ with `npx hardhat keystore set <NAME>`, then run
 - The wallet connection and transaction-handling code started from the course's NFT-ticket
   starter ([jzjzzzzzzz/nft-ticket-dapp](https://github.com/jzjzzzzzzz/nft-ticket-dapp)).
 - Token standards come from [OpenZeppelin Contracts](https://docs.openzeppelin.com/contracts/5.x/).
+- Palworld species data and character artwork are used for this course project. The game dataset
+  is `palworld-dataset.json`; official stat verification uses `DT_PalMonsterParameter_Common.json`.
+  Slug-matched source images are in `art-references/palworld-fullbody/site-images/`, with runtime
+  copies in `frontend/public/pals/`.
 - On-chain randomness here uses `block.prevrandao`, which validators can influence. It is
   adequate for a course demo; a production game would use a verifiable randomness oracle
   such as Chainlink VRF.

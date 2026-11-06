@@ -19,8 +19,8 @@ export function sideOf(battle, account) {
     myCommitment: isCreator ? battle.creatorCommitment : battle.opponentCommitment,
     iRevealed: isCreator ? battle.creatorRevealed : battle.opponentRevealed,
     theyRevealed: isCreator ? battle.opponentRevealed : battle.creatorRevealed,
-    myCard: isCreator ? battle.creatorCard : battle.opponentCard,
-    theirCard: isCreator ? battle.opponentCard : battle.creatorCard,
+    myTeam: isCreator ? battle.creatorCards : battle.opponentCards,
+    theirTeam: isCreator ? battle.opponentCards : battle.creatorCards,
   };
 }
 

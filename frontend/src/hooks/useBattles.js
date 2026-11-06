@@ -19,7 +19,7 @@ const POLL_MS = 10_000;
  * - activeBattles: the player's Open and Joined battles
  * - finishedBattles: the player's last HISTORY_SIZE resolved battles (cancelled ones are left out)
  * Battles are plain objects, newest first: status is a number in STATUS order, stake a
- * bigint, revealDeadline unix seconds, and creatorCard / opponentCard the cards as
+ * bigint, revealDeadline unix seconds, and creatorCards / opponentCards the cards as
  * revealed (null until that side reveals).
  */
 export function useBattles() {
@@ -89,9 +89,9 @@ async function loadBattle(arena, id) {
   const battle = toBattle(id, await arena.getBattle(id));
   if (battle.creatorRevealed || battle.opponentRevealed) {
     // Cards as they were at reveal time, even if they were merged away since.
-    const [creatorCard, opponentCard] = await arena.getRevealedCards(id);
-    if (battle.creatorRevealed) battle.creatorCard = toCard(battle.creatorTokenId, creatorCard);
-    if (battle.opponentRevealed) battle.opponentCard = toCard(battle.opponentTokenId, opponentCard);
+    const [creatorCards, opponentCards] = await arena.getRevealedCards(id);
+    if (battle.creatorRevealed) battle.creatorCards = Array.from(creatorCards, (card, i) => toCard(battle.creatorTokenIds[i], card));
+    if (battle.opponentRevealed) battle.opponentCards = Array.from(opponentCards, (card, i) => toCard(battle.opponentTokenIds[i], card));
   }
   return battle;
 }
@@ -104,14 +104,14 @@ function toBattle(id, battle) {
     stake: battle.stake,
     creatorCommitment: battle.creatorCommitment,
     opponentCommitment: battle.opponentCommitment,
-    creatorTokenId: Number(battle.creatorTokenId),
-    opponentTokenId: Number(battle.opponentTokenId),
+    creatorTokenIds: Array.from(battle.creatorTokenIds, String),
+    opponentTokenIds: Array.from(battle.opponentTokenIds, String),
     creatorRevealed: battle.creatorRevealed,
     opponentRevealed: battle.opponentRevealed,
     revealDeadline: Number(battle.revealDeadline),
     status: Number(battle.status),
     winner: battle.winner,
-    creatorCard: null,
-    opponentCard: null,
+    creatorCards: null,
+    opponentCards: null,
   };
 }

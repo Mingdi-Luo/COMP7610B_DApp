@@ -806,6 +806,21 @@
             "internalType": "uint64",
             "name": "breedReadyAt",
             "type": "uint64"
+          },
+          {
+            "internalType": "uint16",
+            "name": "maxHP",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "atk",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "def",
+            "type": "uint16"
           }
         ],
         "internalType": "struct ElementCards.Card",
@@ -851,6 +866,21 @@
           {
             "internalType": "uint16",
             "name": "breedRank",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "maxHP",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "atk",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "def",
             "type": "uint16"
           }
         ],

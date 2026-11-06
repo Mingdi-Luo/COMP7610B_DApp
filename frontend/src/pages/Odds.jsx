@@ -40,10 +40,13 @@ export default function Odds() {
         ))}
       </ul>
       <ul className="passive-list">
-        <li>A strong attack deals 2x power. A resisted attack deals 0.5x.</li>
-        <li>A card attacks with its first element. Against a dual-element card, both results multiply: two strengths make 4x, a strength and a resistance make 1x.</li>
-        <li>An element attacks itself at 1x.</li>
-        <li>{withIcon("Neutral")} always attacks at 1x and is strong against nothing, but {withIcon("Dark")} is strong against it.</li>
+        <li>A strong attack uses E = 12500 (1.25x); a reverse matchup resists with E = 8000 (0.80x); other matchups use 10000.</li>
+        <li>Only the primary element attacks. Multiply both defense elements, then clamp E to 7000–15000. None does not participate.</li>
+        <li>Each round both cards attack simultaneously. Base damage is max(1, floor(ATK × E × 100 / (10000 × (100 + enemy DEF)))); passives modify it as described below.</li>
+        <li>Choose three different NFTs in order. Each side fights with one active card. A knocked-out card is replaced next round; survivors keep their HP. No damage spills onto the next card.</li>
+        <li>Eliminate all three opposing cards to win; both teams eliminated in the same round draw. The entire battle has one 20-round limit.</li>
+        <li>At the limit compare Σ(remaining HP / MaxHP) across all three cards. Unused cards count as full HP, knocked-out cards as zero. Fractions are compared exactly; equal sums draw.</li>
+        <li>HP, ATK and DEF come directly from the official species stats. Rarity and legacy power do not affect battle; passives do not change the stored base stats.</li>
       </ul>
 
       <h2>Breeding</h2>
@@ -54,6 +57,7 @@ export default function Odds() {
       </ul>
 
       <h2>Passives</h2>
+      <p>Each card has at most one passive. Triggers read HP before either attack lands. Apply Pierce to DEF, calculate base damage, apply attack bonuses, then Guard. Round down at each step; final damage is at least 1.</p>
       <ul className="passive-list">
         {Object.entries(PASSIVE_EFFECTS).map(([name, effect]) => (
           <li key={name}><strong>{name}:</strong> {effect}</li>
@@ -78,9 +82,8 @@ function PriceTable() {
         const contract = getCardsContract(getProvider());
         const loaded = await Promise.all(
           RARITIES.map(async (name, rarity) => {
-            const [rateBp, [minPower, maxPower], decompose, enchant, breed] = await Promise.all([
+            const [rateBp, decompose, enchant, breed] = await Promise.all([
               contract.dropRate(rarity),
-              contract.powerRange(rarity),
               contract.decomposeValue(rarity),
               contract.enchantCost(rarity),
               contract.breedFee(rarity),
@@ -88,8 +91,6 @@ function PriceTable() {
             return {
               name,
               percent: Number(rateBp) / 100,
-              minPower: Number(minPower),
-              maxPower: Number(maxPower),
               decompose,
               enchant,
               breed,
@@ -112,14 +113,13 @@ function PriceTable() {
       <div className="table-scroll">
         <table className="odds-table">
           <thead>
-            <tr><th>Rarity</th><th>Pack chance</th><th>Power</th><th>Decompose for</th><th>Enchant</th><th>Breed</th></tr>
+            <tr><th>Rarity</th><th>Pack chance</th><th>Decompose for</th><th>Enchant</th><th>Breed</th></tr>
           </thead>
           <tbody>
             {rows.map((row) => (
               <tr key={row.name}>
                 <td>{row.name}</td>
                 <td>{row.percent}%</td>
-                <td>{row.minPower}–{row.maxPower}</td>
                 <td>{formatCoins(row.decompose)}</td>
                 <td>{formatCoins(row.enchant)}</td>
                 <td>{formatCoins(row.breed)}</td>
@@ -166,7 +166,7 @@ function SpeciesTable() {
       <div className="table-scroll">
         <table className="odds-table">
           <thead>
-            <tr><th>Species</th><th>Elements</th><th>Rarity</th><th>Base power</th><th>Breeding rank</th></tr>
+            <tr><th>Species</th><th>Elements</th><th>Rarity</th><th>HP / ATK / DEF</th><th>Breeding rank</th></tr>
           </thead>
           <tbody>
             {rows.map((row, id) => {
@@ -174,10 +174,10 @@ function SpeciesTable() {
               const second = ELEMENTS[Number(row.secondElement)];
               return (
                 <tr key={SPECIES[id].name} title={SPECIES[id].lore}>
-                  <td><span aria-hidden="true">{SPECIES[id].icon}</span> {SPECIES[id].name}</td>
-                  <td>{first === second ? withIcon(first) : `${withIcon(first)} / ${withIcon(second)}`}</td>
+                  <td><img className="species-thumbnail" src={SPECIES[id].image} alt={SPECIES[id].nameEn} loading="lazy" /> {SPECIES[id].name}</td>
+                  <td>{second === "None" || first === second ? withIcon(first) : `${withIcon(first)} / ${withIcon(second)}`}</td>
                   <td>{RARITIES[Number(row.rarity)]}</td>
-                  <td>{Number(row.basePower)}</td>
+                  <td>{Number(row.maxHP)} / {Number(row.atk)} / {Number(row.def)}</td>
                   <td>{Number(row.breedRank)}</td>
                 </tr>
               );

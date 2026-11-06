@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { SPECIES, RECIPES } from "../../frontend/src/config/species.js";
 import { expect } from "chai";
 import { network } from "hardhat";
 import { anyValue } from "@nomicfoundation/hardhat-ethers-chai-matchers/withArgs";
@@ -7,23 +9,14 @@ const { ethers, networkHelpers } = await network.create();
 const Rarity = { Common: 0, Rare: 1, Legendary: 2 };
 const Passive = { None: 0 };
 const Gender = { Male: 0, Female: 1 };
-// Species IDs, in the order of the ElementCards constructor.
-const Species = {
-  Puffkin: 0,
-  Driftmane: 1,
-  Halcyra: 2,
-  Emberkit: 3,
-  Cindrake: 4,
-  Pyrovane: 5,
-  Ripplet: 6,
-  Tidewarden: 7,
-  Voltarch: 13,
-  Stormregent: 14,
-  Cragmaw: 16,
-  Rimefang: 19,
-  Cryomere: 20,
-  Drakeshade: 22,
-  Gloomlet: 24,
+const Species = Object.fromEntries(SPECIES.map((pal) => [pal.nameEn.replaceAll(" ", ""), pal.speciesId]));
+const dataset = JSON.parse(readFileSync(new URL("../../palworld-dataset.json", import.meta.url), "utf8")).pals;
+const official = JSON.parse(readFileSync(new URL("../../DT_PalMonsterParameter_Common.json", import.meta.url), "utf8"))[0].Rows;
+const expectedChild = (a, b) => {
+  const recipe = RECIPES.find(({ parents }) => parents.includes(a) && parents.includes(b) && a !== b);
+  if (recipe) return recipe.child;
+  const target = Math.floor((dataset[a].combiRank + dataset[b].combiRank) / 2);
+  return dataset.reduce((best, pal, id) => Math.abs(pal.combiRank - target) < Math.abs(dataset[best].combiRank - target) ? id : best, 0);
 };
 const PACK_PRICE = 1_000n;
 const BREED_COOLDOWN = 60;
@@ -84,21 +77,28 @@ describe("ElementCards", function () {
       ]);
     });
 
-    it("has nine species of each rarity, all with powers inside their rarity's range", async function () {
+    it("matches all 136 official stats, fixed frontend IDs, elements and economic tiers", async function () {
       const { cards } = await deployCards();
-      expect(await cards.speciesCount()).to.equal(27n);
-      const spread = await cards.POWER_SPREAD();
+      expect(await cards.speciesCount()).to.equal(136n);
+      const elementIds = [9, 0, 1, 2, 3, 4, 6, 5, 8, 7];
       const perRarity = [0, 0, 0];
-
-      for (let id = 0; id < 27; id++) {
+      for (const [id, pal] of dataset.entries()) {
         const species = await cards.getSpecies(id);
+        const source = official[pal.codename];
+        const front = SPECIES[id];
+        expect(front.codename).to.equal(pal.codename);
+        expect(front.image).to.equal(`/pals/${pal.slug}.png`);
+        for (const [field, original] of [["maxHP", "Hp"], ["atk", "ShotAttack"], ["def", "Defense"], ["breedRank", "CombiRank"]]) {
+          expect(species[field], `${pal.codename}.${field}`).to.equal(BigInt(source[original]));
+          expect(front[field]).to.equal(source[original]);
+        }
+        expect(species.element).to.equal(BigInt(elementIds[pal.element1.id]));
+        expect(species.secondElement).to.equal(BigInt(elementIds[pal.element2.id]));
+        expect(species.rarity).to.equal(BigInt(pal.rarity <= 4 ? 0 : pal.rarity <= 9 ? 1 : 2));
         perRarity[Number(species.rarity)]++;
-        const [min, max] = await cards.powerRange(species.rarity);
-        expect(species.basePower).to.be.at.least(min);
-        expect(species.basePower + spread - 1n).to.be.at.most(max);
       }
-      expect(perRarity).to.deep.equal([9, 9, 9]);
-      await expect(cards.getSpecies(27)).to.be.revertedWithCustomError(cards, "UnknownSpecies").withArgs(27n);
+      expect(perRarity.every((count) => count > 0)).to.equal(true);
+      await expect(cards.getSpecies(136)).to.be.revertedWithCustomError(cards, "UnknownSpecies").withArgs(136n);
     });
 
     it("reverts getCard for a card that does not exist", async function () {
@@ -145,6 +145,7 @@ describe("ElementCards", function () {
         expect(card.secondElement).to.equal(species.secondElement);
         expect(card.rarity).to.equal(species.rarity);
         expect(card.power).to.be.within(species.basePower, species.basePower + 11n);
+        expect([card.maxHP, card.atk, card.def]).to.deep.equal([species.maxHP, species.atk, species.def]);
         expect(card.passive).to.equal(BigInt(Passive.None));
         expect(card.generation).to.equal(0n);
         genders.add(card.gender);
@@ -180,9 +181,9 @@ describe("ElementCards", function () {
     it("burns three same-rarity cards and mints one card of the next rarity", async function () {
       const { cards, alice, mint } = await deployMockCards();
       const ids = [
-        await mint(alice, Species.Puffkin),
-        await mint(alice, Species.Emberkit),
-        await mint(alice, Species.Ripplet),
+        await mint(alice, Species.Lamball),
+        await mint(alice, Species.Foxparks),
+        await mint(alice, Species.Fuack),
       ];
 
       await cards.connect(alice).merge([ids[0], ids[1], ids[2]]);
@@ -198,7 +199,7 @@ describe("ElementCards", function () {
 
     it("turns three Rare cards into a Legendary card", async function () {
       const { cards, alice, mint } = await deployMockCards();
-      for (let i = 0; i < 3; i++) await mint(alice, Species.Driftmane, 50);
+      for (let i = 0; i < 3; i++) await mint(alice, Species.IncineramNoct, 50);
 
       await cards.connect(alice).merge([1, 2, 3]);
 
@@ -209,7 +210,7 @@ describe("ElementCards", function () {
 
     it("emits CardsMerged with the burned and new token IDs", async function () {
       const { cards, alice, mint } = await deployMockCards();
-      for (let i = 0; i < 3; i++) await mint(alice, Species.Puffkin);
+      for (let i = 0; i < 3; i++) await mint(alice, Species.Lamball);
 
       await expect(cards.connect(alice).merge([1, 2, 3]))
         .to.emit(cards, "CardsMerged")
@@ -218,9 +219,9 @@ describe("ElementCards", function () {
 
     it("reverts with NotCardOwner when a card belongs to someone else", async function () {
       const { cards, alice, bob, mint } = await deployMockCards();
-      await mint(alice, Species.Puffkin);
-      await mint(alice, Species.Puffkin);
-      const bobs = await mint(bob, Species.Puffkin);
+      await mint(alice, Species.Lamball);
+      await mint(alice, Species.Lamball);
+      const bobs = await mint(bob, Species.Lamball);
 
       await expect(cards.connect(alice).merge([1, 2, bobs]))
         .to.be.revertedWithCustomError(cards, "NotCardOwner")
@@ -233,7 +234,7 @@ describe("ElementCards", function () {
 
     it("reverts with DuplicateCard when the same ID is passed twice", async function () {
       const { cards, alice, mint } = await deployMockCards();
-      for (let i = 0; i < 3; i++) await mint(alice, Species.Puffkin);
+      for (let i = 0; i < 3; i++) await mint(alice, Species.Lamball);
 
       await expect(cards.connect(alice).merge([1, 2, 1]))
         .to.be.revertedWithCustomError(cards, "DuplicateCard")
@@ -242,16 +243,16 @@ describe("ElementCards", function () {
 
     it("reverts with RarityMismatch when rarities differ", async function () {
       const { cards, alice, mint } = await deployMockCards();
-      await mint(alice, Species.Puffkin);
-      await mint(alice, Species.Puffkin);
-      await mint(alice, Species.Driftmane, 50);
+      await mint(alice, Species.Lamball);
+      await mint(alice, Species.Lamball);
+      await mint(alice, Species.IncineramNoct, 50);
 
       await expect(cards.connect(alice).merge([1, 2, 3])).to.be.revertedWithCustomError(cards, "RarityMismatch");
     });
 
     it("reverts with CannotMergeLegendary for Legendary cards", async function () {
       const { cards, alice, mint } = await deployMockCards();
-      for (let i = 0; i < 3; i++) await mint(alice, Species.Halcyra, 90);
+      for (let i = 0; i < 3; i++) await mint(alice, Species.Frostallion, 90);
 
       await expect(cards.connect(alice).merge([1, 2, 3])).to.be.revertedWithCustomError(
         cards,
@@ -264,9 +265,9 @@ describe("ElementCards", function () {
     it("burns the card and pays the value of its rarity", async function () {
       const { coin, cards, alice, mint } = await deployMockCards();
       const cases = [
-        { species: Species.Puffkin, power: 20, value: 300n },
-        { species: Species.Driftmane, power: 50, value: 900n },
-        { species: Species.Halcyra, power: 80, value: 2_700n },
+        { species: Species.Lamball, power: 20, value: 300n },
+        { species: Species.IncineramNoct, power: 50, value: 900n },
+        { species: Species.Frostallion, power: 80, value: 2_700n },
       ];
 
       for (const { species, power, value } of cases) {
@@ -284,7 +285,7 @@ describe("ElementCards", function () {
 
     it("reverts with NotCardOwner for someone else's card", async function () {
       const { cards, alice, bob, mint } = await deployMockCards();
-      const id = await mint(alice, Species.Puffkin);
+      const id = await mint(alice, Species.Lamball);
       await expect(cards.connect(bob).decompose(id))
         .to.be.revertedWithCustomError(cards, "NotCardOwner")
         .withArgs(id);
@@ -312,9 +313,9 @@ describe("ElementCards", function () {
     it("charges by rarity, gives a passive and emits CardEnchanted", async function () {
       const { coin, cards, alice, mint } = await deployMockCards();
       const cases = [
-        { species: Species.Puffkin, power: 20, cost: 200n },
-        { species: Species.Driftmane, power: 50, cost: 500n },
-        { species: Species.Halcyra, power: 80, cost: 1_000n },
+        { species: Species.Lamball, power: 20, cost: 200n },
+        { species: Species.IncineramNoct, power: 50, cost: 500n },
+        { species: Species.Frostallion, power: 80, cost: 1_000n },
       ];
 
       for (const { species, power, cost } of cases) {
@@ -332,7 +333,7 @@ describe("ElementCards", function () {
 
     it("rolls every passive and replaces the old one each time", async function () {
       const { cards, alice, mint } = await deployMockCards();
-      const id = await mint(alice, Species.Puffkin);
+      const id = await mint(alice, Species.Lamball);
       const seen = new Set<bigint>();
 
       for (let i = 0; i < 80; i++) {
@@ -346,12 +347,12 @@ describe("ElementCards", function () {
 
     it("reverts for someone else's card or without enough coins", async function () {
       const { coin, cards, owner, alice, bob, mint } = await deployMockCards();
-      const id = await mint(alice, Species.Puffkin);
+      const id = await mint(alice, Species.Lamball);
       await expect(cards.connect(bob).enchant(id))
         .to.be.revertedWithCustomError(cards, "NotCardOwner")
         .withArgs(id);
 
-      const ownerCard = await mint(owner, Species.Puffkin);
+      const ownerCard = await mint(owner, Species.Lamball);
       await expect(cards.connect(owner).enchant(ownerCard)).to.be.revertedWithCustomError(
         coin,
         "ERC20InsufficientBalance",
@@ -362,26 +363,17 @@ describe("ElementCards", function () {
   describe("breed", function () {
     it("follows the rank formula, with ties going to the lower species ID", async function () {
       const { cards } = await deployCards();
-      // Ranks 100 and 120 average to 110, which is Emberkit.
-      expect(await cards.breedResult(Species.Puffkin, Species.Ripplet)).to.equal(BigInt(Species.Emberkit));
-      // Ranks 100 and 110 average to 105, equally close to both, so the lower ID wins.
-      expect(await cards.breedResult(Species.Puffkin, Species.Emberkit)).to.equal(BigInt(Species.Puffkin));
-      // A species bred with itself stays the same.
-      expect(await cards.breedResult(Species.Cindrake, Species.Cindrake)).to.equal(BigInt(Species.Cindrake));
-      // Common (100) and Legendary (500) average to a Rare (300).
-      expect(await cards.breedResult(Species.Puffkin, Species.Halcyra)).to.equal(BigInt(Species.Driftmane));
-      // Common (100) and Rare (300) average to 200, closest to rank 180.
-      expect(await cards.breedResult(Species.Puffkin, Species.Driftmane)).to.equal(BigInt(Species.Gloomlet));
+      for (let a = 0; a < SPECIES.length; a += 3) {
+        const b = (a * 17 + 4) % SPECIES.length;
+        expect(await cards.breedResult(a, b)).to.equal(BigInt(expectedChild(a, b)));
+      }
+      // 3050 and 3080 average to 3065: Vixy (3060, ID 5) beats Teafant (3070, ID 8).
+      expect(await cards.breedResult(Species.Lamball, Species.Chikipi)).to.equal(BigInt(Species.Vixy));
     });
 
-    it("uses special recipes in either parent order", async function () {
+    it("uses all dataset special recipes in either parent order", async function () {
       const { cards } = await deployCards();
-      const recipes = [
-        [Species.Cindrake, Species.Tidewarden, Species.Pyrovane],
-        [Species.Voltarch, Species.Cragmaw, Species.Stormregent],
-        [Species.Rimefang, Species.Drakeshade, Species.Cryomere],
-      ];
-      for (const [a, b, child] of recipes) {
+      for (const { parents: [a, b], child } of RECIPES) {
         expect(await cards.breedResult(a, b)).to.equal(BigInt(child));
         expect(await cards.breedResult(b, a)).to.equal(BigInt(child));
       }
@@ -389,23 +381,23 @@ describe("ElementCards", function () {
 
     it("reverts breedResult for an unknown species", async function () {
       const { cards } = await deployCards();
-      await expect(cards.breedResult(0, 27)).to.be.revertedWithCustomError(cards, "UnknownSpecies").withArgs(27n);
+      await expect(cards.breedResult(0, 136)).to.be.revertedWithCustomError(cards, "UnknownSpecies").withArgs(136n);
     });
 
     it("charges by the child's rarity, keeps the parents and emits CardBred", async function () {
       const { coin, cards, alice, mint } = await deployMockCards();
-      const a = await mint(alice, Species.Puffkin, 20, Gender.Male);
-      const b = await mint(alice, Species.Ripplet, 20, Gender.Female);
+      const a = await mint(alice, Species.Lamball, 20, Gender.Male);
+      const b = await mint(alice, Species.Fuack, 20, Gender.Female);
       const before = await coin.balanceOf(alice.address);
 
       await expect(cards.connect(alice).breed(a, b))
         .to.emit(cards, "CardBred")
-        .withArgs(alice.address, a, b, 3n, Species.Emberkit);
+        .withArgs(alice.address, a, b, 3n, expectedChild(Species.Lamball, Species.Fuack));
 
       expect(await coin.balanceOf(alice.address)).to.equal(before - 500n);
       expect(await cards.cardsOf(alice.address)).to.deep.equal([1n, 2n, 3n]);
       const child = await cards.getCard(3);
-      expect(child.speciesId).to.equal(BigInt(Species.Emberkit));
+      expect(child.speciesId).to.equal(BigInt(expectedChild(Species.Lamball, Species.Fuack)));
       expect(child.generation).to.equal(1n);
       expect(child.passive).to.equal(BigInt(Passive.None));
       expect(child.gender).to.be.within(0n, 1n);
@@ -413,10 +405,10 @@ describe("ElementCards", function () {
 
     it("needs one male and one female, in either order", async function () {
       const { cards, alice, mint } = await deployMockCards();
-      const male = await mint(alice, Species.Puffkin, 20, Gender.Male);
-      const otherMale = await mint(alice, Species.Puffkin, 20, Gender.Male);
-      const female = await mint(alice, Species.Ripplet, 20, Gender.Female);
-      const otherFemale = await mint(alice, Species.Ripplet, 20, Gender.Female);
+      const male = await mint(alice, Species.Lamball, 20, Gender.Male);
+      const otherMale = await mint(alice, Species.Lamball, 20, Gender.Male);
+      const female = await mint(alice, Species.Fuack, 20, Gender.Female);
+      const otherFemale = await mint(alice, Species.Fuack, 20, Gender.Female);
 
       await expect(cards.connect(alice).breed(male, otherMale)).to.be.revertedWithCustomError(cards, "SameGender");
       await expect(cards.connect(alice).breed(female, otherFemale)).to.be.revertedWithCustomError(cards, "SameGender");
@@ -426,27 +418,27 @@ describe("ElementCards", function () {
 
     it("charges the Legendary fee for a special recipe", async function () {
       const { coin, cards, alice, mint } = await deployMockCards();
-      const a = await mint(alice, Species.Cindrake, 50, Gender.Male);
-      const b = await mint(alice, Species.Tidewarden, 50, Gender.Female);
+      const a = await mint(alice, Species.Frostallion, 50, Gender.Male);
+      const b = await mint(alice, Species.Helzephyr, 50, Gender.Female);
       const before = await coin.balanceOf(alice.address);
 
       await cards.connect(alice).breed(a, b);
 
       expect(await coin.balanceOf(alice.address)).to.equal(before - 4_500n);
       const child = await cards.getCard(3);
-      expect(child.speciesId).to.equal(BigInt(Species.Pyrovane));
+      expect(child.speciesId).to.equal(BigInt(Species.FrostallionNoct));
       expect(child.rarity).to.equal(BigInt(Rarity.Legendary));
     });
 
     it("makes parents wait longer each generation", async function () {
       const { cards, alice, mint } = await deployMockCards();
-      const a = await mint(alice, Species.Puffkin, 20, Gender.Male);
-      const b = await mint(alice, Species.Ripplet, 20, Gender.Female);
+      const a = await mint(alice, Species.Lamball, 20, Gender.Male);
+      const b = await mint(alice, Species.Fuack, 20, Gender.Female);
       await cards.connect(alice).breed(a, b);
 
       const readyAt = (await cards.getCard(a)).breedReadyAt;
       expect(readyAt).to.equal(BigInt((await networkHelpers.time.latest()) + BREED_COOLDOWN));
-      const mate = await mint(alice, Species.Puffkin, 20, Gender.Female);
+      const mate = await mint(alice, Species.Lamball, 20, Gender.Female);
       await expect(cards.connect(alice).breed(a, mate))
         .to.be.revertedWithCustomError(cards, "BreedOnCooldown")
         .withArgs(a, readyAt);
@@ -459,7 +451,7 @@ describe("ElementCards", function () {
       const childGender = (await cards.getCard(child)).gender;
       const childMate = await mint(
         alice,
-        Species.Puffkin,
+        Species.Lamball,
         20,
         childGender === BigInt(Gender.Male) ? Gender.Female : Gender.Male,
       );
@@ -472,8 +464,8 @@ describe("ElementCards", function () {
 
     it("reverts for one card used twice, someone else's card, or too few coins", async function () {
       const { coin, cards, owner, alice, bob, mint } = await deployMockCards();
-      const a = await mint(alice, Species.Puffkin, 20, Gender.Male);
-      const b = await mint(bob, Species.Puffkin, 20, Gender.Female);
+      const a = await mint(alice, Species.Lamball, 20, Gender.Male);
+      const b = await mint(bob, Species.Lamball, 20, Gender.Female);
 
       await expect(cards.connect(alice).breed(a, a))
         .to.be.revertedWithCustomError(cards, "DuplicateCard")
@@ -482,8 +474,8 @@ describe("ElementCards", function () {
         .to.be.revertedWithCustomError(cards, "NotCardOwner")
         .withArgs(b);
 
-      const c = await mint(owner, Species.Puffkin, 20, Gender.Male);
-      const d = await mint(owner, Species.Puffkin, 20, Gender.Female);
+      const c = await mint(owner, Species.Lamball, 20, Gender.Male);
+      const d = await mint(owner, Species.Lamball, 20, Gender.Female);
       await expect(cards.connect(owner).breed(c, d)).to.be.revertedWithCustomError(coin, "ERC20InsufficientBalance");
     });
   });

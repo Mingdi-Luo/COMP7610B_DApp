@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ZeroAddress } from "ethers";
-import { Matchup, ResultRow } from "../components/BattleCards.jsx";
+import { TeamMatchup, ResultRow } from "../components/BattleCards.jsx";
 import Card from "../components/Card.jsx";
 import TxStatus from "../components/TxStatus.jsx";
 import WalletGate from "../components/WalletGate.jsx";
@@ -20,8 +20,8 @@ export default function Arena({ onNavigate }) {
     <section className="panel">
       <h1>Arena</h1>
       <p className="lead">
-        Stake coins on a duel. Both players commit a hidden card, then reveal it within 10 minutes.
-        Elements can double or halve a card's power, and the stronger card takes the pot.
+        Choose three cards in order, commit your hidden team, then reveal it within 10 minutes.
+        The active cards attack simultaneously. Survivors keep their HP; replacements enter next round. The whole battle lasts at most 20 rounds.
       </p>
       <WalletGate>
         <Lobby onNavigate={onNavigate} />
@@ -37,10 +37,20 @@ function Lobby({ onNavigate }) {
   const { balance } = useCoins();
   const tx = useTx();
   const now = useNow();
-  const [fighterId, setFighterId] = useState(null);
+  const [teamIds, setTeamIds] = useState([]);
   const [stakeInput, setStakeInput] = useState("1000");
+  useEffect(() => setTeamIds([]), [account]);
 
-  const fighter = cards.find((card) => card.tokenId === fighterId);
+  const team = teamIds.map(id => cards.find(card => card.tokenId === id));
+  const teamReady = team.length === 3 && team.every(Boolean);
+
+  function toggleCard(tokenId) {
+    setTeamIds(ids => ids.includes(tokenId) ? ids.filter(id => id !== tokenId) : ids.length < 3 ? [...ids, tokenId] : ids);
+  }
+
+  function moveCard(index, offset) {
+    setTeamIds(ids => { const next = [...ids]; [next[index], next[index + offset]] = [next[index + offset], next[index]]; return next; });
+  }
   const stake = parseStake(stakeInput);
   const canAfford = (amount) => balance === null || balance >= amount;
 
@@ -53,24 +63,25 @@ function Lobby({ onNavigate }) {
     if (receipt) refresh();
   }
 
-  // Hides the fighter behind a commitment and keeps the salt in this browser for the reveal.
-  function commitFighter(player) {
+  // Hides the ordered team behind a commitment and keeps the salt in this browser for the reveal.
+  function commitTeam(player) {
+    if (!teamReady) throw new Error("Choose three cards you currently own.");
     const salt = newSalt();
-    const commitment = computeCommitment(fighter.tokenId, salt, player);
-    if (!saveSecret(commitment, { tokenId: fighter.tokenId, salt })) {
+    const commitment = computeCommitment(teamIds, salt, player);
+    if (!saveSecret(commitment, { tokenIds: teamIds, salt })) {
       throw new Error("This browser blocked local storage, so it cannot keep the secret you need to reveal. Use a normal window.");
     }
     return commitment;
   }
 
   const createBattle = () =>
-    send((arena, player) => arena.createBattle(commitFighter(player), stake), {
+    send((arena, player) => arena.createBattle(commitTeam(player), stake), {
       pending: "Creating the battle...",
       success: "Battle created. Waiting for an opponent to join.",
     });
 
   const joinBattle = (battle) =>
-    send((arena, player) => arena.joinBattle(battle.id, commitFighter(player)), {
+    send((arena, player) => arena.joinBattle(battle.id, commitTeam(player)), {
       pending: `Joining battle #${battle.id}...`,
       success: "Joined! Both players now have 10 minutes to reveal.",
     });
@@ -83,9 +94,9 @@ function Lobby({ onNavigate }) {
         if (!secret) {
           throw new Error(`This browser has no saved secret for battle #${battle.id}. Reveal from the browser you used to commit.`);
         }
-        return arena.reveal(battle.id, secret.tokenId, secret.salt);
+        return arena.reveal(battle.id, secret.tokenIds, secret.salt);
       },
-      { pending: "Revealing your card...", success: "Card revealed. Finished battles move to History." },
+      { pending: "Revealing your team...", success: "Team revealed. Finished battles move to History." },
     );
 
   const claimTimeout = (battle) =>
@@ -123,7 +134,7 @@ function Lobby({ onNavigate }) {
           ))}
         </div>
       ) : (
-        <p className="muted">{loaded ? "No active battles. Pick a fighter below to create or join one." : "Loading battles..."}</p>
+        <p className="muted">{loaded ? "No active battles. Pick three cards below to create or join one." : "Loading battles..."}</p>
       )}
 
       {finishedBattles.length > 0 && (
@@ -140,7 +151,7 @@ function Lobby({ onNavigate }) {
         </>
       )}
 
-      <h2>1. Choose your fighter</h2>
+      <h2>1. Choose and order your three cards</h2>
       <p className="muted">
         Your opponent sees only a hash until you reveal. The secret needed to reveal is saved in this
         browser, so reveal from here too.
@@ -151,17 +162,32 @@ function Lobby({ onNavigate }) {
             <Card
               key={card.tokenId}
               {...card}
-              selected={card.tokenId === fighterId}
-              onClick={() => setFighterId((id) => (id === card.tokenId ? null : card.tokenId))}
+              selected={teamIds.includes(card.tokenId)}
+              tag={teamIds.includes(card.tokenId) ? `Position ${teamIds.indexOf(card.tokenId) + 1}` : undefined}
+              disabled={tx.busy || (teamIds.length === 3 && !teamIds.includes(card.tokenId))}
+              onClick={() => toggleCard(card.tokenId)}
             />
           ))}
         </div>
       ) : (
         <div className="notice">
-          <p>You need a card to fight.</p>
+          <p>You need three cards to fight.</p>
           <button type="button" onClick={() => onNavigate("shop")}>Go to the shop</button>
         </div>
       )}
+
+      <div className="lineup-editor" aria-label="Team order">
+        {[0, 1, 2].map(index => (
+          <div key={index} className="lineup-position">
+            <strong>Position {index + 1}</strong>
+            <div className="card-slot">{team[index] ? <Card {...team[index]} /> : <div className="empty-slot">Choose a card</div>}</div>
+            <div className="lineup-controls">
+              <button type="button" disabled={tx.busy || index === 0 || !team[index]} onClick={() => moveCard(index, -1)} aria-label={`Move position ${index + 1} earlier`}>←</button>
+              <button type="button" disabled={tx.busy || index >= teamIds.length - 1 || !team[index]} onClick={() => moveCard(index, 1)} aria-label={`Move position ${index + 1} later`}>→</button>
+            </div>
+          </div>
+        ))}
+      </div>
 
       <h2>2. Create or join a battle</h2>
       <div className="create-battle">
@@ -178,7 +204,7 @@ function Lobby({ onNavigate }) {
         <button
           type="button"
           onClick={createBattle}
-          disabled={!fighter || stake === null || !canAfford(stake) || tx.busy}
+          disabled={!teamReady || stake === null || !canAfford(stake) || tx.busy}
         >
           Create battle
         </button>
@@ -190,7 +216,7 @@ function Lobby({ onNavigate }) {
           <button type="button" onClick={() => onNavigate("topup")}>Top up</button>
         </div>
       )}
-      {!fighter && <p className="muted">Pick a fighter above first.</p>}
+      {!teamReady && <p className="muted">Choose three cards you own before creating or joining a battle.</p>}
 
       <h3>Open battles</h3>
       {openBattles.length > 0 ? (
@@ -199,13 +225,13 @@ function Lobby({ onNavigate }) {
             <div key={battle.id} className="battle-row">
               <div>
                 <strong>Battle #{battle.id}</strong>
-                <span className="muted"> by {shortAddress(battle.creator)} · card hidden</span>
+                <span className="muted"> by {shortAddress(battle.creator)} · team hidden</span>
               </div>
               <span className="battle-stake">{stakeLabel(battle.stake)}</span>
               <button
                 type="button"
                 onClick={() => joinBattle(battle)}
-                disabled={!fighter || !canAfford(battle.stake) || tx.busy}
+                disabled={!teamReady || !canAfford(battle.stake) || tx.busy}
               >
                 Join
               </button>
@@ -223,17 +249,16 @@ function Lobby({ onNavigate }) {
 }
 
 function ActiveBattle({ battle, account, myCards, now, busy, onReveal, onClaim, onCancel }) {
-  const { isCreator, rival, myCommitment, iRevealed, theyRevealed, myCard: revealedCard, theirCard } = sideOf(battle, account);
-  // Before the reveal, only this browser knows the committed card, from the saved secret.
+  const { isCreator, rival, myCommitment, iRevealed, theyRevealed, myTeam: revealedTeam, theirTeam } = sideOf(battle, account);
   const secret = loadSecret(myCommitment);
-  const committedId = secret ? Number(secret.tokenId) : null;
-  const myCard = revealedCard ?? myCards.find((card) => card.tokenId === committedId) ?? null;
+  const ownTeam = revealedTeam ?? secret?.tokenIds.map(id => myCards.find(card => String(card.tokenId) === id) ?? null) ?? null;
+  const missingCard = secret?.tokenIds.find((id, index) => !ownTeam?.[index]);
   const secondsLeft = battle.revealDeadline - now;
 
   let myNote = "Hidden from your opponent";
   if (iRevealed) myNote = "Revealed";
   else if (!secret) myNote = "Secret not saved in this browser";
-  else if (!myCard) myNote = `Card #${committedId} is no longer yours`;
+  else if (missingCard) myNote = `Card #${missingCard} is no longer yours`;
 
   let theirNote = "Hidden until revealed";
   if (battle.status === STATUS.Open) theirNote = "No opponent yet";
@@ -257,9 +282,9 @@ function ActiveBattle({ battle, account, myCards, now, busy, onReveal, onClaim, 
     ) : (
       <>
         <p>
-          {situation} Reveal your card within {formatCountdown(secondsLeft)}, or you lose the stake.
+          {situation} Reveal your team within {formatCountdown(secondsLeft)}, or you lose the stake.
         </p>
-        <button type="button" onClick={() => onReveal(battle)} disabled={busy}>Reveal my card</button>
+        <button type="button" onClick={() => onReveal(battle)} disabled={busy || !secret || Boolean(missingCard)}>Reveal my team</button>
       </>
     );
   } else {
@@ -287,7 +312,7 @@ function ActiveBattle({ battle, account, myCards, now, busy, onReveal, onClaim, 
         <span className={`badge badge-${statusName.toLowerCase()}`}>{statusName}</span>
       </header>
       <div className="battle-body">
-        <Matchup left={myCard} right={theirCard} leftNote={myNote} rightNote={theirNote} />
+        <TeamMatchup left={ownTeam} right={theirTeam} leftNote={myNote} rightNote={theirNote} />
         <div className="battle-action">{action}</div>
       </div>
     </article>

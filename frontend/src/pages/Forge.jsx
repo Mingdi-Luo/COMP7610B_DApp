@@ -59,7 +59,7 @@ function Workshop({ onNavigate }) {
     activeBattles.flatMap((battle) => {
       const { iRevealed, myCommitment } = sideOf(battle, account);
       const secret = iRevealed ? null : loadSecret(myCommitment);
-      return secret ? [Number(secret.tokenId)] : [];
+      return secret ? secret.tokenIds.map(Number) : [];
     }),
   );
 
@@ -93,7 +93,7 @@ function Workshop({ onNavigate }) {
 }
 
 /** Weakest first within each rarity, so the obvious material comes first. */
-const byRarityThenPower = (a, b) => a.rarity - b.rarity || a.power - b.power;
+const byRarityThenPower = (a, b) => a.rarity - b.rarity || a.atk - b.atk;
 
 /** A top-up prompt shown when a price is out of reach. */
 function CoinCheck({ cost, onNavigate }) {
@@ -230,7 +230,7 @@ function MergeMode({ cards, refresh, lockedIds }) {
               onClick={() => selectWeakest(rarityToMerge)}
               disabled={count < MERGE_SIZE || tx.busy}
             >
-              Pick 3 weakest {RARITIES[rarityToMerge]} ({count})
+              Pick 3 lowest-ATK {RARITIES[rarityToMerge]} ({count})
             </button>
           );
         })}
@@ -289,8 +289,8 @@ function EnchantMode({ cards, refresh, lockedIds, onNavigate }) {
   return (
     <>
       <p className="muted">
-        Pay coins to give a card one random passive. Enchanting again replaces the old passive, and the
-        new roll can be any of the five.
+        Pay coins to give a card one random battle passive. Enchanting again replaces the old passive.
+        Each of the five is equally likely, including the one you already have. New and bred cards start without a passive.
       </p>
       <ul className="passive-list">
         {Object.entries(PASSIVE_EFFECTS).map(([name, effect]) => (

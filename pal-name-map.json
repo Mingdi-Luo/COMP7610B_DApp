@@ -1,0 +1,682 @@
+{
+  "SheepBall": {
+    "name": "棉悠悠",
+    "englishName": "Lamball",
+    "paldexNo": "001"
+  },
+  "PinkCat": {
+    "name": "捣蛋猫",
+    "englishName": "Cattiva",
+    "paldexNo": "002"
+  },
+  "ChickenPal": {
+    "name": "皮皮鸡",
+    "englishName": "Chikipi",
+    "paldexNo": "003"
+  },
+  "Carbunclo": {
+    "name": "翠叶鼠",
+    "englishName": "Lifmunk",
+    "paldexNo": "004"
+  },
+  "BluePlatypus": {
+    "name": "冲浪鸭",
+    "englishName": "Fuack",
+    "paldexNo": "005"
+  },
+  "CuteFox": {
+    "name": "玉藻狐",
+    "englishName": "Vixy",
+    "paldexNo": "006"
+  },
+  "FlyingManta": {
+    "name": "鲁米儿",
+    "englishName": "Celaray",
+    "paldexNo": "007"
+  },
+  "WoolFox": {
+    "name": "米露菲",
+    "englishName": "Cremis",
+    "paldexNo": "008"
+  },
+  "Ganesha": {
+    "name": "壶小象",
+    "englishName": "Teafant",
+    "paldexNo": "011"
+  },
+  "PlantSlime": {
+    "name": "叶泥泥",
+    "englishName": "Gumoss",
+    "paldexNo": "012"
+  },
+  "Hedgehog": {
+    "name": "电棘鼠",
+    "englishName": "Jolthog",
+    "paldexNo": "015"
+  },
+  "Hedgehog_Ice": {
+    "name": "冰刺鼠",
+    "englishName": "Jolthog Cryst",
+    "paldexNo": "015B"
+  },
+  "NegativeKoala": {
+    "name": "瞅什魔",
+    "englishName": "Depresso",
+    "paldexNo": "016"
+  },
+  "Penguin": {
+    "name": "企丸丸",
+    "englishName": "Pengullet",
+    "paldexNo": "017"
+  },
+  "CaptainPenguin": {
+    "name": "企丸王",
+    "englishName": "Penking",
+    "paldexNo": "018"
+  },
+  "WizardOwl": {
+    "name": "啼卡尔",
+    "englishName": "Hoocrates",
+    "paldexNo": "019"
+  },
+  "Alpaca": {
+    "name": "美露帕",
+    "englishName": "Melpaca",
+    "paldexNo": "020"
+  },
+  "KingAlpaca": {
+    "name": "君王美露帕",
+    "englishName": "Kingpaca",
+    "paldexNo": "021"
+  },
+  "KingAlpaca_Ice": {
+    "name": "冰帝美露帕",
+    "englishName": "Kingpaca Cryst",
+    "paldexNo": "021B"
+  },
+  "DreamDemon": {
+    "name": "寐魔",
+    "englishName": "Daedream",
+    "paldexNo": "022"
+  },
+  "Monkey": {
+    "name": "新叶猿",
+    "englishName": "Tanzee",
+    "paldexNo": "023"
+  },
+  "NightFox": {
+    "name": "露娜蒂",
+    "englishName": "Nox",
+    "paldexNo": "024"
+  },
+  "LavaGirl": {
+    "name": "融焰娘",
+    "englishName": "Flambelle",
+    "paldexNo": "025"
+  },
+  "FlameBambi": {
+    "name": "燎火鹿",
+    "englishName": "Rooby",
+    "paldexNo": "026"
+  },
+  "Bastet": {
+    "name": "喵丝特",
+    "englishName": "Mau",
+    "paldexNo": "027"
+  },
+  "Bastet_Ice": {
+    "name": "冰丝特",
+    "englishName": "Mau Cryst",
+    "paldexNo": "027B"
+  },
+  "Boar": {
+    "name": "草莽猪",
+    "englishName": "Rushoar",
+    "paldexNo": "028"
+  },
+  "Kitsunebi": {
+    "name": "火绒狐",
+    "englishName": "Foxparks",
+    "paldexNo": "029"
+  },
+  "NegativeOctopus": {
+    "name": "勾魂鱿",
+    "englishName": "Killamari",
+    "paldexNo": "030"
+  },
+  "CuteMole": {
+    "name": "遁地鼠",
+    "englishName": "Fuddler",
+    "paldexNo": "031"
+  },
+  "Deer": {
+    "name": "紫霞鹿",
+    "englishName": "Eikthyrdeer",
+    "paldexNo": "032"
+  },
+  "Deer_Ground": {
+    "name": "祇岳鹿",
+    "englishName": "Eikthyrdeer Terra",
+    "paldexNo": "032B"
+  },
+  "Garm": {
+    "name": "猎狼",
+    "englishName": "Direhowl",
+    "paldexNo": "033"
+  },
+  "BerryGoat": {
+    "name": "灌木羊",
+    "englishName": "Caprity",
+    "paldexNo": "034"
+  },
+  "MopBaby": {
+    "name": "毛掸儿",
+    "englishName": "Swee",
+    "paldexNo": "035"
+  },
+  "MopKing": {
+    "name": "毛老爹",
+    "englishName": "Sweepa",
+    "paldexNo": "036"
+  },
+  "WindChimes": {
+    "name": "吊缚灵",
+    "englishName": "Hangyu",
+    "paldexNo": "038"
+  },
+  "WindChimes_Ice": {
+    "name": "冰缚灵",
+    "englishName": "Hangyu Cryst",
+    "paldexNo": "038B"
+  },
+  "SweetsSheep": {
+    "name": "棉花糖",
+    "englishName": "Woolipop",
+    "paldexNo": "039"
+  },
+  "CowPal": {
+    "name": "波霸牛",
+    "englishName": "Mozzarina",
+    "paldexNo": "040"
+  },
+  "BlueDragon": {
+    "name": "碧海龙",
+    "englishName": "Azurobe",
+    "paldexNo": "041"
+  },
+  "ElecCat": {
+    "name": "伏特喵",
+    "englishName": "Sparkit",
+    "paldexNo": "042"
+  },
+  "Kelpie": {
+    "name": "水灵儿",
+    "englishName": "Kelpsea",
+    "paldexNo": "043"
+  },
+  "Kelpie_Fire": {
+    "name": "火灵儿",
+    "englishName": "Kelpsea Ignis",
+    "paldexNo": "043B"
+  },
+  "Eagle": {
+    "name": "天擒鸟",
+    "englishName": "Galeclaw",
+    "paldexNo": "049"
+  },
+  "HawkBird": {
+    "name": "疾风隼",
+    "englishName": "Nitewing",
+    "paldexNo": "051"
+  },
+  "CatBat": {
+    "name": "猫蝠怪",
+    "englishName": "Tombat",
+    "paldexNo": "052"
+  },
+  "ColorfulBird": {
+    "name": "炸蛋鸟",
+    "englishName": "Tocotoco",
+    "paldexNo": "053"
+  },
+  "Kirin": {
+    "name": "雷角马",
+    "englishName": "Univolt",
+    "paldexNo": "054"
+  },
+  "SharkKid": {
+    "name": "鲨小子",
+    "englishName": "Gobfin",
+    "paldexNo": "055"
+  },
+  "SharkKid_Fire": {
+    "name": "红小鲨",
+    "englishName": "Gobfin Ignis",
+    "paldexNo": "055B"
+  },
+  "Werewolf": {
+    "name": "月镰魔",
+    "englishName": "Loupmoon",
+    "paldexNo": "056"
+  },
+  "DarkCrow": {
+    "name": "黑鸦隐士",
+    "englishName": "Cawgnito",
+    "paldexNo": "057"
+  },
+  "FlameBuffalo": {
+    "name": "炽焰牛",
+    "englishName": "Arsox",
+    "paldexNo": "058"
+  },
+  "LittleBriarRose": {
+    "name": "荊棘魔仙",
+    "englishName": "Bristla",
+    "paldexNo": "060"
+  },
+  "CuteButterfly": {
+    "name": "幻悦蝶",
+    "englishName": "Cinnamoth",
+    "paldexNo": "061"
+  },
+  "FairyDragon": {
+    "name": "精灵龙",
+    "englishName": "Elphidran",
+    "paldexNo": "063"
+  },
+  "FairyDragon_Water": {
+    "name": "水灵龙",
+    "englishName": "Elphidran Aqua",
+    "paldexNo": "063B"
+  },
+  "BirdDragon": {
+    "name": "烽歌龙",
+    "englishName": "Vanwyrm",
+    "paldexNo": "064"
+  },
+  "BirdDragon_Ice": {
+    "name": "霜歌龙",
+    "englishName": "Vanwyrm Cryst",
+    "paldexNo": "064B"
+  },
+  "CatVampire": {
+    "name": "夜幕魔蝠",
+    "englishName": "Felbat",
+    "paldexNo": "065"
+  },
+  "VioletFairy": {
+    "name": "薇莉塔",
+    "englishName": "Vaelet",
+    "paldexNo": "066"
+  },
+  "SoldierBee": {
+    "name": "骑士蜂",
+    "englishName": "Beegarde",
+    "paldexNo": "067"
+  },
+  "QueenBee": {
+    "name": "女皇蜂",
+    "englishName": "Elizabee",
+    "paldexNo": "068"
+  },
+  "PinkLizard": {
+    "name": "博爱蜥",
+    "englishName": "Lovander",
+    "paldexNo": "069"
+  },
+  "NaughtyCat": {
+    "name": "笑魇猫",
+    "englishName": "Grintale",
+    "paldexNo": "070"
+  },
+  "LizardMan": {
+    "name": "朋克蜥",
+    "englishName": "Leezpunk",
+    "paldexNo": "073"
+  },
+  "LizardMan_Fire": {
+    "name": "热血蜥",
+    "englishName": "Leezpunk Ignis",
+    "paldexNo": "073B"
+  },
+  "Gorilla": {
+    "name": "铁拳猿",
+    "englishName": "Gorirat",
+    "paldexNo": "074"
+  },
+  "Serpent": {
+    "name": "滑水蛇",
+    "englishName": "Surfent",
+    "paldexNo": "075"
+  },
+  "Serpent_Ground": {
+    "name": "流沙蛇",
+    "englishName": "Surfent Terra",
+    "paldexNo": "075B"
+  },
+  "RobinHood": {
+    "name": "羽箭射手",
+    "englishName": "Robinquill",
+    "paldexNo": "076"
+  },
+  "RobinHood_Ground": {
+    "name": "山岳射手",
+    "englishName": "Robinquill Terra",
+    "paldexNo": "076B"
+  },
+  "FlowerRabbit": {
+    "name": "波娜兔",
+    "englishName": "Flopie",
+    "paldexNo": "077"
+  },
+  "FoxMage": {
+    "name": "焰巫狐",
+    "englishName": "Wixen",
+    "paldexNo": "078"
+  },
+  "CatMage": {
+    "name": "暗巫猫",
+    "englishName": "Katress",
+    "paldexNo": "079"
+  },
+  "HadesBird": {
+    "name": "雷冥鸟",
+    "englishName": "Helzephyr",
+    "paldexNo": "080"
+  },
+  "Mutant": {
+    "name": "秘斯媞雅",
+    "englishName": "Lunaris",
+    "paldexNo": "082"
+  },
+  "FengyunDeeper": {
+    "name": "云海鹿",
+    "englishName": "Fenglope",
+    "paldexNo": "083"
+  },
+  "FlowerDinosaur": {
+    "name": "花冠龙",
+    "englishName": "Dinossom",
+    "paldexNo": "084"
+  },
+  "FlowerDinosaur_Electric": {
+    "name": "雷冠龙",
+    "englishName": "Dinossom Lux",
+    "paldexNo": "084B"
+  },
+  "Ronin": {
+    "name": "浪刃武士",
+    "englishName": "Bushi",
+    "paldexNo": "085"
+  },
+  "GrassMammoth": {
+    "name": "森猛犸",
+    "englishName": "Mammorest",
+    "paldexNo": "087"
+  },
+  "GrassMammoth_Ice": {
+    "name": "雪猛犸",
+    "englishName": "Mammorest Cryst",
+    "paldexNo": "087B"
+  },
+  "FlowerDoll": {
+    "name": "花丽娜",
+    "englishName": "Petallia",
+    "paldexNo": "089"
+  },
+  "Baphomet": {
+    "name": "炎魔羊",
+    "englishName": "Incineram",
+    "paldexNo": "091"
+  },
+  "Baphomet_Dark": {
+    "name": "暗魔羊",
+    "englishName": "Incineram Noct",
+    "paldexNo": "091B"
+  },
+  "RaijinDaughter": {
+    "name": "雷鸣童子",
+    "englishName": "Dazzi",
+    "paldexNo": "092"
+  },
+  "FireKirin": {
+    "name": "火麒麟",
+    "englishName": "Pyrin",
+    "paldexNo": "093"
+  },
+  "FireKirin_Dark": {
+    "name": "邪麒麟",
+    "englishName": "Pyrin Noct",
+    "paldexNo": "093B"
+  },
+  "LazyDragon": {
+    "name": "佩克龙",
+    "englishName": "Relaxaurus",
+    "paldexNo": "094"
+  },
+  "LazyDragon_Electric": {
+    "name": "派克龙",
+    "englishName": "Relaxaurus Lux",
+    "paldexNo": "094B"
+  },
+  "IceFox": {
+    "name": "吹雪狐",
+    "englishName": "Foxcicle",
+    "paldexNo": "095"
+  },
+  "ThunderBird": {
+    "name": "迅雷鸟",
+    "englishName": "Beakon",
+    "paldexNo": "096"
+  },
+  "ThunderDog": {
+    "name": "霹雳犬",
+    "englishName": "Rayhound",
+    "paldexNo": "098"
+  },
+  "DarkScorpion": {
+    "name": "冥铠蝎",
+    "englishName": "Menasting",
+    "paldexNo": "099"
+  },
+  "IceDeer": {
+    "name": "严冬鹿",
+    "englishName": "Reindrix",
+    "paldexNo": "101"
+  },
+  "GrassPanda": {
+    "name": "叶胖达",
+    "englishName": "Mossanda",
+    "paldexNo": "102"
+  },
+  "GrassPanda_Electric": {
+    "name": "雷胖达",
+    "englishName": "Mossanda Lux",
+    "paldexNo": "102B"
+  },
+  "WeaselDragon": {
+    "name": "疾旋鼬",
+    "englishName": "Chillet",
+    "paldexNo": "103"
+  },
+  "RedArmorBird": {
+    "name": "燧火鸟",
+    "englishName": "Ragnahawk",
+    "paldexNo": "104"
+  },
+  "DrillGame": {
+    "name": "碎岩龟",
+    "englishName": "Digtoise",
+    "paldexNo": "107"
+  },
+  "SakuraSaurus": {
+    "name": "连理龙",
+    "englishName": "Broncherry",
+    "paldexNo": "108"
+  },
+  "SakuraSaurus_Water": {
+    "name": "海誓龙",
+    "englishName": "Broncherry Aqua",
+    "paldexNo": "108B"
+  },
+  "LazyCatfish": {
+    "name": "趴趴鲶",
+    "englishName": "Dumud",
+    "paldexNo": "109"
+  },
+  "AmaterasuWolf": {
+    "name": "苍焰狼",
+    "englishName": "Kitsun",
+    "paldexNo": "111"
+  },
+  "Manticore": {
+    "name": "狱焰王",
+    "englishName": "Blazehowl",
+    "paldexNo": "112"
+  },
+  "Manticore_Dark": {
+    "name": "狱阎王",
+    "englishName": "Blazehowl Noct",
+    "paldexNo": "112B"
+  },
+  "HerculesBeetle": {
+    "name": "铠格力斯",
+    "englishName": "Warsect",
+    "paldexNo": "113"
+  },
+  "WhiteMoth": {
+    "name": "绸笠蛾",
+    "englishName": "Sibelyx",
+    "paldexNo": "116"
+  },
+  "GhostBeast": {
+    "name": "噬魂兽",
+    "englishName": "Maraith",
+    "paldexNo": "117"
+  },
+  "Umihebi": {
+    "name": "覆海龙",
+    "englishName": "Jormuntide",
+    "paldexNo": "121"
+  },
+  "Umihebi_Fire": {
+    "name": "腾炎龙",
+    "englishName": "Jormuntide Ignis",
+    "paldexNo": "121B"
+  },
+  "Suzaku": {
+    "name": "朱雀",
+    "englishName": "Suzaku",
+    "paldexNo": "122"
+  },
+  "Suzaku_Water": {
+    "name": "清雀",
+    "englishName": "Suzaku Aqua",
+    "paldexNo": "122B"
+  },
+  "SkyDragon": {
+    "name": "天羽龙",
+    "englishName": "Quivern",
+    "paldexNo": "124"
+  },
+  "VolcanicMonster": {
+    "name": "熔岩兽",
+    "englishName": "Reptyro",
+    "paldexNo": "129"
+  },
+  "VolcanicMonster_Ice": {
+    "name": "寒霜兽",
+    "englishName": "Reptyro Cryst",
+    "paldexNo": "129B"
+  },
+  "WhiteTiger": {
+    "name": "冰棘兽",
+    "englishName": "Cryolinx",
+    "paldexNo": "132"
+  },
+  "Yeti": {
+    "name": "白绒雪怪",
+    "englishName": "Wumpo",
+    "paldexNo": "134"
+  },
+  "Yeti_Grass": {
+    "name": "绿苔绒怪",
+    "englishName": "Wumpo Botan",
+    "paldexNo": "134B"
+  },
+  "KingBahamut": {
+    "name": "焰煌",
+    "englishName": "Blazamut",
+    "paldexNo": "137"
+  },
+  "Anubis": {
+    "name": "阿努比斯",
+    "englishName": "Anubis",
+    "paldexNo": "139"
+  },
+  "GrassRabbitMan": {
+    "name": "踏春兔",
+    "englishName": "Verdash",
+    "paldexNo": "152"
+  },
+  "BlackMetalDragon": {
+    "name": "魔渊龙",
+    "englishName": "Astegon",
+    "paldexNo": "158"
+  },
+  "ElecPanda": {
+    "name": "暴电熊",
+    "englishName": "Grizzbolt",
+    "paldexNo": "185"
+  },
+  "LilyQueen": {
+    "name": "百合女王",
+    "englishName": "Lyleen",
+    "paldexNo": "186"
+  },
+  "LilyQueen_Dark": {
+    "name": "黑月女王",
+    "englishName": "Lyleen Noct",
+    "paldexNo": "186B"
+  },
+  "ThunderDragonMan": {
+    "name": "波鲁杰克斯",
+    "englishName": "Orserk",
+    "paldexNo": "187"
+  },
+  "Horus": {
+    "name": "荷鲁斯",
+    "englishName": "Faleris",
+    "paldexNo": "188"
+  },
+  "BlackGriffon": {
+    "name": "异构格里芬",
+    "englishName": "Shadowbeak",
+    "paldexNo": "189"
+  },
+  "SaintCentaur": {
+    "name": "圣光骑士",
+    "englishName": "Paladius",
+    "paldexNo": "198"
+  },
+  "BlackCentaur": {
+    "name": "混沌骑士",
+    "englishName": "Necromus",
+    "paldexNo": "199"
+  },
+  "IceHorse": {
+    "name": "唤冬兽",
+    "englishName": "Frostallion",
+    "paldexNo": "200"
+  },
+  "IceHorse_Dark": {
+    "name": "唤夜兽",
+    "englishName": "Frostallion Noct",
+    "paldexNo": "200B"
+  },
+  "JetDragon": {
+    "name": "空涡龙",
+    "englishName": "Jetragon",
+    "paldexNo": "202"
+  }
+}

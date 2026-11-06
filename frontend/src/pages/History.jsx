@@ -1,4 +1,4 @@
-import { Matchup, OutcomeBadge } from "../components/BattleCards.jsx";
+import { TeamMatchup, OutcomeBadge } from "../components/BattleCards.jsx";
 import WalletGate from "../components/WalletGate.jsx";
 import { HISTORY_SIZE, useBattles } from "../hooks/useBattles.js";
 import { useWallet } from "../hooks/useWallet.jsx";
@@ -56,7 +56,7 @@ function HistoryList({ onNavigate }) {
 }
 
 function HistoryEntry({ battle, account }) {
-  const { rival, myCard, theirCard } = sideOf(battle, account);
+  const { rival, myTeam, theirTeam } = sideOf(battle, account);
   const { outcome } = resultOf(battle, account);
   const bothRevealed = battle.creatorRevealed && battle.opponentRevealed;
 
@@ -71,12 +71,12 @@ function HistoryEntry({ battle, account }) {
         <OutcomeBadge battle={battle} account={account} />
       </header>
       <p className={`outcome result-${outcome}`}>{describeResult(battle, account)}</p>
-      <Matchup
-        left={myCard}
-        right={theirCard}
-        leftNote={myCard ? null : "Not revealed"}
-        rightNote={theirCard ? null : "Not revealed"}
-        showPower={bothRevealed}
+      <TeamMatchup
+        left={myTeam}
+        right={theirTeam}
+        leftNote={myTeam ? null : "Not revealed"}
+        rightNote={theirTeam ? null : "Not revealed"}
+        showReplay={bothRevealed}
       />
     </article>
   );

@@ -34,7 +34,7 @@ function Intro({ onNavigate }) {
         <li><strong>Top up.</strong> Buy Duel Coin with ETH. Everything in the game is priced in coins.</li>
         <li><strong>Collect.</strong> Each pack mints one creature. The drop rates live in the contract, so anyone can audit them.</li>
         <li><strong>Improve.</strong> Merge three cards into a rarer one, enchant a random passive, or breed new creatures. Decompose what you do not need for coins.</li>
-        <li><strong>Duel.</strong> Commit a hidden card, reveal it, and the stronger card takes the pot. Nine elements can double or halve its power.</li>
+        <li><strong>Duel.</strong> Commit three cards in order and reveal your team. Fight a relay battle with survivor HP carried over and a global 20-round limit.</li>
       </ol>
 
       <button type="button" onClick={() => onNavigate(canOpenPack ? "shop" : "topup")}>
@@ -59,7 +59,7 @@ function Dashboard({ onNavigate }) {
   const record = recordOf(finishedBattles, account);
   const inPlay = activeBattles.reduce((total, battle) => total + battle.stake, 0n);
   const counts = RARITIES.map((_, rarity) => cards.filter((card) => card.rarity === rarity).length);
-  const strongest = cards.reduce((best, card) => (!best || card.power > best.power ? card : best), null);
+  const strongest = cards.reduce((best, card) => (!best || card.atk > best.atk ? card : best), null);
   const tasks = buildTasks({ activeBattles, openBattles, counts, balance, account, now });
   const pending = (value) => (cardsLoaded && battlesLoaded ? value : "…");
 
@@ -93,8 +93,8 @@ function Dashboard({ onNavigate }) {
           detail="Net over the last 20 battles"
         />
         <Stat
-          label="Strongest card"
-          value={pending(strongest ? strongest.power : "–")}
+          label="Highest ATK"
+          value={pending(strongest ? strongest.atk : "–")}
           detail={
             strongest
               ? `${SPECIES[strongest.speciesId].name}, ${RARITIES[strongest.rarity]} ${ELEMENTS[strongest.element]} #${strongest.tokenId}`
