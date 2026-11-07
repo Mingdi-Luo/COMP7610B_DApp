@@ -246,16 +246,6 @@ with `npx hardhat keystore set <NAME>`, then run
 | `frontend/` | `npm run dev` | Start the development server |
 | `frontend/` | `npm run build` | Build the static site into `frontend/dist/` |
 
-## Team
-
-| Member | Role |
-| --- | --- |
-| _TBD_ | Contracts: ElementCards, technical lead |
-| _TBD_ | Contracts: Arena, security |
-| _TBD_ | Frontend: wallet, shop, collection, drop rates |
-| _TBD_ | Frontend: forge, arena, visual design |
-| _TBD_ | Project management, testing, report, video |
-
 ## Acknowledgements
 
 - The wallet connection and transaction-handling code started from the course's NFT-ticket
