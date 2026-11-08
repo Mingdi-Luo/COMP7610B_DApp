@@ -24,7 +24,7 @@ function Intro({ onNavigate }) {
   return (
     <section className="panel">
       <span className="eyebrow">On-chain creature card game</span>
-      <h1>Elemental Duel</h1>
+      <h1>Cryptids: On-Chain Creature Duels</h1>
       <p className="lead">
         Collect creature card NFTs, make them stronger, and stake coins in duels where neither player can
         peek at the other&apos;s card.
