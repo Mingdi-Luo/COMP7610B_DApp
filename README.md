@@ -1,4 +1,4 @@
-# Elemental Duel
+# Cryptids: On-Chain Creature Duels
 
 An on-chain creature card game built for **COMP7610 Introduction to Web3 and Blockchain** (HKU).
 Players top up with ETH to get Duel Coin, open packs to mint creature card NFTs, make their cards
