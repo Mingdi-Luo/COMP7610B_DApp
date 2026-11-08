@@ -11,7 +11,7 @@ export default function Header({ pages, current, onNavigate }) {
     <header className="header">
       <div className="header-bar">
         <button type="button" className="brand" onClick={() => onNavigate("home")}>
-          <span aria-hidden="true">⚔️</span> Elemental Duel
+          <span aria-hidden="true">⚔️</span> Cryptids
         </button>
 
         <div className="wallet-area">
